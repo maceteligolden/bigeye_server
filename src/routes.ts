@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { ServerRouter } from "./shared/interfaces";
+import { StatusCodes } from "./shared/constants";
 
 export const router = Router({});
 router.get("/", async (_req, res, _next) => {
   try {
-    res.send({ statusCode: 200 });
-    res.status(200);
+    res.send({ statusCode: StatusCodes.OK });
+    res.status(StatusCodes.OK);
   } catch (error: any) {
     res.send(error.message);
-    res.status(503).send();
+    res.status(StatusCodes.SERVICE_UNAVAILABLE).send();
   }
 });
 
