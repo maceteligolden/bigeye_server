@@ -1,5 +1,5 @@
 import { Response, Router } from "express";
-import { StatusCodes, UserRoles } from "../constants";
+import { StatusCodes } from "../constants";
 
 export interface IServer {
   start(): void;
@@ -19,12 +19,12 @@ export type ServerRouter = {
 
 export type ServerRoute = {
   path: string;
-    router: Router;
-}
+  router: Router;
+};
 
 export type ServerResponse = {
-    res: Response;
-    message: string;
-    code: StatusCodes;
-    data?: any;
-}
+  res: Response;
+  message: string;
+  code: StatusCodes;
+  data?: any;
+};

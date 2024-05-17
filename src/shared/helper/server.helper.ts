@@ -1,4 +1,4 @@
-import { Application } from "express";
+import { Application, Router } from "express";
 import { container, injectable } from "tsyringe";
 import { LoggerService } from "../services";
 import { ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
@@ -14,14 +14,14 @@ export default class Server implements IServer {
     this.logger = container.resolve(LoggerService);
   }
 
-    response(args: ServerResponse): void {
-        const { res, code, message, data } = args;
+  response(args: ServerResponse): void {
+    const { res, code, message, data } = args;
 
-        res.status(code).json({
-            message,
-            data
-        });
-    }
+    res.status(code).json({
+      message,
+      data,
+    });
+  }
 
   async start() {
     const PORT = process.env.PORT;
@@ -40,11 +40,11 @@ export default class Server implements IServer {
     });
 
     routes.map((router: ServerRouter) => {
-      const URL = router.base ? `${BASE_URL}/${router.base}` : `${BASE_URL}`;
+      const URL = router.base ? `/${BASE_URL}/${router.base}` : `/${BASE_URL}`;
       
-      router.routes.map((route: ServerRoute)=> {
-        this.app.use(`${URL}/${route.path}`, route.router);
-      })
+      router.routes.map((route: ServerRoute) => {
+        this.app.use(`${URL}${route.path}`, route.router);
+      });
     });
   }
 }
