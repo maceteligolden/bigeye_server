@@ -1,0 +1,45 @@
+{
+  "name": "newton",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "node": ">=20.13.1",
+  "scripts": {
+    "build": "tsc",
+    "dev": "yarn format && nodemon src/index.ts",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src --ignore-unknown",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.5",
+    "nodemon": "^3.1.0",
+    "tsyringe": "^4.8.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.2.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.2.0",
+    "globals": "^15.2.0",
+    "husky": "^9.0.11",
+    "prettier": "^3.2.5",
+    "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.9.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint",
+      "**/*": "yarn format"
+    }
+  }
+}
