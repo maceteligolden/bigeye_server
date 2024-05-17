@@ -1,17 +1,20 @@
-import { Application, Router } from "express";
+import { Application } from "express";
 import { container, injectable } from "tsyringe";
 import { LoggerService } from "../services";
-import { ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
+import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
 import { ServerResponse, ServerRoute } from "../interfaces/server.interface";
+import { Database } from ".";
 
 @injectable()
 export default class Server implements IServer {
   private app: Application;
   private logger: ILogger;
+  private database: IDatabase;
 
   constructor(app: Application) {
     this.app = app;
     this.logger = container.resolve(LoggerService);
+    this.database = container.resolve(Database);
   }
 
   response(args: ServerResponse): void {
@@ -27,6 +30,7 @@ export default class Server implements IServer {
     const PORT = process.env.PORT;
     this.app.listen(PORT, () => {
       this.logger.log(`server listening to ${PORT}`);
+      this.database.connect();
     });
   }
 
