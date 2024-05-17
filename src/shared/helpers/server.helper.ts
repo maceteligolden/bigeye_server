@@ -4,6 +4,7 @@ import { LoggerService } from "../services";
 import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
 import { ServerResponse, ServerRoute } from "../interfaces/server.interface";
 import { Database } from ".";
+import { StatusCodes } from "../constants";
 
 @injectable()
 export default class Server implements IServer {
@@ -48,6 +49,14 @@ export default class Server implements IServer {
       
       router.routes.map((route: ServerRoute) => {
         this.app.use(`${URL}${route.path}`, route.router);
+      });
+
+      this.app.use((req, res, next) => {
+        this.response({
+          res,
+          code: StatusCodes.NOT_FOUND,
+          message: "Unknown API path"
+        });
       });
     });
   }
