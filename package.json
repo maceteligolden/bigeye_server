@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "node": ">=20.13.1",
   "scripts": {
+    "test": "tsc",
     "build": "tsc",
     "dev": "yarn format && nodemon src/index.ts",
     "lint": "eslint src/**/*.ts",
