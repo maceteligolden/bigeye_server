@@ -1,19 +1,14 @@
 import "reflect-metadata";
 import express from "express";
 import "dotenv/config";
-import { Server } from "./shared/helpers";
+import { Server } from "./shared/facade";
 import { cors, errorMiddleware } from "./shared/middlewares";
 import { routes } from "./routes";
 
 const app = express();
 const server = new Server(app);
 server.config({
-  middlewares: [
-    express.json(), 
-    express.urlencoded({ extended: true }), 
-    cors,
-    errorMiddleware
-  ],
+  middlewares: [express.json(), express.urlencoded({ extended: true }), cors, errorMiddleware],
   routes,
 });
 server.start();

@@ -16,11 +16,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.577.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.577.0",
+    "@aws-sdk/client-ses": "^3.577.0",
+    "@aws-sdk/client-sns": "^3.577.0",
+    "@aws-sdk/client-sqs": "^3.577.0",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
     "express": "^4.19.2",
     "mongoose": "^8.3.5",
     "nodemon": "^3.1.0",
+    "stripe": "^15.7.0",
     "tsyringe": "^4.8.0"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
 export interface IDatabase {
-    connect(): void;
-    disconnect(): void;
+  connect(): void;
+  disconnect(): void;
 }

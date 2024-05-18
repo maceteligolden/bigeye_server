@@ -1,5 +1,5 @@
 export interface IPaginator<T> {
-    getNext(): Promise<T[]>;
-    dataCount(): Promise<number>;
-    pageCount(): Promise<number>;
+  getNext(): Promise<T[]>;
+  dataCount(): Promise<number>;
+  pageCount(): Promise<number>;
 }

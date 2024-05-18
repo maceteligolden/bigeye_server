@@ -46,7 +46,7 @@ export default class Server implements IServer {
 
     routes.map((router: ServerRouter) => {
       const URL = router.base ? `/${BASE_URL}/${router.base}` : `/${BASE_URL}`;
-      
+
       router.routes.map((route: ServerRoute) => {
         this.app.use(`${URL}${route.path}`, route.router);
       });
@@ -55,7 +55,7 @@ export default class Server implements IServer {
         this.response({
           res,
           code: StatusCodes.NOT_FOUND,
-          message: "Unknown API path"
+          message: "Unknown API path",
         });
       });
     });
