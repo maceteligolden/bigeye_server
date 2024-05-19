@@ -1,0 +1,118 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-west-1:572368690967:task-definition/NewtonsLawTestTD:12",
+    "containerDefinitions": [
+        {
+            "name": "NewtonsLawTest",
+            "image": "572368690967.dkr.ecr.us-west-1.amazonaws.com/newtonlawtest:latest",
+            "cpu": 0,
+            "memory": 512,
+            "memoryReservation": 205,
+            "portMappings": [
+                {
+                    "name": "newtonslawtest-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                },
+                {
+                    "name": "newtonslawtest-443-tcp",
+                    "containerPort": 443,
+                    "hostPort": 443,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                },
+                {
+                    "name": "newtonslawtest-5000-tcp",
+                    "containerPort": 5000,
+                    "hostPort": 5000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [
+                {
+                    "value": "arn:aws:s3:::newtonslawsecrets/staging.env",
+                    "type": "s3"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/NewtonsLawTestTD",
+                    "awslogs-region": "us-west-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "NewtonsLawTestTD",
+    "taskRoleArn": "arn:aws:iam::572368690967:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::572368690967:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 12,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.env-files.s3"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2"
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "512",
+    "memory": "512",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "tags": [
+        {
+            "key": "Application",
+            "value": "NewtonsLawTest"
+        }
+    ]
+}
