@@ -1,3 +1,19 @@
+import {
+  AWSCognitoConfirmForgotPasswordInput,
+  AWSCognitoConfirmForgotPasswordOutput,
+  AWSCognitoConfirmSignupInput,
+  AWSCognitoConfirmSignupOutput,
+  AWSCognitoForgotPasswordInput,
+  AWSCognitoForgotPasswordOutput,
+  AWSCognitoResendSignupCodeInput,
+  AWSCognitoResendSignupCodeOutput,
+  AWSCognitoSignInInput,
+  AWSCognitoSignInOutput,
+  AWSCognitoSignOutInput,
+  AWSCognitoSignOutOutput,
+  AWSCognitoSignupInput,
+  AWSCognitoSignupOutput,
+} from "./awscognito.dto";
 import { PushNotificationInput } from "./awssns.dto";
 import { QueueMessageInput } from "./awssqs.dto";
 import { NotificationType, SendEmailInput } from "./notification.dto";
@@ -5,6 +21,8 @@ import { PaymentType } from "./payment.dto";
 import {
   CreateCustomerInput,
   CreateCustomerOutput,
+  DeleteCustomerInput,
+  DeleteCustomerOutput,
   FetchCardDetailsInput,
   FetchCardDetailsOutput,
   PaymentConfirmInput,
@@ -12,6 +30,14 @@ import {
   PaymentIntentOutput,
   SetupIntentInput,
   SetupIntentOutput,
+  StripeCreatePlanInput,
+  StripeCreatePlanOutput,
+  StripeCreateSubscriptionInput,
+  StripeCreateSubscriptionOutput,
+  StripeDeletePlanInput,
+  StripeDeletePlanOutput,
+  StripeUpdateSubscriptionInput,
+  StripeUpdateSubscriptionOutput,
 } from "./stripe.dto";
 
 export {
@@ -29,4 +55,28 @@ export {
   FetchCardDetailsOutput,
   PaymentConfirmInput,
   PaymentType,
+  AWSCognitoSignupInput,
+  AWSCognitoSignupOutput,
+  AWSCognitoConfirmSignupInput,
+  AWSCognitoConfirmSignupOutput,
+  AWSCognitoSignInInput,
+  AWSCognitoSignInOutput,
+  AWSCognitoForgotPasswordInput,
+  AWSCognitoForgotPasswordOutput,
+  AWSCognitoConfirmForgotPasswordInput,
+  AWSCognitoConfirmForgotPasswordOutput,
+  AWSCognitoResendSignupCodeInput,
+  AWSCognitoResendSignupCodeOutput,
+  AWSCognitoSignOutInput,
+  AWSCognitoSignOutOutput,
+  DeleteCustomerInput,
+  DeleteCustomerOutput,
+  StripeCreatePlanOutput,
+  StripeCreatePlanInput,
+  StripeDeletePlanInput,
+  StripeDeletePlanOutput,
+  StripeCreateSubscriptionInput,
+  StripeCreateSubscriptionOutput,
+  StripeUpdateSubscriptionInput,
+  StripeUpdateSubscriptionOutput,
 };
