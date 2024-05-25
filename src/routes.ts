@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { ServerRouter } from "./shared/interfaces";
 import { StatusCodes } from "./shared/constants";
+import { customerAuthRouter } from "./modules/auth/routers";
+import { adminPlanRouter, subscriptionRouter } from "./modules/subcription/routers";
+import { cardRouter } from "./modules/payment/routers";
 
 export const router = Router({});
 router.get("/", async (_req, res, _next) => {
@@ -20,6 +23,32 @@ export const routes: ServerRouter[] = [
       {
         path: "/healthcheck",
         router: router,
+      },
+    ],
+  },
+  {
+    base: "customer",
+    routes: [
+      {
+        path: "/auth",
+        router: customerAuthRouter,
+      },
+      {
+        path: "/subscriptions",
+        router: subscriptionRouter,
+      },
+      {
+        path: "/cards",
+        router: cardRouter,
+      },
+    ],
+  },
+  {
+    base: "admin",
+    routes: [
+      {
+        path: "/plans",
+        router: adminPlanRouter,
       },
     ],
   },
