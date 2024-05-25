@@ -2,6 +2,8 @@ import { injectable } from "tsyringe";
 import {
   CreateCustomerInput,
   CreateCustomerOutput,
+  DeleteCustomerInput,
+  DeleteCustomerOutput,
   FetchCardDetailsInput,
   FetchCardDetailsOutput,
   PaymentConfirmInput,
@@ -9,6 +11,14 @@ import {
   PaymentIntentOutput,
   SetupIntentInput,
   SetupIntentOutput,
+  StripeCreatePlanInput,
+  StripeCreatePlanOutput,
+  StripeCreateSubscriptionInput,
+  StripeCreateSubscriptionOutput,
+  StripeDeletePlanInput,
+  StripeDeletePlanOutput,
+  StripeUpdateSubscriptionInput,
+  StripeUpdateSubscriptionOutput,
 } from "../dto";
 import { StripeCurriencies, StripePaymentMethodType } from "../constants";
 import { StripeHelper } from "../helper";
@@ -64,6 +74,14 @@ export default class Stripe {
     };
   }
 
+  async deleteCustomer(args: DeleteCustomerInput): Promise<DeleteCustomerOutput> {
+    const { customer_id } = args;
+    const response = await stripe.customers.del(customer_id);
+    return {
+      isDeleted: response.deleted,
+    };
+  }
+
   async deleteCard(payment_method_id: string): Promise<void> {
     await stripe.paymentMethods.detach(payment_method_id);
   }
@@ -78,6 +96,76 @@ export default class Stripe {
       exp_month: card.exp_month,
       exp_year: card.exp_year,
       brand: card.brand,
+    };
+  }
+
+  async createPlan(args: StripeCreatePlanInput): Promise<StripeCreatePlanOutput> {
+    const { amount, name } = args;
+
+    const { id, product } = await stripe.prices.create({
+      currency: "usd",
+      unit_amount: Number(amount),
+      recurring: {
+        interval: "month",
+      },
+      product_data: {
+        name,
+      },
+    });
+
+    const response = await stripe.plans.create({
+      amount: Number(amount),
+      currency: "usd",
+      interval: "month",
+      product,
+    });
+    return {
+      plan_id: response.id,
+      price_id: id,
+    };
+  }
+
+  async deletePlan(args: StripeDeletePlanInput): Promise<StripeDeletePlanOutput> {
+    const { plan_id } = args;
+
+    const response = await stripe.plans.del(plan_id);
+
+    return {
+      isPlanDeleted: response.deleted,
+    };
+  }
+
+  async createSubscription(args: StripeCreateSubscriptionInput): Promise<StripeCreateSubscriptionOutput> {
+    const { customer_id, price_id, payment_method } = args;
+
+    const response = await stripe.subscriptions.create({
+      customer: customer_id,
+      currency: "usd",
+      items: [
+        {
+          price: price_id,
+        },
+      ],
+      payment_behavior: "default_incomplete",
+      payment_method,
+    });
+    return {
+      subscription_id: response.id,
+      subscription_end_date: response.current_period_end,
+    };
+  }
+
+  async updateSubscription(args: StripeUpdateSubscriptionInput): Promise<StripeUpdateSubscriptionOutput> {
+    const { subscription_id, order_id } = args;
+
+    const response = await stripe.subscriptions.update(subscription_id, {
+      metadata: {
+        order_id,
+      },
+    });
+
+    return {
+      isUpdated: response.id ? true : false,
     };
   }
 }
