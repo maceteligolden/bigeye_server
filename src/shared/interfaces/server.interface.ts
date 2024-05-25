@@ -4,7 +4,6 @@ import { StatusCodes } from "../constants";
 export interface IServer {
   start(): void;
   config(args: ServerConfig): void;
-  response(args: ServerResponse): void;
 }
 
 export type ServerConfig = {
