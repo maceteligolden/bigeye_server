@@ -4,7 +4,7 @@ import { ILogger } from "./logger.interface";
 import { INotification } from "./notification.interface";
 import { IPaginator } from "./paginator.interface";
 import { IRepository } from "./repository.interface";
-import { IServer, ServerConfig, ServerRoute, ServerRouter } from "./server.interface";
+import { IServer, ServerConfig, ServerResponse, ServerRoute, ServerRouter } from "./server.interface";
 
 export {
   INotification,
@@ -17,4 +17,5 @@ export {
   ServerConfig,
   ServerRouter,
   ServerRoute,
+  ServerResponse,
 };
