@@ -30,6 +30,14 @@ export type CreateCustomerOutput = {
   customer_id: string;
 };
 
+export type DeleteCustomerInput = {
+  customer_id: string;
+};
+
+export type DeleteCustomerOutput = {
+  isDeleted: boolean;
+};
+
 export type FetchCardDetailsInput = {
   payment_method_id: string;
 };
@@ -39,4 +47,42 @@ export type FetchCardDetailsOutput = {
   exp_month: string;
   exp_year: string;
   brand: string;
+};
+
+export type StripeCreatePlanInput = {
+  name: string;
+  amount: string;
+};
+
+export type StripeCreatePlanOutput = {
+  plan_id: string;
+  price_id: string;
+};
+
+export type StripeDeletePlanInput = {
+  plan_id: string;
+};
+
+export type StripeDeletePlanOutput = {
+  isPlanDeleted: boolean;
+};
+
+export type StripeCreateSubscriptionInput = {
+  customer_id: string;
+  price_id: string;
+  payment_method: string | undefined;
+};
+
+export type StripeCreateSubscriptionOutput = {
+  subscription_id: string;
+  subscription_end_date: string;
+};
+
+export type StripeUpdateSubscriptionInput = {
+  subscription_id: string;
+  order_id: string;
+};
+
+export type StripeUpdateSubscriptionOutput = {
+  isUpdated: boolean;
 };
