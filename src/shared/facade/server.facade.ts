@@ -2,9 +2,10 @@ import { Application } from "express";
 import { container, injectable } from "tsyringe";
 import { LoggerService } from "../services";
 import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
-import { ServerResponse, ServerRoute } from "../interfaces/server.interface";
+import { ServerRoute } from "../interfaces/server.interface";
 import { Database } from ".";
 import { StatusCodes } from "../constants";
+import { Res } from "../helper";
 
 @injectable()
 export default class Server implements IServer {
@@ -18,16 +19,7 @@ export default class Server implements IServer {
     this.database = container.resolve(Database);
   }
 
-  response(args: ServerResponse): void {
-    const { res, code, message, data } = args;
-
-    res.status(code).json({
-      message,
-      data,
-    });
-  }
-
-  async start() {
+  async start(): Promise<void> {
     const PORT = process.env.PORT;
     this.app.listen(PORT, () => {
       this.logger.log(`server listening to ${PORT}`);
@@ -51,13 +43,13 @@ export default class Server implements IServer {
         this.app.use(`${URL}${route.path}`, route.router);
       });
 
-      this.app.use((req, res, next) => {
-        this.response({
-          res,
-          code: StatusCodes.NOT_FOUND,
-          message: "Unknown API path",
-        });
-      });
+      // this.app.use((req, res, next) => {
+      //   Res({
+      //     res,
+      //     code: StatusCodes.NOT_FOUND,
+      //     message: "Unknown API path",
+      //   });
+      // });
     });
   }
 }
