@@ -71,6 +71,8 @@ export type StripeCreateSubscriptionInput = {
   customer_id: string;
   price_id: string;
   payment_method: string | undefined;
+  user: string;
+  plan: string;
 };
 
 export type StripeCreateSubscriptionOutput = {

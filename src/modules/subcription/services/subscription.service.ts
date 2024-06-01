@@ -1,15 +1,13 @@
 import { injectable } from "tsyringe";
 import { Stripe } from "../../../shared/facade";
-import { PlanRepository, SubscriptionRepository, UserRepository } from "../../../shared/repositories";
+import { PlanRepository, UserRepository } from "../../../shared/repositories";
 import { CreateSubscriptionInput, CreateSubscriptionOutput } from "../dto";
-import { SubscriptionStatus } from "../../../shared/constants";
-import { BadRequestError } from "../../../shared/errors";
+import { BadRequestError, InternalServerError } from "../../../shared/errors";
 
 @injectable()
 export default class SubscriptionService {
   constructor(
     private stripe: Stripe,
-    private subscriptionRepository: SubscriptionRepository,
     private planRepository: PlanRepository,
     private userRepository: UserRepository,
   ) {}
@@ -17,48 +15,38 @@ export default class SubscriptionService {
   async createSubscription(args: CreateSubscriptionInput): Promise<CreateSubscriptionOutput> {
     const { user, plan } = args;
 
-    const { stripe_customer_id, stripe_card_id } = await this.userRepository.fetchOneById(user);
+    const checkUser = await this.userRepository.fetchOneById(user);
 
-    if (!stripe_customer_id) {
+    if (!checkUser) {
       throw new BadRequestError("user not found");
     }
 
-    const { stripe_price_id, amount } = await this.planRepository.fetchOneById(plan);
+    const { stripe_customer_id, stripe_card_id } = checkUser;
 
-    if (!stripe_price_id) {
+    const checkPlan = await this.planRepository.fetchOneById(plan);
+
+    if (!checkPlan) {
       throw new BadRequestError("failed to fetch plan");
     }
 
-    const { subscription_id, subscription_end_date } = await this.stripe.createSubscription({
+    const { stripe_price_id } = checkPlan;
+
+    const { subscription_id } = await this.stripe.createSubscription({
       price_id: stripe_price_id,
       customer_id: stripe_customer_id ? stripe_customer_id : "",
       payment_method: stripe_card_id,
+      user,
+      plan,
     });
 
     if (!subscription_id) {
-      throw new BadRequestError("failed to create subscription");
-    }
-
-    const start_date = new Date();
-
-    const response = await this.subscriptionRepository.create({
-      user,
-      plan,
-      stripe_subscription_id: subscription_id,
-      status: SubscriptionStatus.ACTIVE,
-      start_date,
-      end_date: new Date(subscription_end_date),
-      amount,
-    });
-
-    if (!response) {
-      throw new BadRequestError("failed to add subscription to database");
+      throw new InternalServerError("failed to create subscription");
     }
 
     //TODO: send notification via push notification and email notification
 
     return {
-      subscription: response,
+      processing: true,
     };
   }
 }

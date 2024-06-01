@@ -1,12 +1,16 @@
-import { Router } from "express";
+import { Router, raw } from "express";
 import { ServerRouter } from "./shared/interfaces";
 import { StatusCodes } from "./shared/constants";
 import { customerAuthRouter } from "./modules/auth/routers";
 import { adminPlanRouter, subscriptionRouter } from "./modules/subcription/routers";
 import { cardRouter } from "./modules/payment/routers";
+import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanager/routers";
+import { Stripe } from "./shared/facade";
+import { container } from "tsyringe";
 
 export const router = Router({});
-router.get("/", async (_req, res, _next) => {
+const stripe = container.resolve(Stripe);
+router.get("/healthcheck", async (_req, res, _next) => {
   try {
     res.send({ statusCode: StatusCodes.OK, message: "successfully passed healthcheck" });
     res.status(StatusCodes.OK);
@@ -16,12 +20,16 @@ router.get("/", async (_req, res, _next) => {
   }
 });
 
+router.post("/stripeaccountwebhook", raw({ type: "application/json" }), async (req, res, next) =>
+  stripe.accountWebhook(req, res, next),
+);
+
 export const routes: ServerRouter[] = [
   {
     base: "",
     routes: [
       {
-        path: "/healthcheck",
+        path: "/",
         router: router,
       },
     ],
@@ -40,6 +48,18 @@ export const routes: ServerRouter[] = [
       {
         path: "/cards",
         router: cardRouter,
+      },
+      {
+        path: "/folders",
+        router: folderRouter,
+      },
+      {
+        path: "/files",
+        router: fileRouter,
+      },
+      {
+        path: "/filemanager",
+        router: fileManagerRouter,
       },
     ],
   },

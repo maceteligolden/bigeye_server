@@ -6,5 +6,5 @@ export type CreateSubscriptionInput = {
 };
 
 export type CreateSubscriptionOutput = {
-  subscription: Subscription;
+  processing: boolean;
 };

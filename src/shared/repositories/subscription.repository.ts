@@ -1,24 +1,22 @@
 import { injectable } from "tsyringe";
 import { Subscription } from "../entities";
 import { IRepository } from "../interfaces";
+import { subscriptionSchema } from "../schemas";
 
 @injectable()
 export default class SubscriptionRepository implements IRepository<Subscription> {
   constructor() {}
-  create(args: Subscription): Promise<Subscription> {
-    throw new Error("Method not implemented.");
+  async create(args: Subscription): Promise<Subscription> {
+    return await subscriptionSchema.create(args);
   }
   fetchAll(): Promise<Subscription[]> {
     throw new Error("Method not implemented.");
   }
-  fetchOneById(id: string): Promise<Subscription> {
-    throw new Error("Method not implemented.");
+  async fetchOneById(id: string): Promise<Subscription | null> {
+    return await subscriptionSchema.findById(id);
   }
-  fetchOnebyUserId(userId: string): Promise<Subscription> {
-    throw new Error("Method not implemented");
-  }
-  update(id: string, update: Partial<Subscription>): Promise<Subscription> {
-    throw new Error("Method not implemented.");
+  async update(id: string, update: Partial<Subscription>): Promise<Subscription | null> {
+    return await subscriptionSchema.findOneAndUpdate({ _id: id }, update);
   }
   delete(id: string): Promise<Subscription> {
     throw new Error("Method not implemented.");

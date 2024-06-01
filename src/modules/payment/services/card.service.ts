@@ -14,13 +14,15 @@ export default class CardService {
   async authorizeAddCard(args: AuthorizeCardInput): Promise<AuthorizeCardOutput> {
     const { user_id } = args;
 
-    const { stripe_customer_id } = await this.userRepository.fetchOneById(user_id);
+    const checkUser = await this.userRepository.fetchOneById(user_id);
 
-    if (!stripe_customer_id) {
+    if (!checkUser) {
       throw new BadRequestError("user not found");
     }
 
-    const { client_secret } = await this.stripe.setupIntent({ customer: stripe_customer_id });
+    const { stripe_customer_id } = checkUser;
+
+    const { client_secret } = await this.stripe.setupIntent({ customer: stripe_customer_id! });
 
     if (!client_secret) {
       throw new BadRequestError("failed while generating secret");

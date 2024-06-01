@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Base } from "./base.entity";
 
 export default interface User extends Base {
@@ -7,4 +8,5 @@ export default interface User extends Base {
   stripe_card_last_digits?: string;
   stripe_card_expire_date?: string;
   stripe_card_type?: string;
+  active_plan?: mongoose.Types.ObjectId;
 }

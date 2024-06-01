@@ -1,27 +1,28 @@
 import { injectable } from "tsyringe";
 import { IRepository } from "../interfaces";
 import { User } from "../entities";
+import { userSchema } from "../schemas";
 
 @injectable()
 export default class UserRepository implements IRepository<User> {
   constructor() {}
-  create(args: User): Promise<User> {
-    throw new Error("add user to mongodb table");
+  async create(args: User): Promise<User> {
+    return await userSchema.create(args);
   }
   fetchAll(): Promise<User[]> {
     throw new Error("Method not implemented.");
   }
-  fetchOneById(id: string): Promise<User> {
-    throw new Error("Method not implemented.");
+  async fetchOneById(id: string): Promise<User | null> {
+    return await userSchema.findById(id);
   }
-  fetchOneByCustomerId(id: string): Promise<User> {
-    throw new Error("Method not implemented.");
+  async fetchOneByCustomerId(id: string): Promise<User | null> {
+    return await userSchema.findOne({ stripe_customer_id: id });
   }
-  update(id: string, update: Partial<User>): Promise<User> {
-    throw new Error("Method not implemented.");
+  async update(id: string, update: Partial<User>): Promise<User | null> {
+    return await userSchema.findOneAndUpdate({ _id: id }, update);
   }
-  updateWithCustomerId(customer_id: string, update: Partial<User>): Promise<User> {
-    throw new Error("Method not implemented.");
+  async updateWithCustomerId(customer_id: string, update: Partial<User>): Promise<User | null> {
+    return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, update);
   }
   delete(id: string): Promise<User> {
     throw new Error("Method not implemented.");

@@ -21,4 +21,8 @@ export default class Database implements IDatabase {
   disconnect(): void {
     mongoose.disconnect();
   }
+
+  convertStringToObjectId(id: string) {
+    return new mongoose.Types.ObjectId(id);
+  }
 }
