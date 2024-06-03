@@ -13,7 +13,7 @@ export const stripeRouter = Router({});
 const stripe = container.resolve(Stripe);
 router.get("/", async (_req, res, _next) => {
   try {
-    res.send({ statusCode: StatusCodes.OK, message: "successfully passed healthcheck" });
+    res.send({ statusCode: StatusCodes.OK, message: "successfully passed healthcheck!!!" });
     res.status(StatusCodes.OK);
   } catch (error: any) {
     res.send(error.message);
