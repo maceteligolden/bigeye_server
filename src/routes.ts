@@ -9,8 +9,9 @@ import { Stripe } from "./shared/facade";
 import { container } from "tsyringe";
 
 export const router = Router({});
+export const stripeRouter = Router({});
 const stripe = container.resolve(Stripe);
-router.get("/healthcheck", async (_req, res, _next) => {
+router.get("/", async (_req, res, _next) => {
   try {
     res.send({ statusCode: StatusCodes.OK, message: "successfully passed healthcheck" });
     res.status(StatusCodes.OK);
@@ -20,7 +21,7 @@ router.get("/healthcheck", async (_req, res, _next) => {
   }
 });
 
-router.post("/stripeaccountwebhook", raw({ type: "application/json" }), async (req, res, next) =>
+stripeRouter.post("/", raw({ type: "application/json" }), async (req, res, next) =>
   stripe.accountWebhook(req, res, next),
 );
 
@@ -29,8 +30,12 @@ export const routes: ServerRouter[] = [
     base: "",
     routes: [
       {
-        path: "/",
+        path: "/healthcheck",
         router: router,
+      },
+      {
+        path: "/stripeaccountwebhook",
+        router: stripeRouter,
       },
     ],
   },

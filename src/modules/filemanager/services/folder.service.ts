@@ -15,7 +15,10 @@ import { Database } from "../../../shared/facade";
 
 @injectable()
 export default class FolderService implements IAction {
-  constructor(private folderRepository: FolderRepository, private database: Database) {}
+  constructor(
+    private folderRepository: FolderRepository,
+    private database: Database,
+  ) {}
 
   async move(object_id: string, to: string): Promise<void> {
     const checkId = await this.folderRepository.fetchOneById(object_id);

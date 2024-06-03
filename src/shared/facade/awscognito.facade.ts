@@ -172,7 +172,7 @@ export default class AWSCognito {
       } else if (e instanceof UserNotConfirmedException) {
         throw new Error("user not confirmed");
       } else {
-        throw new Error("error with signup service");
+        throw new Error(e);
       }
     }
   }

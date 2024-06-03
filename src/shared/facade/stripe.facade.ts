@@ -292,11 +292,11 @@ export default class Stripe {
           amount: Number(items.data[0].plan.amount).toString(),
         });
 
-        if(!response){
+        if (!response) {
           throw new InternalServerError("failed to add subscription to records", {
             name: customer_updated.name,
-            email: customer_updated.email
-          })
+            email: customer_updated.email,
+          });
         }
 
         await this.loggerService.log("successfully subscribed customer to a plan", {
