@@ -234,10 +234,7 @@ export default class Stripe {
   }
 
   async accountWebhook(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const endpointSecret =
-      process.env.NODE_ENV === "dev"
-        ? `${process.env.STRIPE_TEST_WEBHOOK_SECRET}`
-        : `${process.env.STRIPE_PROD_WEBHOOK_SECRET}`;
+    const endpointSecret = `${process.env.STRIPE_WEBHOOK_SECRET}`;
     const sig = req.headers["stripe-signature"];
     let event;
     const rawBody = req.body.toString("utf8");
