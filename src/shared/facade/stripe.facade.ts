@@ -27,9 +27,7 @@ import { LoggerService } from "../services";
 import { InternalServerError } from "../errors";
 import { SubscriptionRepository } from "../repositories";
 import { Database } from ".";
-const stripe = require("stripe")(
-  process.env.NODE_ENV === "dev" ? `${process.env.STRIPE_TEST_API_KEY}` : `${process.env.STRIPE_PROD_API_KEY}`,
-);
+const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
 export default class Stripe {
