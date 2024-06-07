@@ -171,7 +171,7 @@ export default class AWSCognito {
     } catch (e: any) {
       if (e instanceof UserNotFoundException) {
         throw new BadRequestError("user not found");
-      } else if(e instanceof NotAuthorizedException){
+      } else if (e instanceof NotAuthorizedException) {
         throw new BadRequestError("invalid details provided");
       } else if (e instanceof UserNotConfirmedException) {
         throw new BadRequestError("user not confirmed");

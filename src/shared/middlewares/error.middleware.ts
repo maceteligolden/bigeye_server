@@ -13,14 +13,14 @@ export const errorMiddleware = (err: Error, req: Request, res: Response, next: N
       res,
       code: err.statusCode,
       message: "error occured",
-      error: err.serializeErrors()
-    })
+      error: err.serializeErrors(),
+    });
   }
-  
+
   Res({
     res,
     code: StatusCodes.INTERNAL_SERVER,
     message: "error occured",
-    error: [{ message: err.message }]
-  })
+    error: [{ message: err.message }],
+  });
 };

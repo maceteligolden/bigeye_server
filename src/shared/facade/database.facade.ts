@@ -16,7 +16,7 @@ export default class Database implements IDatabase {
         this.loggerService.log("Successfully connected to database");
       })
       .catch((err) => {
-        throw new InternalServerError("failed to connect to database")
+        throw new InternalServerError("failed to connect to database");
       });
   }
   disconnect(): void {

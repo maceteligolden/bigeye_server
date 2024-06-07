@@ -41,9 +41,8 @@ export default class Server implements IServer {
       router.routes.map((route: ServerRoute) => {
         this.app.use(`${URL}${route.path}`, route.router);
       });
-
     });
 
-    this.app.use(errorMiddleware) // dont move this else error wont be caught
+    this.app.use(errorMiddleware); // dont move this else error wont be caught
   }
 }
