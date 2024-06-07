@@ -25,5 +25,6 @@ export type ServerResponse = {
   res: Response;
   message: string;
   code: StatusCodes;
+  error?: any;
   data?: any;
 };
