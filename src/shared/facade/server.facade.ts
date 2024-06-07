@@ -4,8 +4,7 @@ import { LoggerService } from "../services";
 import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
 import { ServerRoute } from "../interfaces/server.interface";
 import { Database } from ".";
-import { StatusCodes } from "../constants";
-import { Res } from "../helper";
+import { errorMiddleware } from "../middlewares";
 
 @injectable()
 export default class Server implements IServer {
@@ -43,13 +42,8 @@ export default class Server implements IServer {
         this.app.use(`${URL}${route.path}`, route.router);
       });
 
-      // this.app.use((req, res, next) => {
-      //   Res({
-      //     res,
-      //     code: StatusCodes.NOT_FOUND,
-      //     message: "Unknown API path",
-      //   });
-      // });
     });
+
+    this.app.use(errorMiddleware) // dont move this else error wont be caught
   }
 }
