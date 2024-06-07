@@ -11,6 +11,7 @@ import {
   GlobalSignOutCommand,
   InitiateAuthCommand,
   InvalidPasswordException,
+  NotAuthorizedException,
   ResendConfirmationCodeCommand,
   SignUpCommand,
   UserNotConfirmedException,
@@ -35,6 +36,7 @@ import {
 } from "../dto";
 import { StatusCodes } from "../constants";
 import { AWS } from "../helper";
+import { BadRequestError, InternalServerError } from "../errors";
 
 @injectable()
 export default class AWSCognito {
@@ -80,11 +82,11 @@ export default class AWSCognito {
       };
     } catch (e: any) {
       if (e instanceof InvalidPasswordException) {
-        throw new Error("invalid password");
+        throw new BadRequestError("invalid password");
       } else if (e instanceof UsernameExistsException) {
-        throw new Error("email already exists");
+        throw new BadRequestError("email already exists");
       } else {
-        throw new Error(e);
+        throw new InternalServerError(e);
       }
     }
   }
@@ -108,11 +110,11 @@ export default class AWSCognito {
       };
     } catch (e: any) {
       if (e instanceof ExpiredCodeException) {
-        throw new Error("code has expired");
+        throw new BadRequestError("code has expired");
       } else if (e instanceof UserNotFoundException) {
-        throw new Error("user not found");
+        throw new BadRequestError("user not found");
       } else {
-        throw new Error("unexpected error in auth service confirm signup");
+        throw new InternalServerError("unexpected error in auth service confirm signup");
       }
     }
   }
@@ -135,9 +137,9 @@ export default class AWSCognito {
       };
     } catch (e: any) {
       if (e instanceof CodeDeliveryFailureException) {
-        throw new Error("code failed to resend");
+        throw new BadRequestError("code failed to resend");
       } else {
-        throw new Error("unexpected error occurred when trying to resend confirmation code");
+        throw new InternalServerError("unexpected error occurred when trying to resend confirmation code");
       }
     }
   }
@@ -168,11 +170,13 @@ export default class AWSCognito {
       };
     } catch (e: any) {
       if (e instanceof UserNotFoundException) {
-        throw new Error("invalid details provided");
+        throw new BadRequestError("user not found");
+      } else if(e instanceof NotAuthorizedException){
+        throw new BadRequestError("invalid details provided");
       } else if (e instanceof UserNotConfirmedException) {
-        throw new Error("user not confirmed");
+        throw new BadRequestError("user not confirmed");
       } else {
-        throw new Error(e);
+        throw new InternalServerError(e);
       }
     }
   }
@@ -191,7 +195,7 @@ export default class AWSCognito {
         isLogout: response.$metadata.httpStatusCode === StatusCodes.OK ? true : false,
       };
     } catch (e: any) {
-      throw new Error(e);
+      throw new InternalServerError(e);
     }
   }
 
@@ -213,11 +217,11 @@ export default class AWSCognito {
       };
     } catch (e: any) {
       if (e instanceof CodeDeliveryFailureException) {
-        throw new Error("code failed to send");
+        throw new BadRequestError("code failed to send");
       } else if (e instanceof UserNotFoundException) {
-        throw new Error("user not found");
+        throw new BadRequestError("user not found");
       } else {
-        throw new Error(e);
+        throw new InternalServerError(e);
       }
     }
   }
@@ -245,17 +249,17 @@ export default class AWSCognito {
       };
     } catch (e: any) {
       if (e instanceof CodeMismatchException) {
-        throw new Error("code doesnt match");
+        throw new BadRequestError("code doesnt match");
       } else if (e instanceof ExpiredCodeException) {
-        throw new Error("code expired");
+        throw new BadRequestError("code expired");
       } else if (e instanceof InvalidPasswordException) {
-        throw new Error("invalid password");
+        throw new BadRequestError("invalid password");
       } else if (e instanceof UserNotFoundException) {
-        throw new Error("user not found");
+        throw new BadRequestError("user not found");
       } else if (e instanceof UserNotConfirmedException) {
-        throw new Error("user not confirmed");
+        throw new BadRequestError("user not confirmed");
       } else {
-        throw new Error("unexpected error occurred in auth service confirmforgotpassword");
+        throw new InternalServerError("unexpected error occurred in auth service confirmforgotpassword");
       }
     }
   }
