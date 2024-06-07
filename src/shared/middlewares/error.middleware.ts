@@ -3,15 +3,24 @@ import { container } from "tsyringe";
 import { LoggerService } from "../services";
 import { CustomError } from "../errors";
 import { StatusCodes } from "../constants";
+import { Res } from "../helper";
 
 export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
   const logger = container.resolve(LoggerService);
   logger.log(`${err.message}`);
   if (err instanceof CustomError) {
-    return res.status(err.statusCode).json({ errors: err.serializeErrors() });
+    return Res({
+      res,
+      code: err.statusCode,
+      message: "error occured",
+      error: err.serializeErrors()
+    })
   }
-
-  res.status(StatusCodes.INTERNAL_SERVER).send({
-    errors: [{ message: err.message }],
-  });
+  
+  Res({
+    res,
+    code: StatusCodes.INTERNAL_SERVER,
+    message: "error occured",
+    error: [{ message: err.message }]
+  })
 };
