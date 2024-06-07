@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 import { IDatabase } from "../interfaces";
 import mongoose from "mongoose";
 import { LoggerService } from "../services";
+import { InternalServerError } from "../errors";
 
 @injectable()
 export default class Database implements IDatabase {
@@ -15,7 +16,7 @@ export default class Database implements IDatabase {
         this.loggerService.log("Successfully connected to database");
       })
       .catch((err) => {
-        this.loggerService.log(err);
+        throw new InternalServerError("failed to connect to database")
       });
   }
   disconnect(): void {
