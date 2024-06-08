@@ -3,6 +3,7 @@ import { FileManager } from "../../../shared/entities";
 export type CreateFolderInput = {
   name: string;
   parent_folder_id?: string | undefined;
+  user_id: string;
 };
 
 export type CreateFolderOutput = {
@@ -16,6 +17,7 @@ export type DeleteFolderInput = {
 export type RenameFolderInput = {
   name: string;
   folder_id: string;
+  user_id: string;
 };
 
 export type RenameFolderOutput = {

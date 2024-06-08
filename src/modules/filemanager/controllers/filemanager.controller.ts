@@ -10,14 +10,15 @@ export default class FileManagerController {
 
   async getAllObjects(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { page, limit } = req.query;
+      const { page, limit, folder } = req.query;
 
-      const { user } = req.body;
+      const { sub } = req.user;
 
       const response = await this.fileManagerService.getAllObjects({
-        user_id: user.id,
+        user_id: sub,
         page: page ? page.toString() : "1",
         limit: limit ? limit.toString() : "10",
+        folder: folder?.toString()
       });
 
       Res({

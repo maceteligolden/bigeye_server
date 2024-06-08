@@ -181,6 +181,30 @@ export default class AWSCognito {
     }
   }
 
+  async refreshAccessToken(refresh_token: string): Promise<any> {
+    try {
+      const params = {
+        AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
+        ClientId: `${process.env.AWS_COGNITO_CLIENT_ID}`,
+        AuthParameters: {
+          REFRESH_TOKEN: refresh_token,
+          SECRET_HASH: await this.aws.generateSecretHash(""),
+        },
+      };
+
+      const command = new InitiateAuthCommand(params);
+      const response = await this.client.send(command);
+
+      return {
+        accessToken: response.AuthenticationResult?.AccessToken,
+        idToken: response.AuthenticationResult?.IdToken,
+        refreshToken: response.AuthenticationResult?.RefreshToken,
+      };
+    } catch (e: any) {
+      throw new InternalServerError(e);
+    }
+  }
+
   async signOut(args: AWSCognitoSignOutInput): Promise<AWSCognitoSignOutOutput> {
     try {
       const { access_token } = args;

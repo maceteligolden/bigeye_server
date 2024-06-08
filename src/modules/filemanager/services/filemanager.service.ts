@@ -7,35 +7,23 @@ import { BadRequestError, InternalServerError } from "../../../shared/errors";
 export default class FileManagerService {
   constructor(
     private fileManagerRepository: FileManagerRepository,
-    private userRepository: UserRepository,
+    private userRepository: UserRepository
   ) {}
 
   async getAllObjects(args: GetAllObjectsInput): Promise<GetAllObjectsOutput> {
-    const { user_id, page, limit } = args;
-
+    const { user_id, page, limit, folder } = args;
+    
     const pageNumber = parseInt(page as string) || 1;
     const limitNumber = parseInt(limit as string) || 10;
     const skip = (pageNumber - 1) * limitNumber;
 
-    const totalObject = await this.fileManagerRepository.totalObjectByUser(user_id);
+    const check_user_id = await this.userRepository.fetchOneByCognitoId(user_id);
 
-    if (!totalObject) {
-      throw new InternalServerError("failed to get total object count for user");
-    }
+    const totalObject = await this.fileManagerRepository.totalObjectByUser(check_user_id?._id!, folder);
 
     const page_count = Math.ceil(totalObject / limitNumber).toString();
 
-    const check_user_id = await this.userRepository.fetchOneById(user_id);
-
-    if (!check_user_id) {
-      throw new BadRequestError("user not found");
-    }
-
-    const response = await this.fileManagerRepository.fetchAllByUserId(user_id, skip, limitNumber);
-
-    if (!response) {
-      throw new InternalServerError("failed to fetch all user objects");
-    }
+    const response = await this.fileManagerRepository.fetchAllByUserId(check_user_id?._id!, skip, limitNumber, folder);
 
     return {
       data: response,

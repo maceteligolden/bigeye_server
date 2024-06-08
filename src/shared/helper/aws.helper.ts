@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 import jwt from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import crypto from "crypto";
+import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 @injectable()
 export default class AWS {
@@ -24,28 +25,18 @@ export default class AWS {
         callback(err);
       } else {
         const signingKey = key?.getPublicKey;
+        console.log("signed key: " + signingKey);
         callback(null, signingKey);
       }
     });
   }
 
-  verifySecret(token: string): any {
-    return new Promise((resolve, reject) => {
-      jwt.verify(
-        token,
-        this.getKey,
-        {
-          algorithms: ["RS256"],
-          issuer: `https://cognito-idp.${process.env.AWS_COGNITO_REGION}.amazonaws.com/${process.env.AWS_COGNITO_USER_POOL_ID}/.well-known/jwks.json`,
-        },
-        (err, decoded) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(decoded);
-          }
-        },
-      );
+  async verifySecret(token: string): Promise<any> {
+    const verifier = CognitoJwtVerifier.create({
+      userPoolId: `${process.env.AWS_COGNITO_USER_POOL_ID}`,
+      tokenUse: "access",
+      clientId: `${process.env.AWS_COGNITO_CLIENT_ID}`,
     });
+    return await verifier.verify(token);
   }
 }

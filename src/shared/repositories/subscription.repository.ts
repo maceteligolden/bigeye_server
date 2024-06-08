@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { Subscription } from "../entities";
-import { IRepository } from "../interfaces";
+import { DeleteOutput, IRepository } from "../interfaces";
 import { subscriptionSchema } from "../schemas";
 
 @injectable()
@@ -18,7 +18,7 @@ export default class SubscriptionRepository implements IRepository<Subscription>
   async update(id: string, update: Partial<Subscription>): Promise<Subscription | null> {
     return await subscriptionSchema.findOneAndUpdate({ _id: id }, update);
   }
-  delete(id: string): Promise<Subscription> {
+  async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");
   }
 }

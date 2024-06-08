@@ -16,7 +16,7 @@ export default class FolderController {
 
       Res({
         res,
-        code: StatusCodes.CREATED,
+        code: StatusCodes.NO_CONTENT,
         message: "successfully moved folder",
       });
     } catch (err: any) {
@@ -42,11 +42,14 @@ export default class FolderController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      const { sub } = req.user;
+
       const { name, parent_folder_id } = req.body;
 
       const moveFolder = await this.folderService.createFolder({
         name,
         parent_folder_id,
+        user_id: sub,
       });
 
       Res({
@@ -64,15 +67,14 @@ export default class FolderController {
     try {
       const { id } = req.params;
 
-      const moveFolder = await this.folderService.deleteFolder({
+      await this.folderService.deleteFolder({
         folder_id: id,
       });
 
       Res({
         res,
-        code: StatusCodes.CREATED,
+        code: StatusCodes.NO_CONTENT,
         message: "successfully deleted folder",
-        data: moveFolder,
       });
     } catch (err: any) {
       next(err);
@@ -81,18 +83,20 @@ export default class FolderController {
 
   async rename(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      const { sub } = req.user;
+
       const { name, folder_id } = req.body;
 
-      const moveFolder = await this.folderService.renameFolder({
+      await this.folderService.renameFolder({
         name,
         folder_id,
+        user_id: sub,
       });
 
       Res({
         res,
-        code: StatusCodes.CREATED,
+        code: StatusCodes.NO_CONTENT,
         message: "successfully renamed folder",
-        data: moveFolder,
       });
     } catch (err: any) {
       next(err);

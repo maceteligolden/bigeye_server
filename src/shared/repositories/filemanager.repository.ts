@@ -1,7 +1,8 @@
 import { injectable } from "tsyringe";
-import { IRepository } from "../interfaces";
+import { DeleteOutput, IRepository } from "../interfaces";
 import { FileManager } from "../entities";
 import { filemanagerSchema } from "../schemas";
+import { InternalServerError } from "../errors";
 
 @injectable()
 export default class FileManagerRepository implements IRepository<FileManager> {
@@ -12,11 +13,27 @@ export default class FileManagerRepository implements IRepository<FileManager> {
   fetchAll(): Promise<FileManager[]> {
     throw new Error("Method not implemented.");
   }
-  fetchAllByUserId(user_id: string, skip: number, limit: number): Promise<FileManager[]> {
-    throw new Error("Method not implemented.");
+  async fetchAllByUserId(user_id: string, skip: number, limit: number, folder?: string): Promise<FileManager[]> {
+    try {
+      if(folder){
+        return await filemanagerSchema.find({ user: user_id, parent: folder }).skip(skip).limit(limit);
+      } else {
+        return await filemanagerSchema.find({ user: user_id }).skip(skip).limit(limit);
+      }
+    } catch(err: any){
+      throw new InternalServerError("failed to fetch all user objects");
+    }
   }
-  totalObjectByUser(user_id: string): Promise<number> {
-    throw new Error("Method not implemented.");
+  async totalObjectByUser(user_id: string, folder?: string): Promise<number> {
+    try {
+      if(folder){
+        return await filemanagerSchema.countDocuments({ user: user_id, parent: folder }).exec();
+      } else {
+        return await filemanagerSchema.countDocuments({ user: user_id }).exec();
+      }
+    } catch(err: any){
+      throw new InternalServerError("failed to get total object count for user");
+    }
   }
   async fetchOneById(id: string): Promise<FileManager | null> {
     return await filemanagerSchema.findOne({ _id: id });
@@ -24,7 +41,7 @@ export default class FileManagerRepository implements IRepository<FileManager> {
   async update(id: string, update: Partial<FileManager>): Promise<FileManager | null> {
     return await filemanagerSchema.findOneAndUpdate({ _id: id }, update);
   }
-  delete(id: string): Promise<FileManager> {
+  async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");
   }
 }

@@ -1,5 +1,5 @@
 import { IAWS } from "./aws.interface";
-import { IDatabase } from "./database.interface";
+import { DeleteOutput, IDatabase } from "./database.interface";
 import { ILogger } from "./logger.interface";
 import { INotification } from "./notification.interface";
 import { IPaginator } from "./paginator.interface";
@@ -18,4 +18,5 @@ export {
   ServerRouter,
   ServerRoute,
   ServerResponse,
+  DeleteOutput
 };

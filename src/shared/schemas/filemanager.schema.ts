@@ -8,6 +8,13 @@ const fileManagerSchema: Schema = new Schema<FileManager>({
     required: true,
     ref: "User",
   },
+  name: {
+    type: String,
+    required: true,
+  },
+  key: {
+    type: String
+  },
   size: {
     type: String,
   },

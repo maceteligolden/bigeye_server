@@ -4,6 +4,7 @@ export type GetAllObjectsInput = {
   user_id: string;
   page: string;
   limit: string;
+  folder?: string;
 };
 
 export type GetAllObjectsOutput = {

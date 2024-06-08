@@ -1,23 +1,30 @@
 import { Request, Response, NextFunction } from "express";
-import { BadRequestError } from "../errors";
+import { NotAuthorizedError } from "../errors";
 import { AWS } from "../helper";
 import { container } from "tsyringe";
 
 const awsHelper = container.resolve(AWS);
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    throw new BadRequestError("failed to find token");
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
   }
+}
 
-  const verifySecret = awsHelper.verifySecret(token);
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const access_token = req.headers.authorization?.split(" ")[1];
+  try {
+    if (!access_token) {
+      throw new NotAuthorizedError("failed to find token");
+    }
 
-  if (!verifySecret) {
-    throw new BadRequestError("token failed verification");
+    const verifySecret = await awsHelper.verifySecret(access_token);
+   
+    req.user = verifySecret;
+    next();
+  } catch (e: any) {
+    next(e)
   }
-
-  req.body.user = verifySecret;
-
-  next();
 };

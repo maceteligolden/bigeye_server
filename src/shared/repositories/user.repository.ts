@@ -1,11 +1,15 @@
 import { injectable } from "tsyringe";
-import { IRepository } from "../interfaces";
+import { DeleteOutput, IRepository } from "../interfaces";
 import { User } from "../entities";
 import { userSchema } from "../schemas";
+import { Database } from "../facade";
+import { BadRequestError } from "../errors";
 
 @injectable()
 export default class UserRepository implements IRepository<User> {
-  constructor() {}
+  constructor(
+    private database: Database
+  ) {}
   async create(args: User): Promise<User> {
     return await userSchema.create(args);
   }
@@ -13,10 +17,18 @@ export default class UserRepository implements IRepository<User> {
     throw new Error("Method not implemented.");
   }
   async fetchOneById(id: string): Promise<User | null> {
-    return await userSchema.findById(id);
+    const ID = await this.database.convertStringToObjectId(id)
+    return await userSchema.findOne({ _id: id});
   }
   async fetchOneByCustomerId(id: string): Promise<User | null> {
     return await userSchema.findOne({ stripe_customer_id: id });
+  }
+  async fetchOneByCognitoId(id: string): Promise<User | null> {
+    try {
+    return await userSchema.findOne({ awscognito_user_id: id });
+    } catch(err: any){
+      throw new BadRequestError("user not found");
+    }
   }
   async update(id: string, update: Partial<User>): Promise<User | null> {
     return await userSchema.findOneAndUpdate({ _id: id }, update);
@@ -24,7 +36,7 @@ export default class UserRepository implements IRepository<User> {
   async updateWithCustomerId(customer_id: string, update: Partial<User>): Promise<User | null> {
     return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, update);
   }
-  delete(id: string): Promise<User> {
+  async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");
   }
 }

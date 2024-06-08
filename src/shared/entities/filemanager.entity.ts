@@ -4,9 +4,10 @@ import { Base } from "./base.entity";
 
 export default interface FileManager extends Base {
   object_type?: FileManagerObjectTypes;
-  name?: string;
+  name: string;
   parent?: mongoose.Types.ObjectId;
   extension?: string;
   size?: string;
-  user?: mongoose.Types.ObjectId;
+  key?: string;
+  user: mongoose.Types.ObjectId;
 }

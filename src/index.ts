@@ -9,7 +9,7 @@ import fileUpload from "express-fileupload";
 const app = express();
 const server = new Server(app);
 server.config({
-  middlewares: [express.json(), express.urlencoded({ extended: true }), fileUpload(), cors],
+  middlewares: [express.json(), express.urlencoded({ extended: true }), cors],
   routes,
 });
 server.start();

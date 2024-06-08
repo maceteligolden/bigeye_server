@@ -6,8 +6,8 @@ import {
   RenameFolderInput,
   RenameFolderOutput,
 } from "../dto";
-import { FolderRepository } from "../../../shared/repositories";
-import { BadRequestError, InternalServerError } from "../../../shared/errors";
+import { FolderRepository, UserRepository } from "../../../shared/repositories";
+import { BadRequestError, InternalServerError, NotFoundError, NotModifiedError } from "../../../shared/errors";
 import { FileManagerObjectTypes } from "../../../shared/constants";
 import { IAction } from "../interfaces";
 import { FileManager } from "../../../shared/entities";
@@ -17,6 +17,7 @@ import { Database } from "../../../shared/facade";
 export default class FolderService implements IAction {
   constructor(
     private folderRepository: FolderRepository,
+    private userRepository: UserRepository,
     private database: Database,
   ) {}
 
@@ -78,12 +79,19 @@ export default class FolderService implements IAction {
   }
 
   async createFolder(args: CreateFolderInput): Promise<CreateFolderOutput> {
-    const { name, parent_folder_id } = args;
+    const { name, parent_folder_id, user_id } = args;
 
-    this.checkFolderName(name);
+    const user = await this.userRepository.fetchOneByCognitoId(user_id);
+
+    if (!user) {
+      throw new BadRequestError("account not found");
+    }
+
+    await this.checkFolderName(name, user._id!);
 
     const addFolder = await this.folderRepository.create({
-      name,
+      name: name,
+      user: await this.database.convertStringToObjectId(user._id!),
       parent: parent_folder_id ? await this.database.convertStringToObjectId(parent_folder_id) : undefined,
       object_type: FileManagerObjectTypes.FOLDER,
     });
@@ -109,21 +117,27 @@ export default class FolderService implements IAction {
     const deleteFolder = await this.folderRepository.delete(folder_id);
 
     if (!deleteFolder) {
-      throw new InternalServerError("failed to delete folder");
+      throw new NotFoundError("failed to delete folder");
     }
   }
 
   async renameFolder(args: RenameFolderInput): Promise<RenameFolderOutput> {
-    const { name, folder_id } = args;
+    const { name, folder_id, user_id } = args;
 
-    this.checkFolderName(name);
+    const user = await this.userRepository.fetchOneByCognitoId(user_id);
+
+    if (!user) {
+      throw new BadRequestError("account not found");
+    }
+
+    await this.checkFolderName(name, user._id!);
 
     const renameFolder = await this.folderRepository.update(folder_id, {
       name,
     });
 
     if (!renameFolder) {
-      throw new InternalServerError("failed to rename folder");
+      throw new NotModifiedError("failed to rename folder");
     }
 
     return {
@@ -131,8 +145,8 @@ export default class FolderService implements IAction {
     };
   }
 
-  async checkFolderName(name: string): Promise<void> {
-    const checkName = await this.folderRepository.fetchFoldersByName(name);
+  async checkFolderName(name: string, user_id: string): Promise<void> {
+    const checkName = await this.folderRepository.fetchFoldersByName(name, user_id);
 
     if (checkName) {
       throw new BadRequestError("folder name taken");

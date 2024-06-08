@@ -12,11 +12,12 @@ export default class FileController {
   async upload(req: Request, res: Response, next: NextFunction) {
     try {
       const { files } = req;
-      const { user, parent } = req.body;
-
+      const { sub } = req.user;
+      const { parent } = req.query;
+      console.log("file: " + JSON.stringify(files))
       const response = await this.fileService.uploadFile({
-        user_id: user.id,
-        parent,
+        user_id: sub,
+        parent: parent ? parent?.toString() : "",
         files: files as FileArray,
       });
 
@@ -40,7 +41,7 @@ export default class FileController {
       Res({
         res,
         code: StatusCodes.CREATED,
-        message: "successfully moved folder",
+        message: "successfully moved file",
       });
     } catch (err: any) {
       next(err);

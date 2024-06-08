@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe";
-import { IRepository } from "../interfaces";
+import { DeleteOutput, IRepository } from "../interfaces";
 import { Plan } from "../entities";
 import { planSchema } from "../schemas";
 
@@ -21,7 +21,7 @@ export default class PlanRepository implements IRepository<Plan> {
   async update(id: string, update: Partial<Plan>): Promise<Plan | null> {
     return await planSchema.findOneAndUpdate({ _id: id }, update);
   }
-  delete(id: string): Promise<Plan> {
+  async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");
   }
 }
