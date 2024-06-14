@@ -10,9 +10,9 @@ export default class FolderController {
 
   async move(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { object_id, to } = req.body;
+      const { ids, to } = req.body;
 
-      await this.folderService.move(object_id, to);
+      await this.folderService.move(ids, to);
 
       Res({
         res,

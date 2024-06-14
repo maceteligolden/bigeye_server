@@ -34,9 +34,9 @@ export default class FileController {
 
   async move(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { object_id, to } = req.body;
+      const { ids, to } = req.body;
 
-      await this.fileService.move(object_id, to);
+      await this.fileService.move(ids, to);
 
       Res({
         res,

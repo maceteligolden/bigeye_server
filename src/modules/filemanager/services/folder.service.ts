@@ -21,12 +21,7 @@ export default class FolderService implements IAction {
     private database: Database,
   ) {}
 
-  async move(object_id: string, to: string): Promise<void> {
-    const checkId = await this.folderRepository.fetchOneById(object_id);
-
-    if (!checkId) {
-      throw new BadRequestError("folder not found");
-    }
+  async move(object_id: string[], to: string): Promise<void> {
 
     const checkDestination = await this.folderRepository.fetchOneById(to);
 
@@ -34,13 +29,16 @@ export default class FolderService implements IAction {
       throw new BadRequestError("destionation not found");
     }
 
-    const moveObject = await this.folderRepository.update(object_id, {
-      parent: await this.database.convertStringToObjectId(to),
-    });
-
-    if (!moveObject) {
-      throw new BadRequestError("failed to move folder");
-    }
+    object_id.map(async (id, _)=> {
+      const moveObject = await this.folderRepository.update(id, {
+        parent: await this.database.convertStringToObjectId(to),
+      });
+  
+      if (!moveObject) {
+        throw new BadRequestError("failed to move folder");
+      }
+    })
+  
   }
   async copy(object_id: string, to: string): Promise<void> {
     const checkId = await this.folderRepository.fetchOneById(object_id);
