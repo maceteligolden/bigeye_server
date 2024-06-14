@@ -2,7 +2,7 @@ import { injectable } from "tsyringe";
 import { UploadFileInput, UploadFileOutput } from "../dto";
 import { FileRepository, UserRepository } from "../../../shared/repositories";
 import { FileManagerObjectTypes } from "../../../shared/constants";
-import { BadRequestError} from "../../../shared/errors";
+import { BadRequestError } from "../../../shared/errors";
 import { IAction } from "../interfaces";
 import { Database } from "../../../shared/facade";
 

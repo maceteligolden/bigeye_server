@@ -7,9 +7,7 @@ import { BadRequestError } from "../errors";
 
 @injectable()
 export default class UserRepository implements IRepository<User> {
-  constructor(
-    private database: Database
-  ) {}
+  constructor(private database: Database) {}
   async create(args: User): Promise<User> {
     return await userSchema.create(args);
   }
@@ -17,16 +15,16 @@ export default class UserRepository implements IRepository<User> {
     throw new Error("Method not implemented.");
   }
   async fetchOneById(id: string): Promise<User | null> {
-    const ID = await this.database.convertStringToObjectId(id)
-    return await userSchema.findOne({ _id: id});
+    const ID = await this.database.convertStringToObjectId(id);
+    return await userSchema.findOne({ _id: id });
   }
   async fetchOneByCustomerId(id: string): Promise<User | null> {
     return await userSchema.findOne({ stripe_customer_id: id });
   }
   async fetchOneByCognitoId(id: string): Promise<User | null> {
     try {
-    return await userSchema.findOne({ awscognito_user_id: id });
-    } catch(err: any){
+      return await userSchema.findOne({ awscognito_user_id: id });
+    } catch (err: any) {
       throw new BadRequestError("user not found");
     }
   }

@@ -21,10 +21,10 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
 
     const verifySecret = await awsHelper.verifySecret(access_token);
-   
+
     req.user = verifySecret;
     next();
   } catch (e: any) {
-    next(e)
+    next(e);
   }
 };

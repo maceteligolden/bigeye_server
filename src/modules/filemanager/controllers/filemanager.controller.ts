@@ -18,7 +18,7 @@ export default class FileManagerController {
         user_id: sub,
         page: page ? page.toString() : "1",
         limit: limit ? limit.toString() : "10",
-        folder: folder?.toString()
+        folder: folder?.toString(),
       });
 
       Res({

@@ -7,12 +7,12 @@ import { BadRequestError, InternalServerError } from "../../../shared/errors";
 export default class FileManagerService {
   constructor(
     private fileManagerRepository: FileManagerRepository,
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
   ) {}
 
   async getAllObjects(args: GetAllObjectsInput): Promise<GetAllObjectsOutput> {
     const { user_id, page, limit, folder } = args;
-    
+
     const pageNumber = parseInt(page as string) || 1;
     const limitNumber = parseInt(limit as string) || 10;
     const skip = (pageNumber - 1) * limitNumber;

@@ -4,5 +4,5 @@ export interface IDatabase {
 }
 
 export type DeleteOutput = {
-  deletedCount: number
-}
+  deletedCount: number;
+};

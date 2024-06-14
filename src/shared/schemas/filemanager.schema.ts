@@ -13,7 +13,7 @@ const fileManagerSchema: Schema = new Schema<FileManager>({
     required: true,
   },
   key: {
-    type: String
+    type: String,
   },
   size: {
     type: String,

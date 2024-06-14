@@ -18,5 +18,5 @@ export {
   ServerRouter,
   ServerRoute,
   ServerResponse,
-  DeleteOutput
+  DeleteOutput,
 };

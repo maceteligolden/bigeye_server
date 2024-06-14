@@ -15,23 +15,23 @@ export default class FileManagerRepository implements IRepository<FileManager> {
   }
   async fetchAllByUserId(user_id: string, skip: number, limit: number, folder?: string): Promise<FileManager[]> {
     try {
-      if(folder){
+      if (folder) {
         return await filemanagerSchema.find({ user: user_id, parent: folder }).skip(skip).limit(limit);
       } else {
         return await filemanagerSchema.find({ user: user_id }).skip(skip).limit(limit);
       }
-    } catch(err: any){
+    } catch (err: any) {
       throw new InternalServerError("failed to fetch all user objects");
     }
   }
   async totalObjectByUser(user_id: string, folder?: string): Promise<number> {
     try {
-      if(folder){
+      if (folder) {
         return await filemanagerSchema.countDocuments({ user: user_id, parent: folder }).exec();
       } else {
         return await filemanagerSchema.countDocuments({ user: user_id }).exec();
       }
-    } catch(err: any){
+    } catch (err: any) {
       throw new InternalServerError("failed to get total object count for user");
     }
   }

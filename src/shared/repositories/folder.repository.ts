@@ -32,6 +32,6 @@ export default class FolderRepository implements IRepository<FileManager> {
     return await filemanagerSchema.findOneAndUpdate({ _id: id }, update);
   }
   async delete(id: string): Promise<DeleteOutput> {
-    return await filemanagerSchema.deleteOne({_id: id})
+    return await filemanagerSchema.deleteOne({ _id: id });
   }
 }

@@ -7,8 +7,8 @@ export default class FileRepository implements IRepository<FileManager> {
   constructor() {}
   async create(args: FileManager): Promise<FileManager> {
     try {
-    return await filemanagerSchema.create(args);
-    } catch(err: any) {
+      return await filemanagerSchema.create(args);
+    } catch (err: any) {
       throw new InternalServerError("failed to upload file(s)");
     }
   }
