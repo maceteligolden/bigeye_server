@@ -59,7 +59,7 @@ export default class AccountController {
         res,
         message: "successfully fetch account details",
         code: StatusCodes.OK,
-        data: response
+        data: response,
       });
     } catch (err: any) {
       next(err);

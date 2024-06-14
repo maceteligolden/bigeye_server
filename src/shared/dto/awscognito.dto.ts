@@ -79,4 +79,4 @@ export type AWSCognitoGetProfileOutput = {
   firstName: string | AttributeType | undefined;
   lastName: string | AttributeType | undefined;
   email: string | AttributeType | undefined;
-}
+};

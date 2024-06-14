@@ -5,13 +5,11 @@ import { customerAuthRouter } from "./modules/auth/routers";
 import { adminPlanRouter, subscriptionRouter } from "./modules/subcription/routers";
 import { cardRouter } from "./modules/payment/routers";
 import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanager/routers";
-import { Stripe } from "./shared/facade";
-import { container } from "tsyringe";
 import { accountRouter } from "./modules/account/routes";
 
 export const router = Router({});
 export const stripeRouter = Router({});
-const stripe = container.resolve(Stripe);
+
 router.get("/", async (_req, res, _next) => {
   try {
     res.send({ statusCode: StatusCodes.OK, message: "successfully passed healthcheck!!!" });
@@ -22,10 +20,6 @@ router.get("/", async (_req, res, _next) => {
   }
 });
 
-stripeRouter.post("/", raw({ type: "application/json" }), async (req, res, next) =>
-  stripe.accountWebhook(req, res, next),
-);
-
 export const routes: ServerRouter[] = [
   {
     base: "",
@@ -33,11 +27,7 @@ export const routes: ServerRouter[] = [
       {
         path: "/healthcheck",
         router: router,
-      },
-      {
-        path: "/stripeaccountwebhook",
-        router: stripeRouter,
-      },
+      }
     ],
   },
   {
