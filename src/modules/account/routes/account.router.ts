@@ -14,4 +14,8 @@ accountRouter.delete("/", authMiddleware, (req: Request, res: Response, next: Ne
   accountController.deleteAccount(req, res, next),
 );
 
+accountRouter.get("/profile", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  accountController.getAccount(req, res, next),
+);
+
 export default accountRouter;

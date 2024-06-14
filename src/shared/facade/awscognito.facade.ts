@@ -10,6 +10,7 @@ import {
   DeleteUserCommand,
   ExpiredCodeException,
   ForgotPasswordCommand,
+  GetUserCommand,
   GlobalSignOutCommand,
   InitiateAuthCommand,
   InvalidPasswordException,
@@ -321,4 +322,17 @@ export default class AWSCognito {
     const command = new DeleteUserCommand(input);
     await this.client.send(command);
   }
+
+  async getProfile(accessToken: string) {
+    const input = {
+      AccessToken: accessToken, 
+    };
+    const command = new GetUserCommand(input);
+    const response = await this.client.send(command);
+    return {
+      firstName: response.UserAttributes && response.UserAttributes[3].Value,
+      lastName: response.UserAttributes && response.UserAttributes[2].Value,
+      email: response.UserAttributes && response.UserAttributes[0].Value,
+    }
+  } 
 }

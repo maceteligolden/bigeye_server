@@ -1,4 +1,4 @@
-import { AuthenticationResultType } from "@aws-sdk/client-cognito-identity-provider";
+import { AttributeType, AuthenticationResultType } from "@aws-sdk/client-cognito-identity-provider";
 
 export type AWSCognitoSignupInput = {
   password: string;
@@ -74,3 +74,9 @@ export type AWSCognitoChangepasswordInput = {
 export type AWSCognitoChangepasswordOutput = {
   isChanged: boolean;
 };
+
+export type AWSCognitoGetProfileOutput = {
+  firstName: string | AttributeType | undefined;
+  lastName: string | AttributeType | undefined;
+  email: string | AttributeType | undefined;
+}

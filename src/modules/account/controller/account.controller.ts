@@ -48,4 +48,21 @@ export default class AccountController {
       next(err);
     }
   }
+
+  async getAccount(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const accessToken = req.headers.authorization?.split(" ")[1];
+
+      const response = await this.accountService.getAccount(accessToken ? accessToken : "");
+
+      Res({
+        res,
+        message: "successfully fetch account details",
+        code: StatusCodes.OK,
+        data: response
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
 }

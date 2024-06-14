@@ -1,8 +1,9 @@
 import { injectable } from "tsyringe";
 import { AWSCognito } from "../../../shared/facade";
-import { AWSCognitoChangepasswordInput, AWSCognitoChangepasswordOutput } from "../../../shared/dto";
+import { AWSCognitoChangepasswordInput, AWSCognitoChangepasswordOutput, AWSCognitoGetProfileOutput } from "../../../shared/dto";
 import { DeleteAccountInput, DeleteAccountOutput } from "../dto";
 import { FileManagerRepository, UserRepository } from "../../../shared/repositories";
+import { User } from "../../../shared/entities";
 
 @injectable()
 export default class AccountService {
@@ -14,6 +15,12 @@ export default class AccountService {
 
   async changePassword(args: AWSCognitoChangepasswordInput): Promise<AWSCognitoChangepasswordOutput> {
     return await this.awsCognito.changePassword(args);
+  }
+
+  async getAccount(accessToken: string): Promise<AWSCognitoGetProfileOutput>{
+    const response = await this.awsCognito.getProfile(accessToken)
+
+    return {...response}
   }
 
   async deleteAccount(args: DeleteAccountInput): Promise<DeleteAccountOutput> {
