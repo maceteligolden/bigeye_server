@@ -42,6 +42,9 @@ export default class FileManagerRepository implements IRepository<FileManager> {
     return await filemanagerSchema.findOneAndUpdate({ _id: id }, update);
   }
   async delete(id: string): Promise<DeleteOutput> {
-    throw new Error("Method not implemented.");
+    return await filemanagerSchema.deleteOne({ _id: id });
+  }
+  async deleteMany(ids: string[]): Promise<any> {
+    return await filemanagerSchema.deleteMany({ _id: { $in: ids } });
   }
 }

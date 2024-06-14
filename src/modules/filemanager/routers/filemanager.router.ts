@@ -14,4 +14,8 @@ fileManagerRouter.delete("/:id", authMiddleware, (req: Request, res: Response, n
   fileManagerController.deleteObject(req, res, next),
 );
 
+fileManagerRouter.delete("/", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  fileManagerController.deleteManyObject(req, res, next),
+);
+
 export default fileManagerRouter;

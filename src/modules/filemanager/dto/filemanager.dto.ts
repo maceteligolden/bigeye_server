@@ -20,3 +20,11 @@ export type DeleteObjectInput = {
 export type DeleteObjectOutput = {
   isObjectDeleted: boolean;
 };
+
+export type DeleteManyObjectInput = {
+  object_ids: string[];
+};
+
+export type DeleteManyObjectOutput = {
+  isDeleted: boolean;
+};

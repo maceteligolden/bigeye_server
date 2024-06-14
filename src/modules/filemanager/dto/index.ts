@@ -1,5 +1,12 @@
 import { UploadFileInput, UploadFileOutput } from "./file.dto";
-import { DeleteObjectInput, DeleteObjectOutput, GetAllObjectsInput, GetAllObjectsOutput } from "./filemanager.dto";
+import {
+  DeleteManyObjectInput,
+  DeleteManyObjectOutput,
+  DeleteObjectInput,
+  DeleteObjectOutput,
+  GetAllObjectsInput,
+  GetAllObjectsOutput,
+} from "./filemanager.dto";
 import {
   CreateFolderInput,
   CreateFolderOutput,
@@ -20,4 +27,6 @@ export {
   GetAllObjectsOutput,
   DeleteObjectInput,
   DeleteObjectOutput,
+  DeleteManyObjectInput,
+  DeleteManyObjectOutput,
 };

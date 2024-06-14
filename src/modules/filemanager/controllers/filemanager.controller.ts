@@ -50,4 +50,22 @@ export default class FileManagerController {
       next(err);
     }
   }
+
+  async deleteManyObject(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { ids } = req.body;
+
+      await this.fileManagerService.deleteManyObjects({
+        object_ids: ids,
+      });
+
+      Res({
+        res,
+        code: StatusCodes.OK,
+        message: "successfully deleted all objects",
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
 }

@@ -14,7 +14,7 @@ export default class FileController {
       const { files } = req;
       const { sub } = req.user;
       const { parent } = req.query;
-      console.log("file: " + JSON.stringify(files))
+      console.log("file: " + JSON.stringify(files));
       const response = await this.fileService.uploadFile({
         user_id: sub,
         parent: parent ? parent?.toString() : "",

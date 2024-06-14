@@ -1,5 +1,12 @@
 import { injectable } from "tsyringe";
-import { DeleteObjectInput, DeleteObjectOutput, GetAllObjectsInput, GetAllObjectsOutput } from "../dto";
+import {
+  DeleteManyObjectInput,
+  DeleteManyObjectOutput,
+  DeleteObjectInput,
+  DeleteObjectOutput,
+  GetAllObjectsInput,
+  GetAllObjectsOutput,
+} from "../dto";
 import { FileManagerRepository, UserRepository } from "../../../shared/repositories";
 import { BadRequestError, InternalServerError } from "../../../shared/errors";
 
@@ -49,6 +56,16 @@ export default class FileManagerService {
 
     return {
       isObjectDeleted: true,
+    };
+  }
+
+  async deleteManyObjects(args: DeleteManyObjectInput): Promise<DeleteManyObjectOutput> {
+    const { object_ids } = args;
+
+    await this.fileManagerRepository.deleteMany(object_ids);
+
+    return {
+      isDeleted: true,
     };
   }
 }
