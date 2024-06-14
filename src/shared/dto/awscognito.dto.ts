@@ -64,3 +64,13 @@ export type AWSCognitoConfirmForgotPasswordInput = {
 export type AWSCognitoConfirmForgotPasswordOutput = {
   isPasswordChanged: boolean | undefined;
 };
+
+export type AWSCognitoChangepasswordInput = {
+  previousPassword: string;
+  proposedPassword: string;
+  accessToken: string;
+};
+
+export type AWSCognitoChangepasswordOutput = {
+  isChanged: boolean;
+};

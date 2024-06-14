@@ -1,11 +1,13 @@
 import { injectable } from "tsyringe";
 import {
   AuthFlowType,
+  ChangePasswordCommand,
   CodeDeliveryFailureException,
   CodeMismatchException,
   CognitoIdentityProviderClient,
   ConfirmForgotPasswordCommand,
   ConfirmSignUpCommand,
+  DeleteUserCommand,
   ExpiredCodeException,
   ForgotPasswordCommand,
   GlobalSignOutCommand,
@@ -19,6 +21,8 @@ import {
   UsernameExistsException,
 } from "@aws-sdk/client-cognito-identity-provider";
 import {
+  AWSCognitoChangepasswordInput,
+  AWSCognitoChangepasswordOutput,
   AWSCognitoConfirmForgotPasswordInput,
   AWSCognitoConfirmForgotPasswordOutput,
   AWSCognitoConfirmSignupInput,
@@ -286,5 +290,35 @@ export default class AWSCognito {
         throw new InternalServerError("unexpected error occurred in auth service confirmforgotpassword");
       }
     }
+  }
+
+  async changePassword(args: AWSCognitoChangepasswordInput): Promise<AWSCognitoChangepasswordOutput> {
+    try {
+      const { previousPassword, proposedPassword, accessToken } = args;
+
+      const params = {
+        PreviousPassword: previousPassword,
+        ProposedPassword: proposedPassword,
+        AccessToken: accessToken,
+      };
+
+      const command = new ChangePasswordCommand(params);
+
+      const response = await this.client.send(command);
+
+      return {
+        isChanged: response.$metadata.httpStatusCode === StatusCodes.CREATED ? true : false,
+      };
+    } catch (err: any) {
+      throw new InternalServerError(err);
+    }
+  }
+
+  async deleteProfile(accessToken: string): Promise<void> {
+    const input = { 
+      AccessToken: accessToken,
+    };
+    const command = new DeleteUserCommand(input);
+    await this.client.send(command);
   }
 }

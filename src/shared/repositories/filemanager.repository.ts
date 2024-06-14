@@ -47,4 +47,7 @@ export default class FileManagerRepository implements IRepository<FileManager> {
   async deleteMany(ids: string[]): Promise<any> {
     return await filemanagerSchema.deleteMany({ _id: { $in: ids } });
   }
+  async deleteManyByUserId(user_id: string): Promise<any> {
+    return await filemanagerSchema.deleteMany({ user: user_id });
+  }
 }

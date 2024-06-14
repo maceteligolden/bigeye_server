@@ -22,23 +22,21 @@ export default class FolderService implements IAction {
   ) {}
 
   async move(object_id: string[], to: string): Promise<void> {
-
     const checkDestination = await this.folderRepository.fetchOneById(to);
 
     if (!checkDestination) {
       throw new BadRequestError("destionation not found");
     }
 
-    object_id.map(async (id, _)=> {
+    object_id.map(async (id, _) => {
       const moveObject = await this.folderRepository.update(id, {
         parent: await this.database.convertStringToObjectId(to),
       });
-  
+
       if (!moveObject) {
         throw new BadRequestError("failed to move folder");
       }
-    })
-  
+    });
   }
   async copy(object_id: string, to: string): Promise<void> {
     const checkId = await this.folderRepository.fetchOneById(object_id);

@@ -42,15 +42,15 @@ export default class FileService implements IAction {
       throw new BadRequestError("destination not found");
     }
 
-    object_id.map(async (id, _)=> {
+    object_id.map(async (id, _) => {
       const moveObject = await this.fileRepository.update(id, {
         parent: await this.database.convertStringToObjectId(to),
       });
-  
+
       if (!moveObject) {
         throw new BadRequestError("failed to move file");
       }
-    })
+    });
   }
   async copy(object_id: string, to: string): Promise<void> {
     const checkId = await this.fileRepository.fetchOneById(object_id);

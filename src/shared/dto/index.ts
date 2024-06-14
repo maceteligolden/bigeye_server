@@ -1,4 +1,6 @@
 import {
+  AWSCognitoChangepasswordInput,
+  AWSCognitoChangepasswordOutput,
   AWSCognitoConfirmForgotPasswordInput,
   AWSCognitoConfirmForgotPasswordOutput,
   AWSCognitoConfirmSignupInput,
@@ -69,6 +71,8 @@ export {
   AWSCognitoResendSignupCodeOutput,
   AWSCognitoSignOutInput,
   AWSCognitoSignOutOutput,
+  AWSCognitoChangepasswordInput,
+  AWSCognitoChangepasswordOutput,
   DeleteCustomerInput,
   DeleteCustomerOutput,
   StripeCreatePlanOutput,

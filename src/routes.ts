@@ -7,6 +7,7 @@ import { cardRouter } from "./modules/payment/routers";
 import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanager/routers";
 import { Stripe } from "./shared/facade";
 import { container } from "tsyringe";
+import { accountRouter } from "./modules/account/routes";
 
 export const router = Router({});
 export const stripeRouter = Router({});
@@ -65,6 +66,10 @@ export const routes: ServerRouter[] = [
       {
         path: "/filemanager",
         router: fileManagerRouter,
+      },
+      {
+        path: "/accounts",
+        router: accountRouter,
       },
     ],
   },

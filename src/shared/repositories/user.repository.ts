@@ -37,4 +37,8 @@ export default class UserRepository implements IRepository<User> {
   async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");
   }
+
+  async deleteByCognitoId(id: string){
+    return await userSchema.deleteOne({ awscognito_user_id: id})
+  }
 }
