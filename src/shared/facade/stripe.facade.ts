@@ -1,5 +1,4 @@
 import { injectable } from "tsyringe";
-import { Request, Response, NextFunction } from "express";
 import {
   CreateCustomerInput,
   CreateCustomerOutput,
@@ -21,13 +20,15 @@ import {
   StripeUpdateSubscriptionInput,
   StripeUpdateSubscriptionOutput,
 } from "../dto";
-import { StatusCodes, StripeCurriencies, StripePaymentMethodType, SubscriptionStatus } from "../constants";
-import { Res, StripeHelper } from "../helper";
+import { StripeCurriencies, StripePaymentMethodType } from "../constants";
+import { StripeHelper } from "../helper";
 import { LoggerService } from "../services";
 import { InternalServerError } from "../errors";
 import { SubscriptionRepository } from "../repositories";
 import { Database } from ".";
-const stripe = require("stripe")(`sk_test_51PJSmMD8tDGhrOdHek2V30Klg2aau40zdSWitlpJW7GVvNGBxiREgn0PlL7lKpWDtGOtjioUMsJwxwyj2XwCAkAZ00pR4is6Yc`);
+const stripe = require("stripe")(
+  `${process.env.STRIPE_API_KEY}`
+);
 
 @injectable()
 export default class Stripe {

@@ -1,4 +1,4 @@
-import { Router, raw } from "express";
+import { Router } from "express";
 import { ServerRouter } from "./shared/interfaces";
 import { StatusCodes } from "./shared/constants";
 import { customerAuthRouter } from "./modules/auth/routers";
@@ -8,7 +8,6 @@ import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanag
 import { accountRouter } from "./modules/account/routes";
 
 export const router = Router({});
-export const stripeRouter = Router({});
 
 router.get("/", async (_req, res, _next) => {
   try {
@@ -27,7 +26,7 @@ export const routes: ServerRouter[] = [
       {
         path: "/healthcheck",
         router: router,
-      }
+      },
     ],
   },
   {

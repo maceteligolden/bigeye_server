@@ -1,13 +1,13 @@
 import { injectable } from "tsyringe";
 import { AWSCognito } from "../../../shared/facade";
 import {
-  AWSCognitoChangepasswordInput,
-  AWSCognitoChangepasswordOutput,
   AWSCognitoGetProfileOutput,
+  ChangepasswordInput,
+  ChangepasswordOutput,
 } from "../../../shared/dto";
 import { DeleteAccountInput, DeleteAccountOutput } from "../dto";
 import { FileManagerRepository, UserRepository } from "../../../shared/repositories";
-import { User } from "../../../shared/entities";
+import { LoggerService } from "../../../shared/services";
 
 @injectable()
 export default class AccountService {
@@ -15,10 +15,23 @@ export default class AccountService {
     private awsCognito: AWSCognito,
     private userRepository: UserRepository,
     private fileManager: FileManagerRepository,
+    private loggerService: LoggerService,
   ) {}
 
-  async changePassword(args: AWSCognitoChangepasswordInput): Promise<AWSCognitoChangepasswordOutput> {
-    return await this.awsCognito.changePassword(args);
+  async changePassword(args: ChangepasswordInput): Promise<ChangepasswordOutput> {
+    const { awsId, previousPassword, proposedPassword, accessToken } = args;
+    const response = await this.awsCognito.changePassword({
+      previousPassword,
+      proposedPassword,
+      accessToken
+    });
+
+    await this.loggerService.log("successfully changed account password", {
+      dateChanged: new Date(),
+      awsId
+    });
+
+    return response;
   }
 
   async getAccount(accessToken: string): Promise<AWSCognitoGetProfileOutput> {
@@ -37,6 +50,10 @@ export default class AccountService {
     await this.userRepository.deleteByCognitoId(awsId);
 
     await this.fileManager.deleteManyByUserId(user?._id!);
+
+    await this.loggerService.log("successfully deleted account", {
+      awsId
+    })
 
     return {
       isDeleted: true,

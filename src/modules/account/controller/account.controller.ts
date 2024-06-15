@@ -12,11 +12,13 @@ export default class AccountController {
     try {
       const accessToken = req.headers.authorization?.split(" ")[1];
       const { previousPassword, proposedPassword } = req.body;
+      const { sub } = req.user;
 
       await this.accountService.changePassword({
         previousPassword,
         proposedPassword,
         accessToken: accessToken ? accessToken : "",
+        awsId: sub
       });
 
       Res({

@@ -4,7 +4,6 @@ import "dotenv/config";
 import { Server } from "./shared/facade";
 import { cors } from "./shared/middlewares";
 import { routes } from "./routes";
-import fileUpload from "express-fileupload";
 
 const app = express();
 const server = new Server(app);
