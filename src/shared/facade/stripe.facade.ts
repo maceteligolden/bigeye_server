@@ -24,8 +24,6 @@ import { StripeCurriencies, StripePaymentMethodType } from "../constants";
 import { StripeHelper } from "../helper";
 import { LoggerService } from "../services";
 import { InternalServerError } from "../errors";
-import { SubscriptionRepository } from "../repositories";
-import { Database } from ".";
 const stripe = require("stripe")(
   `${process.env.STRIPE_API_KEY}`
 );
@@ -34,203 +32,241 @@ const stripe = require("stripe")(
 export default class Stripe {
   constructor(
     private stripeHelper: StripeHelper,
-    private loggerService: LoggerService,
-    private subscriptionRepository: SubscriptionRepository,
-    private database: Database,
+    private loggerService: LoggerService
   ) {}
 
   async setupIntent(args: SetupIntentInput): Promise<SetupIntentOutput> {
-    const { customer } = args;
-    const { client_secret } = await stripe.setupIntents.create({
-      customer,
-      payment_method_types: [StripePaymentMethodType.CARD],
-    });
+    try {
+      const { customer } = args;
+      const { client_secret } = await stripe.setupIntents.create({
+        customer,
+        payment_method_types: [StripePaymentMethodType.CARD],
+      });
 
-    if (!client_secret) {
-      throw new InternalServerError("failed to create setupintent");
+      return {
+        client_secret
+      };
+    } catch(err){
+      throw new InternalServerError("failed setupintent attempt")
     }
-
-    return {
-      client_secret,
-    };
   }
 
   async paymentIntent(args: PaymentIntentInput): Promise<PaymentIntentOutput> {
-    const { customer, amount, payment_method } = args;
-    const { id } = await stripe.paymentIntents.create({
-      amount: this.stripeHelper.currencyConverter(amount),
-      currency: StripeCurriencies.USD,
-      payment_method,
-      metadata: {},
-      payment_method_types: [StripePaymentMethodType.CARD],
-      customer,
-    });
+    try {
+      const { customer, amount, payment_method } = args;
+      const { id } = await stripe.paymentIntents.create({
+        amount: this.stripeHelper.currencyConverter(amount),
+        currency: StripeCurriencies.USD,
+        payment_method,
+        metadata: {},
+        payment_method_types: [StripePaymentMethodType.CARD],
+        customer,
+      });
 
-    if (!id) {
-      throw new InternalServerError("failed to create payment intent");
+      if (!id) {
+        throw new InternalServerError("failed to create payment intent");
+      }
+
+      return {
+        charge_id: id,
+      };
+    } catch(err: any){
+      throw new InternalServerError("failed paymentintent attempt")
     }
-
-    return {
-      charge_id: id,
-    };
   }
 
   async paymentConfirm(args: PaymentConfirmInput): Promise<void> {
-    const { id, payment_id } = args;
+    try {
+      const { id, payment_id } = args;
 
-    const response = await stripe.paymentIntents.confirm(id, { payment_method: payment_id });
-
-    if (!response) {
-      throw new InternalServerError("failed to confirm payment");
+      const response = await stripe.paymentIntents.confirm(id, { payment_method: payment_id });
+  
+      if (!response) {
+        throw new InternalServerError("failed to confirm payment");
+      }
+    } catch(err: any){
+      throw new InternalServerError("failed paymentconfirm attempt")
     }
   }
 
   async createCustomer(args: CreateCustomerInput): Promise<CreateCustomerOutput> {
-    const { email, name } = args;
-    const customer = await stripe.customers.create({
-      email,
-      name,
-    });
-
-    if (!customer) {
-      throw new InternalServerError("failed to create customer");
+    try {
+      const { email, name } = args;
+      const customer = await stripe.customers.create({
+        email,
+        name,
+      });
+  
+      if (!customer) {
+        throw new InternalServerError("failed to create customer");
+      }
+  
+      return {
+        customer_id: customer.id,
+      };
+    } catch(err: any){
+      throw new InternalServerError("failed attempt to create stripe customer account")
     }
-
-    return {
-      customer_id: customer.id,
-    };
   }
 
   async deleteCustomer(args: DeleteCustomerInput): Promise<DeleteCustomerOutput> {
-    const { customer_id } = args;
-    const response = await stripe.customers.del(customer_id);
-
-    if (!response) {
-      throw new InternalServerError("failed to delete customer");
+    try {
+      const { customer_id } = args;
+      const response = await stripe.customers.del(customer_id);
+  
+      if (!response) {
+        throw new InternalServerError("failed to delete customer");
+      }
+  
+      return {
+        isDeleted: response.deleted,
+      };
+    } catch(err : any){
+      throw new InternalServerError("failed attempt to delete stripe customer account")
     }
-
-    return {
-      isDeleted: response.deleted,
-    };
   }
 
   async deleteCard(payment_method_id: string): Promise<void> {
-    const response = await stripe.paymentMethods.detach(payment_method_id);
+    try {
+      const response = await stripe.paymentMethods.detach(payment_method_id);
 
-    if (!response) {
-      throw new InternalServerError("failed to delete card");
+      if (!response) {
+        throw new InternalServerError("failed to delete card");
+      }
+    }catch(err){
+      throw new InternalServerError("failed attempt to delete card from stripe")
     }
   }
 
   async fetchCardDetails(args: FetchCardDetailsInput): Promise<FetchCardDetailsOutput> {
-    const { payment_method_id } = args;
+    try {
+      const { payment_method_id } = args;
 
-    const { card } = await stripe.paymentMethods.retrieve(payment_method_id);
+      const { card } = await stripe.paymentMethods.retrieve(payment_method_id);
 
-    if (!card) {
-      throw new InternalServerError("failed to retrieved card");
+      if (!card) {
+        throw new InternalServerError("failed to retrieved card");
+      }
+
+      return {
+        last4: card.last4,
+        exp_month: card.exp_month,
+        exp_year: card.exp_year,
+        brand: card.brand,
+      };
+    }catch(err: any){
+      throw new InternalServerError("failed attempt to delete card from stripe")
     }
-
-    return {
-      last4: card.last4,
-      exp_month: card.exp_month,
-      exp_year: card.exp_year,
-      brand: card.brand,
-    };
   }
 
   async createPlan(args: StripeCreatePlanInput): Promise<StripeCreatePlanOutput> {
-    const { amount, name } = args;
+    try {
+      const { amount, name } = args;
 
-    const { id, product } = await stripe.prices.create({
-      currency: "usd",
-      unit_amount: Number(amount),
-      recurring: {
+      const { id, product } = await stripe.prices.create({
+        currency: "usd",
+        unit_amount: Number(amount),
+        recurring: {
+          interval: "month",
+        },
+        product_data: {
+          name,
+        },
+      });
+
+      if (!id) {
+        throw new InternalServerError("failed to create price");
+      }
+
+      const response = await stripe.plans.create({
+        amount: Number(amount),
+        currency: "usd",
         interval: "month",
-      },
-      product_data: {
-        name,
-      },
-    });
+        product,
+      });
 
-    if (!id) {
-      throw new InternalServerError("failed to create price");
+      if (!response) {
+        throw new InternalServerError("failed to create plan");
+      }
+      return {
+        plan_id: response.id,
+        price_id: id,
+      };
+    }catch(err: any){
+      throw new InternalServerError("failed attempt to create plan")
     }
-
-    const response = await stripe.plans.create({
-      amount: Number(amount),
-      currency: "usd",
-      interval: "month",
-      product,
-    });
-
-    if (!response) {
-      throw new InternalServerError("failed to create plan");
-    }
-    return {
-      plan_id: response.id,
-      price_id: id,
-    };
   }
 
   async deletePlan(args: StripeDeletePlanInput): Promise<StripeDeletePlanOutput> {
-    const { plan_id } = args;
+    try {
+      const { plan_id } = args;
 
-    const response = await stripe.plans.del(plan_id);
+      const response = await stripe.plans.del(plan_id);
 
-    if (!response) {
-      throw new InternalServerError("failed to delete plan");
+      if (!response) {
+        throw new InternalServerError("failed to delete plan");
+      }
+
+      return {
+        isPlanDeleted: response.deleted,
+      };
+    }catch(err: any){
+      throw new InternalServerError("failed attempt to delete plan")
     }
-
-    return {
-      isPlanDeleted: response.deleted,
-    };
   }
 
   async createSubscription(args: StripeCreateSubscriptionInput): Promise<StripeCreateSubscriptionOutput> {
-    const { customer_id, price_id, payment_method, user, plan } = args;
+     try { 
+      const { customer_id, price_id, payment_method, user, plan } = args;
 
-    const response = await stripe.subscriptions.create({
-      customer: customer_id,
-      currency: "usd",
-      items: [
-        {
-          price: price_id,
+      const response = await stripe.subscriptions.create({
+        customer: customer_id,
+        currency: "usd",
+        items: [
+          {
+            price: price_id,
+          },
+        ],
+        payment_behavior: "default_incomplete",
+        payment_method,
+        metadata: {
+          user,
+          plan,
         },
-      ],
-      payment_behavior: "default_incomplete",
-      payment_method,
-      metadata: {
-        user,
-        plan,
-      },
-    });
+      });
 
-    if (!response) {
-      throw new InternalServerError("failed to create subscription");
+      if (!response) {
+        throw new InternalServerError("failed to create subscription");
+      }
+
+      return {
+        subscription_id: response.id,
+        subscription_end_date: response.current_period_end,
+      };
+    }catch(err: any){
+      throw new InternalServerError("failed attempt to create subscription")
     }
-
-    return {
-      subscription_id: response.id,
-      subscription_end_date: response.current_period_end,
-    };
   }
 
   async updateSubscription(args: StripeUpdateSubscriptionInput): Promise<StripeUpdateSubscriptionOutput> {
-    const { subscription_id, order_id } = args;
+    try {
+      const { subscription_id, order_id } = args;
 
-    const response = await stripe.subscriptions.update(subscription_id, {
-      metadata: {
-        order_id,
-      },
-    });
+      const response = await stripe.subscriptions.update(subscription_id, {
+        metadata: {
+          order_id,
+        },
+      });
 
-    if (!response) {
-      throw new InternalServerError("failed to update subscription");
+      if (!response) {
+        throw new InternalServerError("failed to update subscription");
+      }
+
+      return {
+        isUpdated: response.id ? true : false,
+      };
+    }catch(err: any){
+      throw new InternalServerError("failed attempt to update subscription")
     }
-
-    return {
-      isUpdated: response.id ? true : false,
-    };
   }
 }
