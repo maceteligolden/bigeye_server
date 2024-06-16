@@ -1,3 +1,4 @@
+import { FileManagerObjectTypes } from "../constants";
 import { FileManager } from "../entities";
 import { InternalServerError } from "../errors";
 import { DeleteOutput, IRepository } from "../interfaces";
@@ -23,5 +24,14 @@ export default class FileRepository implements IRepository<FileManager> {
   }
   async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");
+  }
+  async fetchFileByName(name: string, user_id: string): Promise<FileManager | null> {
+    const response = await filemanagerSchema.findOne({
+      name,
+      user: user_id,
+      object_type: FileManagerObjectTypes.FILE,
+    });
+
+    return response;
   }
 }

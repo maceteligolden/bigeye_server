@@ -17,6 +17,10 @@ fileRouter.patch("/move", authMiddleware, (req: Request, res: Response, next: Ne
   fileController.move(req, res, next),
 );
 
+fileRouter.patch("/rename", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  fileController.rename(req, res, next),
+);
+
 fileRouter.patch("/copy", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
   fileController.copy(req, res, next),
 );

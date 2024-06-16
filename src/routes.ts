@@ -60,6 +60,10 @@ export const routes: ServerRouter[] = [
         path: "/accounts",
         router: accountRouter,
       },
+      {
+        path: "/cards",
+        router: cardRouter
+      }
     ],
   },
   {

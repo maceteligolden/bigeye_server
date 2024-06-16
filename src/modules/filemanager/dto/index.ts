@@ -1,4 +1,4 @@
-import { UploadFileInput, UploadFileOutput } from "./file.dto";
+import { RenameFileInput, RenameFileOutput, UploadFileInput, UploadFileOutput } from "./file.dto";
 import {
   DeleteManyObjectInput,
   DeleteManyObjectOutput,
@@ -21,6 +21,8 @@ export {
   DeleteFolderInput,
   RenameFolderInput,
   RenameFolderOutput,
+  RenameFileInput,
+  RenameFileOutput,
   UploadFileInput,
   UploadFileOutput,
   GetAllObjectsInput,

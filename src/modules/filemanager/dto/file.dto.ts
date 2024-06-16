@@ -1,4 +1,5 @@
 import { FileArray } from "express-fileupload";
+import { FileManager } from "../../../shared/entities";
 
 export type UploadFileInput = {
   files: FileArray;
@@ -8,4 +9,14 @@ export type UploadFileInput = {
 
 export type UploadFileOutput = {
   isUploaded: boolean;
+};
+
+export type RenameFileInput = {
+  name: string;
+  file_id: string;
+  user_id: string;
+};
+
+export type RenameFileOutput = {
+  data: FileManager;
 };

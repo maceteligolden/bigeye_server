@@ -1,8 +1,8 @@
 import { injectable } from "tsyringe";
-import { UploadFileInput, UploadFileOutput } from "../dto";
+import { RenameFileInput, RenameFileOutput, UploadFileInput, UploadFileOutput } from "../dto";
 import { FileRepository, UserRepository } from "../../../shared/repositories";
 import { FileManagerObjectTypes } from "../../../shared/constants";
-import { BadRequestError } from "../../../shared/errors";
+import { BadRequestError, NotModifiedError } from "../../../shared/errors";
 import { IAction } from "../interfaces";
 import { Database } from "../../../shared/facade";
 
@@ -74,6 +74,38 @@ export default class FileService implements IAction {
 
     if (!copyFolder) {
       throw new BadRequestError("failed to copy folder");
+    }
+  }
+
+  async renameFile(args: RenameFileInput): Promise<RenameFileOutput> {
+    const { name, file_id, user_id } = args;
+
+    const user = await this.userRepository.fetchOneByCognitoId(user_id);
+
+    if (!user) {
+      throw new BadRequestError("account not found");
+    }
+
+    await this.checkFileName(name, user._id!);
+
+    const renameFile = await this.fileRepository.update(file_id, {
+      name,
+    });
+
+    if (!renameFile) {
+      throw new NotModifiedError("failed to rename file");
+    }
+
+    return {
+      data: renameFile,
+    };
+  }
+
+  async checkFileName(name: string, user_id: string): Promise<void> {
+    const checkName = await this.fileRepository.fetchFileByName(name, user_id);
+
+    if (checkName) {
+      throw new BadRequestError("file name taken");
     }
   }
 }

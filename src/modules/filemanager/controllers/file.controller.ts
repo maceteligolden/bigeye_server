@@ -63,4 +63,26 @@ export default class FileController {
       next(err);
     }
   }
+
+  async rename(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { sub } = req.user;
+
+      const { name, file_id } = req.body;
+
+      await this.fileService.renameFile({
+        name,
+        file_id,
+        user_id: sub,
+      });
+
+      Res({
+        res,
+        code: StatusCodes.NO_CONTENT,
+        message: "successfully renamed file",
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
 }
