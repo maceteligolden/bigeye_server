@@ -14,7 +14,7 @@ export default class CardService {
   async authorizeAddCard(args: AuthorizeCardInput): Promise<AuthorizeCardOutput> {
     const { user_id } = args;
 
-    const checkUser = await this.userRepository.fetchOneById(user_id);
+    const checkUser = await this.userRepository.fetchOneByCognitoId(user_id);
 
     if (!checkUser) {
       throw new BadRequestError("user not found");

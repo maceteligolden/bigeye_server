@@ -10,9 +10,9 @@ export default class CardController {
 
   async authorizeAddCard(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { user } = req.body;
+      const { sub } = req.user;
 
-      const response = await this.cardService.authorizeAddCard({ user_id: user.sub });
+      const response = await this.cardService.authorizeAddCard({ user_id: sub });
 
       Res({
         res,
