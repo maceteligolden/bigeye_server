@@ -15,7 +15,7 @@ export default class SubscriptionService {
   async createSubscription(args: CreateSubscriptionInput): Promise<CreateSubscriptionOutput> {
     const { user, plan } = args;
 
-    const checkUser = await this.userRepository.fetchOneById(user);
+    const checkUser = await this.userRepository.fetchOneByCognitoId(user);
 
     if (!checkUser) {
       throw new BadRequestError("user not found");

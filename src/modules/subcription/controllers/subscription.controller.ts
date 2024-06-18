@@ -10,10 +10,12 @@ export default class SubscriptionController {
 
   async createSubscription(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { user_id, plan_id } = req.body;
+      const { plan_id } = req.body;
+
+      const { sub } = req.user;
 
       const response = await this.subscriptionService.createSubscription({
-        user: user_id,
+        user: sub,
         plan: plan_id,
       });
 
