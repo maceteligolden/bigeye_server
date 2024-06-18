@@ -9,8 +9,9 @@ const planController = container.resolve(PlanController);
 planRouter.get("/", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
   planController.getPlans(req, res, next),
 );
-// adminPlanRouter.delete("/:planid", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
-//   adminPlanController.createPlan(req, res, next),
-// );
+
+planRouter.get("/active-plan", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  planController.getActivePlan(req, res, next),
+);
 
 export default planRouter;

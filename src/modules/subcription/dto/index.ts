@@ -1,4 +1,4 @@
-import { CreatePlanOutput } from "./plan.dto";
+import { CreatePlanOutput, GetActivePlanOutput } from "./plan.dto";
 import { CreateSubscriptionInput, CreateSubscriptionOutput } from "./subscription.dto";
 
-export { CreatePlanOutput, CreateSubscriptionInput, CreateSubscriptionOutput };
+export { CreatePlanOutput, CreateSubscriptionInput, CreateSubscriptionOutput, GetActivePlanOutput };

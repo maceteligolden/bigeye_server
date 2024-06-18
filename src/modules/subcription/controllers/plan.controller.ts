@@ -24,21 +24,20 @@ export default class PlanController {
     }
   }
 
-//   async deletePlan(req: Request, res: Response, next: NextFunction): Promise<void> {
-//     try {
-//       const { planid } = req.params;
+  async getActivePlan(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { sub } = req.user;
 
-//       await this.adminPlanService.deletePlan({
-//         plan_id: planid,
-//       });
+      const response = await this.planService.getActivePlan(sub);
 
-//       Res({
-//         res,
-//         code: StatusCodes.CREATED,
-//         message: "successfully deleted a subscription plan",
-//       });
-//     } catch (e: any) {
-//       next(e);
-//     }
-//   }
+      Res({
+        res,
+        code: StatusCodes.OK, 
+        message: "successfully fetch active plan",
+        data: response
+      });
+    } catch (e: any) {
+      next(e);
+    }
+  }
 }
