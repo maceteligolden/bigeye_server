@@ -2,7 +2,7 @@ import { Router } from "express";
 import { ServerRouter } from "./shared/interfaces";
 import { StatusCodes } from "./shared/constants";
 import { customerAuthRouter } from "./modules/auth/routers";
-import { adminPlanRouter, subscriptionRouter } from "./modules/subcription/routers";
+import { adminPlanRouter, planRouter, subscriptionRouter } from "./modules/subcription/routers";
 import { cardRouter } from "./modules/payment/routers";
 import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanager/routers";
 import { accountRouter } from "./modules/account/routes";
@@ -64,6 +64,10 @@ export const routes: ServerRouter[] = [
         path: "/payments",
         router: cardRouter,
       },
+      {
+        path: "/plans",
+        router: planRouter
+      }
     ],
   },
   {

@@ -9,8 +9,8 @@ export default class PlanRepository implements IRepository<Plan> {
   async create(args: Plan): Promise<Plan> {
     return await planSchema.create(args);
   }
-  fetchAll(): Promise<Plan[]> {
-    throw new Error("Method not implemented.");
+  async fetchAll(): Promise<Plan[]> {
+    return await planSchema.find()
   }
   async fetchOneById(id: string): Promise<Plan | null> {
     return await planSchema.findById(id);

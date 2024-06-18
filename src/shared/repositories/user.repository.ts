@@ -29,7 +29,11 @@ export default class UserRepository implements IRepository<User> {
     }
   }
   async update(id: string, update: Partial<User>): Promise<User | null> {
-    return await userSchema.findOneAndUpdate({ _id: id }, update);
+    try {
+      return await userSchema.findOneAndUpdate({ _id: id }, update);
+    }catch(err: any){
+      throw new BadRequestError("failed to update user");
+    }
   }
   async updateWithCustomerId(customer_id: string, update: Partial<User>): Promise<User | null> {
     return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, update);

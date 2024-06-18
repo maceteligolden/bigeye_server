@@ -9,7 +9,7 @@ import { errorMiddleware } from "../middlewares";
 import { Res } from "../helper";
 import { StatusCodes, SubscriptionStatus } from "../constants";
 import { InternalServerError } from "../errors";
-import { SubscriptionRepository } from "../repositories";
+import { SubscriptionRepository, UserRepository } from "../repositories";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
@@ -17,12 +17,14 @@ export default class Server implements IServer {
   private app: Application;
   private loggerService: ILogger;
   private subscriptionRepository: SubscriptionRepository;
+  private userRepository: UserRepository;
   private database: IDatabase;
 
   constructor(app: Application) {
     this.app = app;
     this.loggerService = container.resolve(LoggerService);
     this.subscriptionRepository = container.resolve(SubscriptionRepository);
+    this.userRepository = container.resolve(UserRepository);
     this.database = container.resolve(Database);
   }
 
@@ -85,8 +87,10 @@ export default class Server implements IServer {
         case "customer.subscription.created":
           const { id, current_period_end, current_period_start, items, metadata } = event.data.object;
 
+          const userId = await this.database.convertStringToObjectId(metadata.user);
+
           const response = await this.subscriptionRepository.create({
-            user: await this.database.convertStringToObjectId(metadata.user),
+            user: userId,
             plan: await this.database.convertStringToObjectId(metadata.plan),
             stripe_subscription_id: id,
             status: SubscriptionStatus.ACTIVE,
@@ -101,6 +105,10 @@ export default class Server implements IServer {
               email: customer_updated.email,
             });
           }
+
+          await this.userRepository.update(userId, {
+            active_plan: await this.database.convertStringToObjectId(response._id!)
+          });
 
           await this.loggerService.log("successfully subscribed customer to a plan", {
             name: customer_updated.name,
