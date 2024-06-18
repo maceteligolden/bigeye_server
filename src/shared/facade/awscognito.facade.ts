@@ -17,6 +17,7 @@ import {
   NotAuthorizedException,
   ResendConfirmationCodeCommand,
   SignUpCommand,
+  UpdateUserAttributesCommand,
   UserNotConfirmedException,
   UserNotFoundException,
   UsernameExistsException,
@@ -38,6 +39,8 @@ import {
   AWSCognitoSignOutOutput,
   AWSCognitoSignupInput,
   AWSCognitoSignupOutput,
+  AWSCognitoUpdateProfileInput,
+  AWSCognitoUpdateProfileOutput,
 } from "../dto";
 import { StatusCodes } from "../constants";
 import { AWS } from "../helper";
@@ -333,6 +336,34 @@ export default class AWSCognito {
       firstName: response.UserAttributes && response.UserAttributes[3].Value,
       lastName: response.UserAttributes && response.UserAttributes[2].Value,
       email: response.UserAttributes && response.UserAttributes[0].Value,
+    };
+  }
+
+  async updateProfile(args: AWSCognitoUpdateProfileInput): Promise<AWSCognitoUpdateProfileOutput> {
+    const { firstName, lastName, accessToken } = args;
+
+    const input = {
+      // UpdateUserAttributesRequest
+      UserAttributes: [
+        // AttributeListType // required
+        {
+          // AttributeType
+          Name: "given_name", // required
+          Value: firstName,
+        },
+        {
+          // AttributeType
+          Name: "family_name", // required
+          Value: lastName,
+        },
+      ],
+      AccessToken: accessToken, // required
+    };
+    const command = new UpdateUserAttributesCommand(input);
+    await this.client.send(command);
+
+    return {
+      isUpdated: true,
     };
   }
 }

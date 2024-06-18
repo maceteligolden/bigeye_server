@@ -80,3 +80,13 @@ export type AWSCognitoGetProfileOutput = {
   lastName: string | AttributeType | undefined;
   email: string | AttributeType | undefined;
 };
+
+export type AWSCognitoUpdateProfileInput = {
+  firstName: string | undefined;
+  lastName: string | undefined;
+  accessToken: string;
+};
+
+export type AWSCognitoUpdateProfileOutput = {
+  isUpdated: boolean;
+};

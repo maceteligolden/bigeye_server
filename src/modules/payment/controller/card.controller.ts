@@ -12,7 +12,7 @@ export default class CardController {
     try {
       const { user } = req.body;
 
-      const response = await this.cardService.authorizeAddCard({ user_id: user.id });
+      const response = await this.cardService.authorizeAddCard({ user_id: user.sub });
 
       Res({
         res,

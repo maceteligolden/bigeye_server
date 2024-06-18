@@ -17,6 +17,8 @@ import {
   AWSCognitoSignOutOutput,
   AWSCognitoSignupInput,
   AWSCognitoSignupOutput,
+  AWSCognitoUpdateProfileInput,
+  AWSCognitoUpdateProfileOutput,
 } from "./awscognito.dto";
 import { PushNotificationInput } from "./awssns.dto";
 import { QueueMessageInput } from "./awssqs.dto";
@@ -76,6 +78,8 @@ export {
   AWSCognitoChangepasswordInput,
   AWSCognitoChangepasswordOutput,
   AWSCognitoGetProfileOutput,
+  AWSCognitoUpdateProfileInput,
+  AWSCognitoUpdateProfileOutput,
   ChangepasswordInput,
   ChangepasswordOutput,
   DeleteCustomerInput,

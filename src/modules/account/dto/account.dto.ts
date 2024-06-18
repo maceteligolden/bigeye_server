@@ -1,3 +1,5 @@
+import { AWSCognitoUpdateProfileInput, AWSCognitoUpdateProfileOutput } from "../../../shared/dto";
+
 export type DeleteAccountInput = {
   accessToken: string;
   awsId: string;
@@ -17,3 +19,10 @@ export type ChangepasswordInput = {
 export type ChangepasswordOutput = {
   isChanged: boolean;
 };
+
+export type UpdateProfileInput = {
+  cognitoId: string;
+} & AWSCognitoUpdateProfileInput;
+
+export type UpdateProfileOutput = {
+} & AWSCognitoUpdateProfileOutput;

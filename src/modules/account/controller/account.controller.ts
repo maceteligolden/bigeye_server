@@ -18,7 +18,7 @@ export default class AccountController {
         previousPassword,
         proposedPassword,
         accessToken: accessToken ? accessToken : "",
-        awsId: sub
+        awsId: sub,
       });
 
       Res({
@@ -56,6 +56,32 @@ export default class AccountController {
       const accessToken = req.headers.authorization?.split(" ")[1];
 
       const response = await this.accountService.getAccount(accessToken ? accessToken : "");
+
+      Res({
+        res,
+        message: "successfully fetch account details",
+        code: StatusCodes.OK,
+        data: response,
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
+
+  async updateAccount(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const accessToken = req.headers.authorization?.split(" ")[1];
+
+      const { first_name, last_name } = req.body;
+
+      const { sub } = req.user;
+
+      const response = await this.accountService.updateAccount({
+        firstName: first_name,
+        lastName: last_name,
+        accessToken: accessToken ? accessToken : "",
+        cognitoId: sub
+      });
 
       Res({
         res,

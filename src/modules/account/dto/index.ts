@@ -1,3 +1,3 @@
-import { DeleteAccountInput, DeleteAccountOutput } from "./account.dto";
+import { DeleteAccountInput, DeleteAccountOutput, UpdateProfileInput, UpdateProfileOutput } from "./account.dto";
 
-export { DeleteAccountInput, DeleteAccountOutput };
+export { DeleteAccountInput, DeleteAccountOutput, UpdateProfileInput, UpdateProfileOutput };

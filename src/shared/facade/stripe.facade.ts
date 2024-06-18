@@ -24,15 +24,13 @@ import { StripeCurriencies, StripePaymentMethodType } from "../constants";
 import { StripeHelper } from "../helper";
 import { LoggerService } from "../services";
 import { InternalServerError } from "../errors";
-const stripe = require("stripe")(
-  `${process.env.STRIPE_API_KEY}`
-);
+const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
 export default class Stripe {
   constructor(
     private stripeHelper: StripeHelper,
-    private loggerService: LoggerService
+    private loggerService: LoggerService,
   ) {}
 
   async setupIntent(args: SetupIntentInput): Promise<SetupIntentOutput> {
@@ -44,10 +42,10 @@ export default class Stripe {
       });
 
       return {
-        client_secret
+        client_secret,
       };
-    } catch(err){
-      throw new InternalServerError("failed setupintent attempt")
+    } catch (err) {
+      throw new InternalServerError("failed setupintent attempt");
     }
   }
 
@@ -70,8 +68,8 @@ export default class Stripe {
       return {
         charge_id: id,
       };
-    } catch(err: any){
-      throw new InternalServerError("failed paymentintent attempt")
+    } catch (err: any) {
+      throw new InternalServerError("failed paymentintent attempt");
     }
   }
 
@@ -80,12 +78,12 @@ export default class Stripe {
       const { id, payment_id } = args;
 
       const response = await stripe.paymentIntents.confirm(id, { payment_method: payment_id });
-  
+
       if (!response) {
         throw new InternalServerError("failed to confirm payment");
       }
-    } catch(err: any){
-      throw new InternalServerError("failed paymentconfirm attempt")
+    } catch (err: any) {
+      throw new InternalServerError("failed paymentconfirm attempt");
     }
   }
 
@@ -96,16 +94,16 @@ export default class Stripe {
         email,
         name,
       });
-  
+
       if (!customer) {
         throw new InternalServerError("failed to create customer");
       }
-  
+
       return {
         customer_id: customer.id,
       };
-    } catch(err: any){
-      throw new InternalServerError("failed attempt to create stripe customer account")
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to create stripe customer account");
     }
   }
 
@@ -113,16 +111,16 @@ export default class Stripe {
     try {
       const { customer_id } = args;
       const response = await stripe.customers.del(customer_id);
-  
+
       if (!response) {
         throw new InternalServerError("failed to delete customer");
       }
-  
+
       return {
         isDeleted: response.deleted,
       };
-    } catch(err : any){
-      throw new InternalServerError("failed attempt to delete stripe customer account")
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to delete stripe customer account");
     }
   }
 
@@ -133,8 +131,8 @@ export default class Stripe {
       if (!response) {
         throw new InternalServerError("failed to delete card");
       }
-    }catch(err){
-      throw new InternalServerError("failed attempt to delete card from stripe")
+    } catch (err) {
+      throw new InternalServerError("failed attempt to delete card from stripe");
     }
   }
 
@@ -154,8 +152,8 @@ export default class Stripe {
         exp_year: card.exp_year,
         brand: card.brand,
       };
-    }catch(err: any){
-      throw new InternalServerError("failed attempt to delete card from stripe")
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to delete card from stripe");
     }
   }
 
@@ -192,8 +190,8 @@ export default class Stripe {
         plan_id: response.id,
         price_id: id,
       };
-    }catch(err: any){
-      throw new InternalServerError("failed attempt to create plan")
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to create plan");
     }
   }
 
@@ -210,13 +208,13 @@ export default class Stripe {
       return {
         isPlanDeleted: response.deleted,
       };
-    }catch(err: any){
-      throw new InternalServerError("failed attempt to delete plan")
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to delete plan");
     }
   }
 
   async createSubscription(args: StripeCreateSubscriptionInput): Promise<StripeCreateSubscriptionOutput> {
-     try { 
+    try {
       const { customer_id, price_id, payment_method, user, plan } = args;
 
       const response = await stripe.subscriptions.create({
@@ -243,8 +241,8 @@ export default class Stripe {
         subscription_id: response.id,
         subscription_end_date: response.current_period_end,
       };
-    }catch(err: any){
-      throw new InternalServerError("failed attempt to create subscription")
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to create subscription");
     }
   }
 
@@ -265,8 +263,8 @@ export default class Stripe {
       return {
         isUpdated: response.id ? true : false,
       };
-    }catch(err: any){
-      throw new InternalServerError("failed attempt to update subscription")
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to update subscription");
     }
   }
 }

@@ -18,4 +18,8 @@ accountRouter.get("/profile", authMiddleware, (req: Request, res: Response, next
   accountController.getAccount(req, res, next),
 );
 
+accountRouter.patch("/update-profile", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  accountController.updateAccount(req, res, next),
+);
+
 export default accountRouter;

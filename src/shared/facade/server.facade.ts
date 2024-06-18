@@ -10,9 +10,7 @@ import { Res } from "../helper";
 import { StatusCodes, SubscriptionStatus } from "../constants";
 import { InternalServerError } from "../errors";
 import { SubscriptionRepository } from "../repositories";
-const stripe = require("stripe")(
-  `${process.env.STRIPE_API_KEY}`
-);
+const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
 export default class Server implements IServer {
