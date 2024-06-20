@@ -66,8 +66,8 @@ export const routes: ServerRouter[] = [
       },
       {
         path: "/plans",
-        router: planRouter
-      }
+        router: planRouter,
+      },
     ],
   },
   {

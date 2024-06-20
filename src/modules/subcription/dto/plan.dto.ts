@@ -9,4 +9,4 @@ export type CreatePlanOutput = {
 
 export type GetActivePlanOutput = {
   active_plan_id: string | mongoose.Types.ObjectId | undefined;
-}
+};

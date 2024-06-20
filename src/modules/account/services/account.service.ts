@@ -57,11 +57,10 @@ export default class AccountService {
   }
 
   async updateAccount(args: UpdateProfileInput): Promise<UpdateProfileOutput> {
-
     const deleteCognitoUser = await this.awsCognito.updateProfile(args);
 
     return {
-      isUpdated: deleteCognitoUser.isUpdated
+      isUpdated: deleteCognitoUser.isUpdated,
     };
   }
 }

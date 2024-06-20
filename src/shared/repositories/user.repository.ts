@@ -31,7 +31,7 @@ export default class UserRepository implements IRepository<User> {
   async update(id: string, update: Partial<User>): Promise<User | null> {
     try {
       return await userSchema.findOneAndUpdate({ _id: id }, update);
-    }catch(err: any){
+    } catch (err: any) {
       throw new BadRequestError("failed to update user");
     }
   }

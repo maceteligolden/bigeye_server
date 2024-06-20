@@ -9,10 +9,6 @@ export type CreateSubscriptionOutput = {
   processing: boolean;
 };
 
-export type CancelSubscriptionInput = {
+export type CancelSubscriptionInput = {};
 
-}
-
-export type CancelSubscriptionOutput = {
-  
-}
+export type CancelSubscriptionOutput = {};

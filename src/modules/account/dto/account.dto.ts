@@ -24,5 +24,4 @@ export type UpdateProfileInput = {
   cognitoId: string;
 } & AWSCognitoUpdateProfileInput;
 
-export type UpdateProfileOutput = {
-} & AWSCognitoUpdateProfileOutput;
+export type UpdateProfileOutput = {} & AWSCognitoUpdateProfileOutput;

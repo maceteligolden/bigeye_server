@@ -10,7 +10,7 @@ export default class PlanRepository implements IRepository<Plan> {
     return await planSchema.create(args);
   }
   async fetchAll(): Promise<Plan[]> {
-    return await planSchema.find()
+    return await planSchema.find();
   }
   async fetchOneById(id: string): Promise<Plan | null> {
     return await planSchema.findById(id);

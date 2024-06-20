@@ -80,7 +80,7 @@ export default class AccountController {
         firstName: first_name,
         lastName: last_name,
         accessToken: accessToken ? accessToken : "",
-        cognitoId: sub
+        cognitoId: sub,
       });
 
       Res({

@@ -107,7 +107,7 @@ export default class Server implements IServer {
           }
 
           await this.userRepository.update(userId, {
-            active_plan: await this.database.convertStringToObjectId(response._id!)
+            active_plan: await this.database.convertStringToObjectId(response._id!),
           });
 
           await this.loggerService.log("successfully subscribed customer to a plan", {

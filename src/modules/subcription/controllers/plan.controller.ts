@@ -10,14 +10,13 @@ export default class PlanController {
 
   async getPlans(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
       const response = await this.planService.getPlans();
 
       Res({
         res,
         code: StatusCodes.OK,
         message: "successfully fetched all plans",
-        data: response
+        data: response,
       });
     } catch (e: any) {
       next(e);
@@ -32,9 +31,9 @@ export default class PlanController {
 
       Res({
         res,
-        code: StatusCodes.OK, 
+        code: StatusCodes.OK,
         message: "successfully fetch active plan",
-        data: response
+        data: response,
       });
     } catch (e: any) {
       next(e);
