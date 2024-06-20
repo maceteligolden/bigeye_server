@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { Stripe } from "../../../shared/facade";
 import { PlanRepository, UserRepository } from "../../../shared/repositories";
-import { CreateSubscriptionInput, CreateSubscriptionOutput } from "../dto";
+import { CancelSubscriptionInput, CancelSubscriptionOutput, CreateSubscriptionInput, CreateSubscriptionOutput } from "../dto";
 import { BadRequestError, InternalServerError } from "../../../shared/errors";
 
 @injectable()
@@ -35,7 +35,7 @@ export default class SubscriptionService {
       price_id: stripe_price_id,
       customer_id: stripe_customer_id ? stripe_customer_id : "",
       payment_method: stripe_card_id,
-      user,
+      user: checkUser._id ? checkUser._id : "",
       plan,
     });
 
@@ -48,5 +48,13 @@ export default class SubscriptionService {
     return {
       processing: true,
     };
+  }
+
+  async cancelSubscription(args: CancelSubscriptionInput): Promise<CancelSubscriptionOutput> {
+
+
+    return {
+
+    }
   }
 }
