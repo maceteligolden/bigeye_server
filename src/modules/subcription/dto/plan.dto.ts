@@ -8,5 +8,7 @@ export type CreatePlanOutput = {
 };
 
 export type GetActivePlanOutput = {
-  active_plan_id: string | mongoose.Types.ObjectId | undefined;
+  _id: string | mongoose.Types.ObjectId | undefined;
+  amount: string;
+  name: string;
 };

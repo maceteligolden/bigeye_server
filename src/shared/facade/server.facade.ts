@@ -5,11 +5,11 @@ import { LoggerService } from "../services";
 import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
 import { ServerRoute } from "../interfaces/server.interface";
 import { Database } from ".";
-import { errorMiddleware } from "../middlewares";
+import { cors, errorMiddleware } from "../middlewares";
 import { Res } from "../helper";
 import { StatusCodes, SubscriptionStatus } from "../constants";
 import { InternalServerError } from "../errors";
-import { SubscriptionRepository, UserRepository } from "../repositories";
+import { PlanRepository, SubscriptionRepository, UserRepository } from "../repositories";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
@@ -17,6 +17,7 @@ export default class Server implements IServer {
   private app: Application;
   private loggerService: ILogger;
   private subscriptionRepository: SubscriptionRepository;
+  private planRepository: PlanRepository;
   private userRepository: UserRepository;
   private database: IDatabase;
 
@@ -25,6 +26,7 @@ export default class Server implements IServer {
     this.loggerService = container.resolve(LoggerService);
     this.subscriptionRepository = container.resolve(SubscriptionRepository);
     this.userRepository = container.resolve(UserRepository);
+    this.planRepository = container.resolve(PlanRepository)
     this.database = container.resolve(Database);
   }
 
@@ -41,18 +43,20 @@ export default class Server implements IServer {
 
     const BASE_URL = process.env.BASE_URL;
 
+    this.app.use(cors);
+
     this.app.post("/webhook", bodyParser.raw({ type: "application/json" }), async (req, res, next) => {
       const endpointSecret = `${process.env.STRIPE_WEBHOOK_SECRET}`;
       const sig = req.headers["stripe-signature"];
+  
       let event;
 
       try {
         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
       } catch (err: any) {
-        console.log(err);
         Res({
           res,
-          code: StatusCodes.INTERNAL_SERVER,
+          code: StatusCodes.UNAUTHORIZED,
           message: `webhook error: ${err.message}`,
         });
         return;
@@ -85,13 +89,17 @@ export default class Server implements IServer {
           });
           break;
         case "customer.subscription.created":
-          const { id, current_period_end, current_period_start, items, metadata } = event.data.object;
+          const { id, current_period_end, current_period_start, items, customer } = event.data.object;
 
-          const userId = await this.database.convertStringToObjectId(metadata.user);
+          const userData = await this.userRepository.fetchOneByCustomerId(customer);
+          
+          const userId = await this.database.convertStringToObjectId(userData?._id!);
+          const plan = await this.planRepository.fetchOneByStripePlanId(items.data[0].plan.id);
+          const planId = await this.database.convertStringToObjectId(plan?._id!)
 
           const response = await this.subscriptionRepository.create({
             user: userId,
-            plan: await this.database.convertStringToObjectId(metadata.plan),
+            plan: planId,
             stripe_subscription_id: id,
             status: SubscriptionStatus.ACTIVE,
             start_date: new Date(current_period_start),
@@ -101,8 +109,7 @@ export default class Server implements IServer {
 
           if (!response) {
             throw new InternalServerError("failed to add subscription to records", {
-              name: customer_updated.name,
-              email: customer_updated.email,
+              awsId: userData?.awscognito_user_id
             });
           }
 
@@ -111,8 +118,7 @@ export default class Server implements IServer {
           });
 
           await this.loggerService.log("successfully subscribed customer to a plan", {
-            name: customer_updated.name,
-            email: customer_updated.email,
+            awsId: userData?.awscognito_user_id
           });
           break;
         case "customer.subscription.deleted":
@@ -186,7 +192,7 @@ export default class Server implements IServer {
           });
       }
 
-      res.status(200).send();
+      res.send();
     });
 
     middlewares.map((middleware: any) => {

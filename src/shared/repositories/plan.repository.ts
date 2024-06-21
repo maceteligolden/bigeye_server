@@ -15,8 +15,14 @@ export default class PlanRepository implements IRepository<Plan> {
   async fetchOneById(id: string): Promise<Plan | null> {
     return await planSchema.findById(id);
   }
+  async fetchById(id: string): Promise<Plan | null> {
+    return await planSchema.findOne({ _id: id });
+  }
   async fetchOneByName(name: string): Promise<Plan | null> {
     return await planSchema.findOne({ name });
+  }
+  async fetchOneByStripePlanId(id: string): Promise<Plan | null> {
+    return await planSchema.findOne({ stripe_plan_id: id });
   }
   async update(id: string, update: Partial<Plan>): Promise<Plan | null> {
     return await planSchema.findOneAndUpdate({ _id: id }, update);
