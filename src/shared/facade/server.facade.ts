@@ -92,7 +92,7 @@ export default class Server implements IServer {
           const { id, current_period_end, current_period_start, items, customer } = event.data.object;
 
           const userData = await this.userRepository.fetchOneByCustomerId(customer);
-          
+         
           const userId = await this.database.convertStringToObjectId(userData?._id!);
           const plan = await this.planRepository.fetchOneByStripePlanId(items.data[0].plan.id);
           const planId = await this.database.convertStringToObjectId(plan?._id!)
@@ -113,8 +113,8 @@ export default class Server implements IServer {
             });
           }
 
-          await this.userRepository.update(userId, {
-            active_plan: await this.database.convertStringToObjectId(response._id!),
+          const update = await this.userRepository.update(userData?._id!, {
+            active_plan: planId,
           });
 
           await this.loggerService.log("successfully subscribed customer to a plan", {

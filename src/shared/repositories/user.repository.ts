@@ -23,7 +23,7 @@ export default class UserRepository implements IRepository<User> {
   }
   async fetchOneByCognitoId(id: string): Promise<User | null> {
     try {
-      return await userSchema.findOne({ awscognito_user_id: id }).populate(["active_plan"]);
+      return await userSchema.findOne({ awscognito_user_id: id });
     } catch (err: any) {
       throw new BadRequestError("user not found");
     }

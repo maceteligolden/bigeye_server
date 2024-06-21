@@ -1,14 +1,16 @@
 import { injectable } from "tsyringe";
 import { Plan } from "../../../shared/entities";
-import { PlanRepository, UserRepository } from "../../../shared/repositories";
+import { PlanRepository, SubscriptionRepository, UserRepository } from "../../../shared/repositories";
 import { GetActivePlanOutput } from "../dto";
 import { BadRequestError } from "../../../shared/errors";
 import { Database } from "../../../shared/facade";
+import { ObjectId, Schema } from "mongoose";
 
 @injectable()
 export default class PlanService {
   constructor(
     private planRepository: PlanRepository,
+    private subscriptionRepository: SubscriptionRepository,
     private userRepository: UserRepository,
     private database: Database,
   ) {}
@@ -19,21 +21,22 @@ export default class PlanService {
 
   async getActivePlan(cognitoId: string): Promise<GetActivePlanOutput> {
     const userData = await this.userRepository.fetchOneByCognitoId(cognitoId);
-
+    console.log(userData)
     if (!userData) {
       throw new BadRequestError("user not found");
     }
 
-    const plan = await this.planRepository.fetchById(userData?.active_plan!.toString());
+    const plan = await this.planRepository.fetchOneById(userData.active_plan?.toString()!)
 
-    if (!plan) {
-      throw new BadRequestError("no active plan found");
-    }
+    // if (!plan) {
+    //   throw new BadRequestError("no active plan found");
+    // }
+    console.log("plans: " + plan)
 
     return {
       _id: plan?._id,
-      name: plan?.name ? plan.name : "",
-      amount: plan?.amount ? plan.amount : "",
+      name: plan ? plan.name : "",
+      amount: plan ? plan.amount : "",
     };
   }
 }

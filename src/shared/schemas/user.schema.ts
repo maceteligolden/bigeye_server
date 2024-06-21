@@ -23,7 +23,7 @@ const userSchema: Schema = new Schema<User>({
   },
   active_plan: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Plan",
   },
   created_at: {
     type: Date,

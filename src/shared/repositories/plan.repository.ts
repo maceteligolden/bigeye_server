@@ -2,6 +2,8 @@ import { injectable } from "tsyringe";
 import { DeleteOutput, IRepository } from "../interfaces";
 import { Plan } from "../entities";
 import { planSchema } from "../schemas";
+import { InternalServerError } from "../errors";
+import { Schema, Types } from "mongoose";
 
 @injectable()
 export default class PlanRepository implements IRepository<Plan> {
@@ -15,14 +17,18 @@ export default class PlanRepository implements IRepository<Plan> {
   async fetchOneById(id: string): Promise<Plan | null> {
     return await planSchema.findById(id);
   }
-  async fetchById(id: string): Promise<Plan | null> {
-    return await planSchema.findOne({ _id: id });
+  async fetchById(id: Types.ObjectId | undefined): Promise<Plan | null> {
+    try {
+      return await planSchema.findOne({_id: id});
+    } catch(err: any){
+      throw new InternalServerError(err)
+    }
   }
   async fetchOneByName(name: string): Promise<Plan | null> {
     return await planSchema.findOne({ name });
   }
   async fetchOneByStripePlanId(id: string): Promise<Plan | null> {
-    return await planSchema.findOne({ stripe_plan_id: id });
+    return await planSchema.findOne({ stripe_price_id: id });
   }
   async update(id: string, update: Partial<Plan>): Promise<Plan | null> {
     return await planSchema.findOneAndUpdate({ _id: id }, update);
