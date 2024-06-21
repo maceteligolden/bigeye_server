@@ -21,22 +21,19 @@ export default class PlanService {
 
   async getActivePlan(cognitoId: string): Promise<GetActivePlanOutput> {
     const userData = await this.userRepository.fetchOneByCognitoId(cognitoId);
-    console.log(userData)
+
     if (!userData) {
       throw new BadRequestError("user not found");
     }
 
-    const plan = await this.planRepository.fetchOneById(userData.active_plan?.toString()!)
-
-    // if (!plan) {
-    //   throw new BadRequestError("no active plan found");
-    // }
-    console.log("plans: " + plan)
+    const plan = await this.planRepository.fetchOneById(userData.active_plan?.toString()!);
+    const subscription = await this.subscriptionRepository.fetchByPriceId(plan?._id?.toString()!);
 
     return {
       _id: plan?._id,
       name: plan ? plan.name : "",
       amount: plan ? plan.amount : "",
+      createdDate: subscription?.start_date!,
     };
   }
 }

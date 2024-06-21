@@ -26,7 +26,7 @@ export default class Server implements IServer {
     this.loggerService = container.resolve(LoggerService);
     this.subscriptionRepository = container.resolve(SubscriptionRepository);
     this.userRepository = container.resolve(UserRepository);
-    this.planRepository = container.resolve(PlanRepository)
+    this.planRepository = container.resolve(PlanRepository);
     this.database = container.resolve(Database);
   }
 
@@ -48,7 +48,7 @@ export default class Server implements IServer {
     this.app.post("/webhook", bodyParser.raw({ type: "application/json" }), async (req, res, next) => {
       const endpointSecret = `${process.env.STRIPE_WEBHOOK_SECRET}`;
       const sig = req.headers["stripe-signature"];
-  
+
       let event;
 
       try {
@@ -92,10 +92,10 @@ export default class Server implements IServer {
           const { id, current_period_end, current_period_start, items, customer } = event.data.object;
 
           const userData = await this.userRepository.fetchOneByCustomerId(customer);
-         
+
           const userId = await this.database.convertStringToObjectId(userData?._id!);
           const plan = await this.planRepository.fetchOneByStripePlanId(items.data[0].plan.id);
-          const planId = await this.database.convertStringToObjectId(plan?._id!)
+          const planId = await this.database.convertStringToObjectId(plan?._id!);
 
           const response = await this.subscriptionRepository.create({
             user: userId,
@@ -109,7 +109,7 @@ export default class Server implements IServer {
 
           if (!response) {
             throw new InternalServerError("failed to add subscription to records", {
-              awsId: userData?.awscognito_user_id
+              awsId: userData?.awscognito_user_id,
             });
           }
 
@@ -118,7 +118,7 @@ export default class Server implements IServer {
           });
 
           await this.loggerService.log("successfully subscribed customer to a plan", {
-            awsId: userData?.awscognito_user_id
+            awsId: userData?.awscognito_user_id,
           });
           break;
         case "customer.subscription.deleted":

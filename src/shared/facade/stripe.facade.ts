@@ -216,8 +216,8 @@ export default class Stripe {
   async createSubscription(args: StripeCreateSubscriptionInput): Promise<StripeCreateSubscriptionOutput> {
     try {
       const { customer_id, price_id, payment_method, user, plan } = args;
-      console.log("user id: " + user)
-      console.log("plan id: " + plan)
+      console.log("user id: " + user);
+      console.log("plan id: " + plan);
       const response = await stripe.subscriptions.create({
         customer: customer_id,
         currency: "usd",

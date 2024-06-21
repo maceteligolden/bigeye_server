@@ -15,6 +15,9 @@ export default class SubscriptionRepository implements IRepository<Subscription>
   async fetchOneById(id: string): Promise<Subscription | null> {
     return await subscriptionSchema.findById(id);
   }
+  async fetchByPriceId(id: string): Promise<Subscription | null> {
+    return await subscriptionSchema.findOne({ plan: id });
+  }
   async update(id: string, update: Partial<Subscription>): Promise<Subscription | null> {
     return await subscriptionSchema.findOneAndUpdate({ _id: id }, update);
   }

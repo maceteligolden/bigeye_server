@@ -11,4 +11,5 @@ export type GetActivePlanOutput = {
   _id: string | mongoose.Types.ObjectId | undefined;
   amount: string;
   name: string;
+  createdDate: Date;
 };
