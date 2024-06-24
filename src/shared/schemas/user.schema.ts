@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { User } from "../entities";
+import { UserAccountStatus } from "../constants";
 
 const userSchema: Schema = new Schema<User>({
   awscognito_user_id: {
@@ -24,6 +25,15 @@ const userSchema: Schema = new Schema<User>({
   active_plan: {
     type: Schema.Types.ObjectId,
     ref: "Plan",
+  },
+  status: {
+    type: String,
+    enum: [UserAccountStatus.ACTIVE, UserAccountStatus.BLOCKED, UserAccountStatus.INCOMPLETE, UserAccountStatus.UNCONFIRM],
+    required: true
+  },
+  isFirstLogin: {
+    type: Boolean,
+    default: false
   },
   created_at: {
     type: Date,

@@ -3,7 +3,7 @@ import { FileManagerObjectTypes } from "./filemanager.constant";
 import { StatusCodes } from "./server.constant";
 import { StripeCurriencies, StripePaymentMethodType } from "./stripe.constant";
 import { SubscriptionStatus } from "./subscription.constant";
-import { UserRoles } from "./user.constant";
+import { UserAccountStatus, UserRoles } from "./user.constant";
 
 export {
   UserRoles,
@@ -15,4 +15,5 @@ export {
   StripePaymentMethodType,
   SubscriptionStatus,
   FileManagerObjectTypes,
+  UserAccountStatus
 };

@@ -7,7 +7,7 @@ import { ServerRoute } from "../interfaces/server.interface";
 import { Database } from ".";
 import { cors, errorMiddleware } from "../middlewares";
 import { Res } from "../helper";
-import { StatusCodes, SubscriptionStatus } from "../constants";
+import { StatusCodes, SubscriptionStatus, UserAccountStatus } from "../constants";
 import { InternalServerError } from "../errors";
 import { PlanRepository, SubscriptionRepository, UserRepository } from "../repositories";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
@@ -92,6 +92,10 @@ export default class Server implements IServer {
           const { id, current_period_end, current_period_start, items, customer } = event.data.object;
 
           const userData = await this.userRepository.fetchOneByCustomerId(customer);
+
+          if(userData?.isFirstLogin) {
+            await this.userRepository.updateAccountStatus(userData.stripe_customer_id ? userData.stripe_customer_id : "", UserAccountStatus.ACTIVE)
+          }
 
           const userId = await this.database.convertStringToObjectId(userData?._id!);
           const plan = await this.planRepository.fetchOneByStripePlanId(items.data[0].plan.id);

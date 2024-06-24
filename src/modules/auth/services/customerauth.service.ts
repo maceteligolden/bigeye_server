@@ -17,7 +17,8 @@ import {
   AWSCognitoSignupOutput,
 } from "../../../shared/dto";
 import { UserRepository } from "../../../shared/repositories";
-import { BadRequestError } from "../../../shared/errors";
+import { BadRequestError, InternalServerError } from "../../../shared/errors";
+import { UserAccountStatus } from "../../../shared/constants";
 
 @injectable()
 export default class CustomerAuthService {
@@ -47,6 +48,7 @@ export default class CustomerAuthService {
     const user = await this.userRepository.create({
       awscognito_user_id: response.userId!,
       stripe_customer_id: customer_id,
+      status: UserAccountStatus.UNCONFIRM
     });
 
     if (!user) {
@@ -59,6 +61,7 @@ export default class CustomerAuthService {
   async confirmSignup(args: AWSCognitoConfirmSignupInput): Promise<AWSCognitoConfirmSignupOutput> {
     const response = await this.awsCognito.confirmSignUp(args);
 
+    //TODO: add logic to confirm user here
     return response;
   }
 
@@ -66,7 +69,9 @@ export default class CustomerAuthService {
     return await this.awsCognito.resendSignupConfirmationCode(args);
   }
   async signIn(args: AWSCognitoSignInInput): Promise<AWSCognitoSignInOutput> {
-    return await this.awsCognito.signIn(args);
+    const response = await this.awsCognito.signIn(args);
+
+    return response;
   }
 
   async signOut(args: AWSCognitoSignOutInput): Promise<AWSCognitoSignOutOutput> {

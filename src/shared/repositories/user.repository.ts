@@ -4,6 +4,7 @@ import { User } from "../entities";
 import { userSchema } from "../schemas";
 import { Database } from "../facade";
 import { BadRequestError } from "../errors";
+import { UserAccountStatus } from "../constants";
 
 @injectable()
 export default class UserRepository implements IRepository<User> {
@@ -44,5 +45,9 @@ export default class UserRepository implements IRepository<User> {
 
   async deleteByCognitoId(id: string) {
     return await userSchema.deleteOne({ awscognito_user_id: id });
+  }
+
+  async updateAccountStatus(customer_id: string, status: UserAccountStatus): Promise<User | null> {
+    return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, {status});
   }
 }
