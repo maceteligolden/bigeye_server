@@ -36,6 +36,8 @@ import {
   PaymentIntentOutput,
   SetupIntentInput,
   SetupIntentOutput,
+  StripeCancelSubscriptionInput,
+  StripeCancelSubscriptionOutput,
   StripeCreatePlanInput,
   StripeCreatePlanOutput,
   StripeCreateSubscriptionInput,
@@ -92,4 +94,6 @@ export {
   StripeCreateSubscriptionOutput,
   StripeUpdateSubscriptionInput,
   StripeUpdateSubscriptionOutput,
+  StripeCancelSubscriptionInput,
+  StripeCancelSubscriptionOutput
 };

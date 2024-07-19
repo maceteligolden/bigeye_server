@@ -10,6 +10,7 @@ import { Res } from "../helper";
 import { StatusCodes, SubscriptionStatus, UserAccountStatus } from "../constants";
 import { InternalServerError } from "../errors";
 import { PlanRepository, SubscriptionRepository, UserRepository } from "../repositories";
+import { Plan } from "../entities";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
@@ -170,7 +171,16 @@ export default class Server implements IServer {
           const {} = event.data.object;
           break;
         case "subscription_schedule.canceled":
-          const {} = event.data.object;
+          const SubscriptionScheduleCanceledData = event.data.object;
+
+          const subscriptionScheduleUserData = await this.userRepository.fetchOneByCustomerId(SubscriptionScheduleCanceledData.customer);
+
+          await this.subscriptionRepository.updateByStripeSubId(SubscriptionScheduleCanceledData.id)
+
+          await this.userRepository.update(subscriptionScheduleUserData?._id!, {
+            active_plan: undefined
+          });
+
           break;
         case "subscription_schedule.completed":
           const {} = event.data.object;

@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { Stripe } from "../../../shared/facade";
-import { PlanRepository, UserRepository } from "../../../shared/repositories";
+import { PlanRepository, SubscriptionRepository, UserRepository } from "../../../shared/repositories";
 import {
   CancelSubscriptionInput,
   CancelSubscriptionOutput,
@@ -15,6 +15,7 @@ export default class SubscriptionService {
     private stripe: Stripe,
     private planRepository: PlanRepository,
     private userRepository: UserRepository,
+    private subscriptionRepository: SubscriptionRepository
   ) {}
 
   async createSubscription(args: CreateSubscriptionInput): Promise<CreateSubscriptionOutput> {
@@ -56,6 +57,20 @@ export default class SubscriptionService {
   }
 
   async cancelSubscription(args: CancelSubscriptionInput): Promise<CancelSubscriptionOutput> {
-    return {};
+    const { user_id } = args;
+
+    const checkUser = await this.userRepository.fetchOneByCognitoId(user_id);
+
+    if (!checkUser) {
+      throw new BadRequestError("user not found");
+    }
+
+    const stripeResponse = await this.subscriptionRepository.fetchActiveByUserId(checkUser._id!)
+
+    const response = await this.stripe.cancelSubscription({subscription_id: stripeResponse?.stripe_subscription_id! })
+
+    return {
+      status: response.status
+    };
   }
 }

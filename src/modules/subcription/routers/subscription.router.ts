@@ -10,4 +10,8 @@ subscriptionRouter.post("/subscribe", authMiddleware, (req: Request, res: Respon
   subscriptionController.createSubscription(req, res, next),
 );
 
+subscriptionRouter.patch("/cancel", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  subscriptionController.cancelSubscription(req, res, next),
+);
+
 export default subscriptionRouter;

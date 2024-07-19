@@ -88,3 +88,11 @@ export type StripeUpdateSubscriptionInput = {
 export type StripeUpdateSubscriptionOutput = {
   isUpdated: boolean;
 };
+
+export type StripeCancelSubscriptionInput = {
+  subscription_id: string;
+}
+
+export type StripeCancelSubscriptionOutput = {
+  status: boolean;
+}

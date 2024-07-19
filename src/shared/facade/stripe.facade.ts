@@ -11,6 +11,8 @@ import {
   PaymentIntentOutput,
   SetupIntentInput,
   SetupIntentOutput,
+  StripeCancelSubscriptionInput,
+  StripeCancelSubscriptionOutput,
   StripeCreatePlanInput,
   StripeCreatePlanOutput,
   StripeCreateSubscriptionInput,
@@ -266,6 +268,21 @@ export default class Stripe {
       };
     } catch (err: any) {
       throw new InternalServerError("failed attempt to update subscription");
+    }
+  }
+
+  async cancelSubscription(args: StripeCancelSubscriptionInput): Promise<StripeCancelSubscriptionOutput> {
+    try {
+
+      const { subscription_id } = args;
+
+      const { status } = await stripe.subscriptions.cancel(subscription_id)
+
+      return {
+        status: status === "canceled" ? true : false
+      }
+    } catch(err: any){
+      throw new InternalServerError("failed attempt to cancel subscription")
     }
   }
 }

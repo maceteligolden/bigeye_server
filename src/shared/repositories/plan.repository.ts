@@ -14,7 +14,7 @@ export default class PlanRepository implements IRepository<Plan> {
   async fetchAll(): Promise<Plan[]> {
     return await planSchema.find();
   }
-  async fetchOneById(id: string): Promise<Plan | null> {
+  async fetchOneById(id: any): Promise<Plan | null> {
     return await planSchema.findById(id);
   }
   async fetchById(id: Types.ObjectId | undefined): Promise<Plan | null> {
