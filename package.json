@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "yarn format && nodemon src/index.ts",
-    "test": "jest ./src",
+    "test": "jest ./src --passWithNoTests",
     "test:prod": "jest --detectOpenHandles",
     "test:watch": "jest --watchAll --no-cache",
     "lint": "eslint src/**/*.ts",
