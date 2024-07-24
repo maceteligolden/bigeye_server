@@ -4,13 +4,13 @@ const bodyParser = require("body-parser");
 import { LoggerService } from "../services";
 import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
 import { ServerRoute } from "../interfaces/server.interface";
-import { Database } from ".";
+import { Database, Stripe as StripeFacade } from ".";
 import { cors, errorMiddleware } from "../middlewares";
 import { Res } from "../helper";
 import { StatusCodes, SubscriptionStatus, UserAccountStatus } from "../constants";
-import { InternalServerError } from "../errors";
+import { BadRequestError, InternalServerError } from "../errors";
 import { PlanRepository, SubscriptionRepository, UserRepository } from "../repositories";
-import { Plan } from "../entities";
+import Stripe  from "stripe";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
@@ -20,6 +20,7 @@ export default class Server implements IServer {
   private subscriptionRepository: SubscriptionRepository;
   private planRepository: PlanRepository;
   private userRepository: UserRepository;
+  private stripeFacade: StripeFacade;
   private database: IDatabase;
 
   constructor(app: Application) {
@@ -29,6 +30,7 @@ export default class Server implements IServer {
     this.userRepository = container.resolve(UserRepository);
     this.planRepository = container.resolve(PlanRepository);
     this.database = container.resolve(Database);
+    this.stripeFacade = container.resolve(StripeFacade);
   }
 
   async start(): Promise<void> {
@@ -137,7 +139,31 @@ export default class Server implements IServer {
 
           break;
         case "setup_intent.succeeded":
-          const {} = event.data.object;
+          const setupIntentSucceeded = event.data.object;
+
+          const user = await this.userRepository.fetchOneByCustomerId(setupIntentSucceeded.customer);
+
+          if(!user){
+              throw new BadRequestError("user not found")
+          }
+  
+          const card_details = await this.stripeFacade.fetchCardDetails(setupIntentSucceeded.payment_method);
+
+          if(!card_details){
+              throw new BadRequestError("Failed to fetch cards")
+          }
+
+          const addCard = await this.userRepository.updateWithCustomerId(setupIntentSucceeded.customer, {
+              stripe_card_id: setupIntentSucceeded.payment_method,
+              stripe_card_last_digits: card_details.last4,
+              stripe_card_expire_date: `${card_details.exp_month}/${card_details.exp_year}`,
+              stripe_card_type: card_details.brand,
+              stripe_customer_id: setupIntentSucceeded.customer
+          });
+
+          if(!addCard){
+              throw new BadRequestError("Failed to add card")
+          }
 
           break;
         case "setup_intent.setup_failed":
