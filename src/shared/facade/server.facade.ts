@@ -165,6 +165,10 @@ export default class Server implements IServer {
               throw new BadRequestError("Failed to add card")
           }
 
+          await this.loggerService.log("successfully add card to user account", {
+            awsId: user?.awscognito_user_id,
+          });
+
           break;
         case "setup_intent.setup_failed":
           const {} = event.data.object;
