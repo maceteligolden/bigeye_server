@@ -55,7 +55,9 @@ export default class AccountController {
     try {
       const accessToken = req.headers.authorization?.split(" ")[1];
 
-      const response = await this.accountService.getAccount(accessToken ? accessToken : "");
+      const { user } = req;
+
+      const response = await this.accountService.getAccount(accessToken ? accessToken : "", user.sub);
 
       Res({
         res,

@@ -79,6 +79,10 @@ export type AWSCognitoGetProfileOutput = {
   firstName: string | AttributeType | undefined;
   lastName: string | AttributeType | undefined;
   email: string | AttributeType | undefined;
+  payment_method?: string;
+  card_type?: string;
+  card_last_digits?: string;
+  card_expire_date?: string;
 };
 
 export type AWSCognitoUpdateProfileInput = {
