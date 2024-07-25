@@ -144,7 +144,7 @@ export default class Server implements IServer {
         case "setup_intent.succeeded":
           const setupIntentSucceeded = event.data.object;
         
-          const user = await this.userRepository.fetchOneByCustomerId(setupIntentSucceeded.customer);
+          const user = await this.userRepository.fetchOneByCustomerId(setupIntentSucceeded.metadata.customer);
           
           if (!user) {
             throw new BadRequestError("user not found");
@@ -152,7 +152,7 @@ export default class Server implements IServer {
 
           const card_details = await this.stripeFacade.fetchCardDetails({
             payment_method_id: setupIntentSucceeded.payment_method,
-            stripe_customer_id: setupIntentSucceeded.customer
+            stripe_customer_id: setupIntentSucceeded.metadata.customer
           });
 
           if (!card_details) {
