@@ -28,12 +28,17 @@ const userSchema: Schema = new Schema<User>({
   },
   status: {
     type: String,
-    enum: [UserAccountStatus.ACTIVE, UserAccountStatus.BLOCKED, UserAccountStatus.INCOMPLETE, UserAccountStatus.UNCONFIRM],
-    required: true
+    enum: [
+      UserAccountStatus.ACTIVE,
+      UserAccountStatus.BLOCKED,
+      UserAccountStatus.INCOMPLETE,
+      UserAccountStatus.UNCONFIRM,
+    ],
+    required: true,
   },
   isFirstLogin: {
     type: Boolean,
-    default: false
+    default: false,
   },
   created_at: {
     type: Date,

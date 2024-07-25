@@ -22,6 +22,9 @@ export default class UserRepository implements IRepository<User> {
   async fetchOneByCustomerId(id: string): Promise<User | null> {
     return await userSchema.findOne({ stripe_customer_id: id });
   }
+  async fetchOneByPaymentId(id: string): Promise<User | null> {
+    return await userSchema.findOne({ stripe_card_id: id });
+  }
   async fetchOneByCognitoId(id: string): Promise<User | null> {
     try {
       return await userSchema.findOne({ awscognito_user_id: id });
@@ -48,6 +51,6 @@ export default class UserRepository implements IRepository<User> {
   }
 
   async updateAccountStatus(customer_id: string, status: UserAccountStatus): Promise<User | null> {
-    return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, {status});
+    return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, { status });
   }
 }

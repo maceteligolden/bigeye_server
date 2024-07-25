@@ -95,5 +95,5 @@ export {
   StripeUpdateSubscriptionInput,
   StripeUpdateSubscriptionOutput,
   StripeCancelSubscriptionInput,
-  StripeCancelSubscriptionOutput
+  StripeCancelSubscriptionOutput,
 };

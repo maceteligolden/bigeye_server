@@ -34,14 +34,14 @@ export default class AccountService {
   async getAccount(accessToken: string, customerId: string): Promise<GetProfileOutput> {
     const response = await this.awsCognito.getProfile(accessToken);
 
-    const user = await this.userRepository.fetchOneByCognitoId(customerId)
+    const user = await this.userRepository.fetchOneByCognitoId(customerId);
 
-    return { 
-      ...response, 
-      payment_method: user?.stripe_card_id ? user?.stripe_card_id : "", 
-      card_type: user?.stripe_card_type ? user?.stripe_card_type : "", 
-      card_last_digits: user?.stripe_card_last_digits ? user?.stripe_card_last_digits : "" , 
-      card_expire_date: user?.stripe_card_expire_date  ? user?.stripe_card_expire_date : ""
+    return {
+      ...response,
+      payment_method: user?.stripe_card_id ? user?.stripe_card_id : "",
+      card_type: user?.stripe_card_type ? user?.stripe_card_type : "",
+      card_last_digits: user?.stripe_card_last_digits ? user?.stripe_card_last_digits : "",
+      card_expire_date: user?.stripe_card_expire_date ? user?.stripe_card_expire_date : "",
     };
   }
 

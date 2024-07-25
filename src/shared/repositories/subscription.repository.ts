@@ -26,9 +26,12 @@ export default class SubscriptionRepository implements IRepository<Subscription>
     return await subscriptionSchema.findOneAndUpdate({ _id: id }, update);
   }
   async updateByStripeSubId(id: string): Promise<Subscription | null> {
-    return await subscriptionSchema.findOneAndUpdate({ stripe_subscription_id: id }, {
-      status: SubscriptionStatus.CANCELLED
-    });
+    return await subscriptionSchema.findOneAndUpdate(
+      { stripe_subscription_id: id },
+      {
+        status: SubscriptionStatus.CANCELLED,
+      },
+    );
   }
   async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");

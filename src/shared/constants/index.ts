@@ -15,5 +15,5 @@ export {
   StripePaymentMethodType,
   SubscriptionStatus,
   FileManagerObjectTypes,
-  UserAccountStatus
+  UserAccountStatus,
 };

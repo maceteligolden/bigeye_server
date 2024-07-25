@@ -10,7 +10,7 @@ import { Res } from "../helper";
 import { StatusCodes, SubscriptionStatus, UserAccountStatus } from "../constants";
 import { BadRequestError, InternalServerError } from "../errors";
 import { PlanRepository, SubscriptionRepository, UserRepository } from "../repositories";
-import Stripe  from "stripe";
+import Stripe from "stripe";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
@@ -49,7 +49,7 @@ export default class Server implements IServer {
     this.app.use(cors);
 
     this.app.post("/webhook", bodyParser.raw({ type: "application/json" }), async (req, res, next) => {
-      const endpointSecret = `${process.env.STRIPE_WEBHOOK_SECRET}`;
+      const endpointSecret = `whsec_2b7c1770680f44d66e683d5379c1d6116b9816bc8708b6b065c80a67ac4ea241`;
       const sig = req.headers["stripe-signature"];
 
       let event;
@@ -96,8 +96,11 @@ export default class Server implements IServer {
 
           const userData = await this.userRepository.fetchOneByCustomerId(customer);
 
-          if(userData?.isFirstLogin) {
-            await this.userRepository.updateAccountStatus(userData.stripe_customer_id ? userData.stripe_customer_id : "", UserAccountStatus.ACTIVE)
+          if (userData?.isFirstLogin) {
+            await this.userRepository.updateAccountStatus(
+              userData.stripe_customer_id ? userData.stripe_customer_id : "",
+              UserAccountStatus.ACTIVE,
+            );
           }
 
           const userId = await this.database.convertStringToObjectId(userData?._id!);
@@ -140,29 +143,31 @@ export default class Server implements IServer {
           break;
         case "setup_intent.succeeded":
           const setupIntentSucceeded = event.data.object;
-
+        
           const user = await this.userRepository.fetchOneByCustomerId(setupIntentSucceeded.customer);
-
-          if(!user){
-              throw new BadRequestError("user not found")
-          }
-  
-          const card_details = await this.stripeFacade.fetchCardDetails(setupIntentSucceeded.payment_method);
-
-          if(!card_details){
-              throw new BadRequestError("Failed to fetch cards")
+          
+          if (!user) {
+            throw new BadRequestError("user not found");
           }
 
-          const addCard = await this.userRepository.updateWithCustomerId(setupIntentSucceeded.customer, {
-              stripe_card_id: setupIntentSucceeded.payment_method,
-              stripe_card_last_digits: card_details.last4,
-              stripe_card_expire_date: `${card_details.exp_month}/${card_details.exp_year}`,
-              stripe_card_type: card_details.brand,
-              stripe_customer_id: setupIntentSucceeded.customer
+          const card_details = await this.stripeFacade.fetchCardDetails({
+            payment_method_id: setupIntentSucceeded.payment_method,
+            stripe_customer_id: setupIntentSucceeded.customer
           });
 
-          if(!addCard){
-              throw new BadRequestError("Failed to add card")
+          if (!card_details) {
+            throw new BadRequestError("Failed to fetch cards");
+          }
+
+          const addCard = await this.userRepository.updateWithCustomerId(user.stripe_customer_id!, {
+            stripe_card_id: setupIntentSucceeded.payment_method,
+            stripe_card_last_digits: card_details.last4,
+            stripe_card_expire_date: `${card_details.exp_month}/${card_details.exp_year}`,
+            stripe_card_type: card_details.brand
+          });
+
+          if (!addCard) {
+            throw new BadRequestError("Failed to add card");
           }
 
           await this.loggerService.log("successfully add card to user account", {
@@ -203,12 +208,14 @@ export default class Server implements IServer {
         case "subscription_schedule.canceled":
           const SubscriptionScheduleCanceledData = event.data.object;
 
-          const subscriptionScheduleUserData = await this.userRepository.fetchOneByCustomerId(SubscriptionScheduleCanceledData.customer);
+          const subscriptionScheduleUserData = await this.userRepository.fetchOneByCustomerId(
+            SubscriptionScheduleCanceledData.customer,
+          );
 
-          await this.subscriptionRepository.updateByStripeSubId(SubscriptionScheduleCanceledData.id)
+          await this.subscriptionRepository.updateByStripeSubId(SubscriptionScheduleCanceledData.id);
 
           await this.userRepository.update(subscriptionScheduleUserData?._id!, {
-            active_plan: undefined
+            active_plan: undefined,
           });
 
           break;

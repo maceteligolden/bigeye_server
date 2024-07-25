@@ -19,7 +19,12 @@ const subscriptionSchema: Schema = new Schema<Subscription>({
   },
   status: {
     type: String,
-    enum: [SubscriptionStatus.ACTIVE, SubscriptionStatus.INACTIVE, SubscriptionStatus.EXPIRED, SubscriptionStatus.CANCELLED],
+    enum: [
+      SubscriptionStatus.ACTIVE,
+      SubscriptionStatus.INACTIVE,
+      SubscriptionStatus.EXPIRED,
+      SubscriptionStatus.CANCELLED,
+    ],
     required: true,
   },
   start_date: {

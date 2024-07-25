@@ -5,23 +5,23 @@ import mongoose from "mongoose";
 let mongo: any;
 
 beforeEach(async () => {
-    const mongo = await MongoMemoryServer.create();
-    const mongoUri = mongo.getUri();
-    mongoose.set("strictQuery", true);
-    await mongoose.connect(mongoUri, {});
+  const mongo = await MongoMemoryServer.create();
+  const mongoUri = mongo.getUri();
+  mongoose.set("strictQuery", true);
+  await mongoose.connect(mongoUri, {});
 });
 
 beforeEach(async () => {
-    const collections = await mongoose.connection.db.collections();
+  const collections = await mongoose.connection.db.collections();
 
-    for (const collection of collections) {
-        await collection.deleteMany({});
-    }
+  for (const collection of collections) {
+    await collection.deleteMany({});
+  }
 });
 
 afterEach(async () => {
-    if (mongo) {
-        await mongo.stop();
-    }
-    await mongoose.connection.close();
+  if (mongo) {
+    await mongo.stop();
+  }
+  await mongoose.connection.close();
 });

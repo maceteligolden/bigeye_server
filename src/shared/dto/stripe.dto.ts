@@ -40,6 +40,7 @@ export type DeleteCustomerOutput = {
 
 export type FetchCardDetailsInput = {
   payment_method_id: string;
+  stripe_customer_id: string;
 };
 
 export type FetchCardDetailsOutput = {
@@ -91,8 +92,8 @@ export type StripeUpdateSubscriptionOutput = {
 
 export type StripeCancelSubscriptionInput = {
   subscription_id: string;
-}
+};
 
 export type StripeCancelSubscriptionOutput = {
   status: boolean;
-}
+};

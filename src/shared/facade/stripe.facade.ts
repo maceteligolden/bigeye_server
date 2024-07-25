@@ -41,6 +41,9 @@ export default class Stripe {
       const { client_secret } = await stripe.setupIntents.create({
         customer,
         payment_method_types: [StripePaymentMethodType.CARD],
+        metadata: {
+          customer
+        }
       });
 
       return {
@@ -140,9 +143,9 @@ export default class Stripe {
 
   async fetchCardDetails(args: FetchCardDetailsInput): Promise<FetchCardDetailsOutput> {
     try {
-      const { payment_method_id } = args;
+      const { payment_method_id, stripe_customer_id } = args;
 
-      const { card } = await stripe.paymentMethods.retrieve(payment_method_id);
+      const { card } = await stripe.paymentMethods.retrieve(stripe_customer_id, payment_method_id);
 
       if (!card) {
         throw new InternalServerError("failed to retrieved card");
@@ -273,16 +276,15 @@ export default class Stripe {
 
   async cancelSubscription(args: StripeCancelSubscriptionInput): Promise<StripeCancelSubscriptionOutput> {
     try {
-
       const { subscription_id } = args;
 
-      const { status } = await stripe.subscriptions.cancel(subscription_id)
+      const { status } = await stripe.subscriptions.cancel(subscription_id);
 
       return {
-        status: status === "canceled" ? true : false
-      }
-    } catch(err: any){
-      throw new InternalServerError("failed attempt to cancel subscription")
+        status: status === "canceled" ? true : false,
+      };
+    } catch (err: any) {
+      throw new InternalServerError("failed attempt to cancel subscription");
     }
   }
 }

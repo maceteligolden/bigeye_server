@@ -48,7 +48,7 @@ export default class CustomerAuthService {
     const user = await this.userRepository.create({
       awscognito_user_id: response.userId!,
       stripe_customer_id: customer_id,
-      status: UserAccountStatus.UNCONFIRM
+      status: UserAccountStatus.UNCONFIRM,
     });
 
     if (!user) {

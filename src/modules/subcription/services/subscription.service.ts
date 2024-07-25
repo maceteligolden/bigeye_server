@@ -15,7 +15,7 @@ export default class SubscriptionService {
     private stripe: Stripe,
     private planRepository: PlanRepository,
     private userRepository: UserRepository,
-    private subscriptionRepository: SubscriptionRepository
+    private subscriptionRepository: SubscriptionRepository,
   ) {}
 
   async createSubscription(args: CreateSubscriptionInput): Promise<CreateSubscriptionOutput> {
@@ -65,12 +65,12 @@ export default class SubscriptionService {
       throw new BadRequestError("user not found");
     }
 
-    const stripeResponse = await this.subscriptionRepository.fetchActiveByUserId(checkUser._id!)
+    const stripeResponse = await this.subscriptionRepository.fetchActiveByUserId(checkUser._id!);
 
-    const response = await this.stripe.cancelSubscription({subscription_id: stripeResponse?.stripe_subscription_id! })
+    const response = await this.stripe.cancelSubscription({ subscription_id: stripeResponse?.stripe_subscription_id! });
 
     return {
-      status: response.status
+      status: response.status,
     };
   }
 }

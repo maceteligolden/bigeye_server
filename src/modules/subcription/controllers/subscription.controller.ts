@@ -32,11 +32,10 @@ export default class SubscriptionController {
 
   async cancelSubscription(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
       const { sub } = req.user;
 
       const response = await this.subscriptionService.cancelSubscription({
-        user_id: sub
+        user_id: sub,
       });
 
       Res({
