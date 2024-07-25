@@ -4,6 +4,7 @@ import { AWSCognitoGetProfileOutput, ChangepasswordInput, ChangepasswordOutput }
 import { DeleteAccountInput, DeleteAccountOutput, UpdateProfileInput, UpdateProfileOutput } from "../dto";
 import { FileManagerRepository, UserRepository } from "../../../shared/repositories";
 import { LoggerService } from "../../../shared/services";
+import { GetProfileOutput } from "../interfaces";
 
 @injectable()
 export default class AccountService {
@@ -30,12 +31,18 @@ export default class AccountService {
     return response;
   }
 
-  async getAccount(accessToken: string, customerId: string): Promise<AWSCognitoGetProfileOutput> {
+  async getAccount(accessToken: string, customerId: string): Promise<GetProfileOutput> {
     const response = await this.awsCognito.getProfile(accessToken);
 
     const user = await this.userRepository.fetchOneByCognitoId(customerId)
 
-    return { ...response, payment_method: user?.stripe_card_id, card_type: user?.stripe_card_type, card_last_digits: user?.stripe_card_last_digits, card_expire_date: user?.stripe_card_expire_date  };
+    return { 
+      ...response, 
+      payment_method: user?.stripe_card_id ? user?.stripe_card_id : "", 
+      card_type: user?.stripe_card_type ? user?.stripe_card_type : "", 
+      card_last_digits: user?.stripe_card_last_digits ? user?.stripe_card_last_digits : "" , 
+      card_expire_date: user?.stripe_card_expire_date  ? user?.stripe_card_expire_date : ""
+    };
   }
 
   async deleteAccount(args: DeleteAccountInput): Promise<DeleteAccountOutput> {
