@@ -49,7 +49,7 @@ export default class Server implements IServer {
     this.app.use(cors);
 
     this.app.post("/webhook", bodyParser.raw({ type: "application/json" }), async (req, res, next) => {
-      const endpointSecret = `whsec_2b7c1770680f44d66e683d5379c1d6116b9816bc8708b6b065c80a67ac4ea241`;
+      const endpointSecret = `${process.env.STRIPE_WEBHOOK_SECRET}`;
       const sig = req.headers["stripe-signature"];
 
       let event;
