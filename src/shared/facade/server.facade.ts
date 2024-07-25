@@ -143,7 +143,7 @@ export default class Server implements IServer {
           break;
         case "setup_intent.succeeded":
           const setupIntentSucceeded = event.data.object;
-        
+          await this.loggerService.log(setupIntentSucceeded)
           const user = await this.userRepository.fetchOneByCustomerId(setupIntentSucceeded.metadata.customer);
           
           if (!user) {
