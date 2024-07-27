@@ -1,6 +1,6 @@
 export type SetupIntentInput = {
   customer: string;
-  user_id: string;
+  user_id?: string;
 };
 
 export type SetupIntentOutput = {
