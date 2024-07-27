@@ -161,7 +161,7 @@ export default class Stripe {
         brand: card.brand,
       };
     } catch (err: any) {
-      throw new InternalServerError("failed attempt to delete card from stripe");
+      throw new InternalServerError(err);
     }
   }
 
