@@ -145,11 +145,6 @@ export default class Server implements IServer {
           const setupIntentSucceeded = event.data.object;
           console.log("setupintentobject: " + JSON.stringify(setupIntentSucceeded))
           await this.loggerService.log(JSON.stringify(setupIntentSucceeded));
-          const user = await this.userRepository.fetchOneByCustomerId(setupIntentSucceeded.metadata.customer);
-          console.log("user: " + user)
-          if (!user) {
-            throw new BadRequestError("user not found");
-          }
 
           const card_details = await this.stripeFacade.fetchCardDetails({
             payment_method_id: setupIntentSucceeded.payment_method,
@@ -160,7 +155,7 @@ export default class Server implements IServer {
             throw new BadRequestError("Failed to fetch cards");
           }
 
-          const addCard = await this.userRepository.updateWithCustomerId(user.stripe_customer_id!, {
+          const addCard = await this.userRepository.updateWithCustomerId(setupIntentSucceeded.metadata.customer, {
             stripe_card_id: setupIntentSucceeded.payment_method,
             stripe_card_last_digits: card_details.last4,
             stripe_card_expire_date: `${card_details.exp_month}/${card_details.exp_year}`,
@@ -172,7 +167,7 @@ export default class Server implements IServer {
           }
 
           await this.loggerService.log("successfully add card to user account", {
-            awsId: user?.awscognito_user_id,
+            awsId: setupIntentSucceeded.metadata.user_cognito_id,
           });
 
           break;

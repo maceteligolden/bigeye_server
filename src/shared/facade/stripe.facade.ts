@@ -37,12 +37,13 @@ export default class Stripe {
 
   async setupIntent(args: SetupIntentInput): Promise<SetupIntentOutput> {
     try {
-      const { customer } = args;
+      const { customer, user_id } = args;
       const { client_secret } = await stripe.setupIntents.create({
         customer,
         payment_method_types: [StripePaymentMethodType.CARD],
         metadata: {
           customer,
+          user_cognito_id: user_id
         },
       });
 

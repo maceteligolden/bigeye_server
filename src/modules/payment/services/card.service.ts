@@ -20,9 +20,9 @@ export default class CardService {
       throw new BadRequestError("user not found");
     }
 
-    const { stripe_customer_id } = checkUser;
+    const { stripe_customer_id, awscognito_user_id } = checkUser;
 
-    const { client_secret } = await this.stripe.setupIntent({ customer: stripe_customer_id! });
+    const { client_secret } = await this.stripe.setupIntent({ customer: stripe_customer_id!, user_id: awscognito_user_id!});
 
     if (!client_secret) {
       throw new BadRequestError("failed while generating secret");
