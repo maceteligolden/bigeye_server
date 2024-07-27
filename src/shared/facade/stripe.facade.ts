@@ -148,7 +148,7 @@ export default class Stripe {
     try {
       const { payment_method_id, stripe_customer_id } = args;
 
-      const { card } = await stripe.paymentMethods.retrieve(stripe_customer_id, payment_method_id);
+      const { card } = await stripe.paymentMethods.retrieve(payment_method_id);
 
       if (!card) {
         throw new InternalServerError("failed to retrieved card");

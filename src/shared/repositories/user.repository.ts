@@ -39,8 +39,12 @@ export default class UserRepository implements IRepository<User> {
       throw new BadRequestError("failed to update user");
     }
   }
-  async updateWithCustomerId(customer_id: string, update: Partial<User>): Promise<User | null> {
-    return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, update);
+  async updateWithCustomerId(customer_id: string, update: Partial<User>): Promise<User | null | undefined> {
+    try {
+      return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, update);
+    } catch(err){
+      console.log(err)
+    }
   }
   async delete(id: string): Promise<DeleteOutput> {
     throw new Error("Method not implemented.");

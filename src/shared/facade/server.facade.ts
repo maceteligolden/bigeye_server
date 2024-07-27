@@ -143,8 +143,6 @@ export default class Server implements IServer {
           break;
         case "setup_intent.succeeded":
           const setupIntentSucceeded = event.data.object;
-          console.log("setupintentobject: " + JSON.stringify(setupIntentSucceeded))
-          await this.loggerService.log(JSON.stringify(setupIntentSucceeded));
 
           const card_details = await this.stripeFacade.fetchCardDetails({
             payment_method_id: setupIntentSucceeded.payment_method,
@@ -162,9 +160,9 @@ export default class Server implements IServer {
             stripe_card_type: card_details.brand,
           });
 
-          if (!addCard) {
-            throw new BadRequestError("Failed to add card");
-          }
+          // if (!addCard) {
+          //   throw new BadRequestError("Failed to add card");
+          // }
 
           await this.loggerService.log("successfully add card to user account", {
             awsId: setupIntentSucceeded.metadata.user_cognito_id,
