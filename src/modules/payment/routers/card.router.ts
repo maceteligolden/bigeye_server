@@ -10,4 +10,8 @@ cardRouter.post("/authorize-add-card", authMiddleware, (req: Request, res: Respo
   cardController.authorizeAddCard(req, res, next),
 );
 
+cardRouter.delete("/", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  cardController.deleteCard(req, res, next),
+);
+
 export default cardRouter;

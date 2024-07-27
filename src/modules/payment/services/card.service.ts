@@ -66,4 +66,12 @@ export default class CardService {
       isCardSaved: true,
     };
   }
+
+  async deleteCard(user_id: string): Promise<void> {
+
+    const isDeleted = await this.userRepository.clearCardDetails(user_id);
+
+    //TODO: delete card from stripe
+
+  }
 }

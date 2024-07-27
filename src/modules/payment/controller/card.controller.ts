@@ -24,4 +24,20 @@ export default class CardController {
       next(e);
     }
   }
+
+  async deleteCard(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { sub } = req.user;
+
+      const response = await this.cardService.deleteCard(sub);
+
+      Res({
+        res,
+        code: StatusCodes.NO_CONTENT,
+        message: "successfully deleted card"
+      });
+    } catch (e: any) {
+      next(e);
+    }
+  }
 }
