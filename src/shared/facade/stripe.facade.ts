@@ -42,8 +42,8 @@ export default class Stripe {
         customer,
         payment_method_types: [StripePaymentMethodType.CARD],
         metadata: {
-          customer
-        }
+          customer,
+        },
       });
 
       return {
@@ -99,6 +99,8 @@ export default class Stripe {
         email,
         name,
       });
+
+      console.log("stripe customer: " + customer)
 
       if (!customer) {
         throw new InternalServerError("failed to create customer");

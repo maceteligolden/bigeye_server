@@ -15,7 +15,7 @@ export default class CardService {
     const { user_id } = args;
 
     const checkUser = await this.userRepository.fetchOneByCognitoId(user_id);
-  
+
     if (!checkUser) {
       throw new BadRequestError("user not found");
     }
@@ -44,7 +44,7 @@ export default class CardService {
 
     const cardDetails = await this.stripe.fetchCardDetails({
       payment_method_id: stripe_card_id,
-      stripe_customer_id
+      stripe_customer_id,
     });
 
     if (!cardDetails) {
