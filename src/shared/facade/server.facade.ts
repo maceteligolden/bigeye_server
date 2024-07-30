@@ -175,6 +175,19 @@ export default class Server implements IServer {
         case "payment_intent.created":
           const {} = event.data.object;
           break;
+        case "payment_intent.cancelled":
+          const PaymentIntentCancelledData = event.data.object;
+
+          await this.userRepository.fetchOneByCustomerId(
+            PaymentIntentCancelledData.customer,
+          );
+
+          await this.subscriptionRepository.updateByStripeSubId(PaymentIntentCancelledData.id);
+
+          await this.userRepository.update(PaymentIntentCancelledData?._id!, {
+            active_plan: undefined,
+          });
+          break;
         case "payment_intent.payment_failed":
           const {} = event.data.object;
           break;
