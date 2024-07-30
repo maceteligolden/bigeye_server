@@ -251,7 +251,7 @@ export default class Stripe {
         subscription_end_date: response.current_period_end,
       };
     } catch (err: any) {
-      throw new InternalServerError("failed creating subscription");
+      throw new InternalServerError(err);
     }
   }
 
