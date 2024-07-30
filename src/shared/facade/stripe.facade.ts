@@ -235,7 +235,7 @@ export default class Stripe {
           },
         ],
         payment_behavior: "default_incomplete",
-        payment_method,
+        default_payment_method: payment_method,
         metadata: {
           user,
           plan,
