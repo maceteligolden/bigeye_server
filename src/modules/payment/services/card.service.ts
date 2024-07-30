@@ -22,7 +22,10 @@ export default class CardService {
 
     const { stripe_customer_id, awscognito_user_id } = checkUser;
 
-    const { client_secret } = await this.stripe.setupIntent({ customer: stripe_customer_id!, user_id: awscognito_user_id!});
+    const { client_secret } = await this.stripe.setupIntent({
+      customer: stripe_customer_id!,
+      user_id: awscognito_user_id!,
+    });
 
     if (!client_secret) {
       throw new BadRequestError("failed while generating secret");
@@ -68,10 +71,8 @@ export default class CardService {
   }
 
   async deleteCard(user_id: string): Promise<void> {
-
     const isDeleted = await this.userRepository.clearCardDetails(user_id);
 
     //TODO: delete card from stripe
-
   }
 }

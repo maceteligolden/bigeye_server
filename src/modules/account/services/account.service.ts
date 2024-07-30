@@ -35,7 +35,7 @@ export default class AccountService {
     const response = await this.awsCognito.getProfile(accessToken);
 
     const user = await this.userRepository.fetchOneByCognitoId(customerId);
-    console.log("user profile: " + JSON.stringify(user))
+    console.log("user profile: " + JSON.stringify(user));
     return {
       ...response,
       payment_method: user?.stripe_card_id ? user?.stripe_card_id : "",

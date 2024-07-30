@@ -34,7 +34,7 @@ export default class CardController {
       Res({
         res,
         code: StatusCodes.NO_CONTENT,
-        message: "successfully deleted card"
+        message: "successfully deleted card",
       });
     } catch (e: any) {
       next(e);

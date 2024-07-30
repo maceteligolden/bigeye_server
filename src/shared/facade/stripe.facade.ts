@@ -43,7 +43,7 @@ export default class Stripe {
         payment_method_types: [StripePaymentMethodType.CARD],
         metadata: {
           customer,
-          user_cognito_id: user_id
+          user_cognito_id: user_id,
         },
       });
 
@@ -101,7 +101,7 @@ export default class Stripe {
         name,
       });
 
-      console.log("stripe customer: " + customer)
+      console.log("stripe customer: " + customer);
 
       if (!customer) {
         throw new InternalServerError("failed to create customer");
@@ -287,7 +287,7 @@ export default class Stripe {
         status: status === "canceled" ? true : false,
       };
     } catch (err: any) {
-      throw new InternalServerError("failed attempt to cancel subscription");
+      throw new InternalServerError(err);
     }
   }
 }

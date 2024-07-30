@@ -42,8 +42,8 @@ export default class UserRepository implements IRepository<User> {
   async updateWithCustomerId(customer_id: string, update: Partial<User>): Promise<User | null | undefined> {
     try {
       return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, update);
-    } catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
   }
   async delete(id: string): Promise<DeleteOutput> {
@@ -55,12 +55,15 @@ export default class UserRepository implements IRepository<User> {
   }
 
   async clearCardDetails(user_id: string) {
-    return await userSchema.findOneAndUpdate({ awscognito_user_id: user_id}, {
-      stripe_card_expire_date: "",
-      stripe_card_id: "",
-      stripe_card_last_digits: "",
-      stripe_card_type: ""
-    })
+    return await userSchema.findOneAndUpdate(
+      { awscognito_user_id: user_id },
+      {
+        stripe_card_expire_date: "",
+        stripe_card_id: "",
+        stripe_card_last_digits: "",
+        stripe_card_type: "",
+      },
+    );
   }
 
   async updateAccountStatus(customer_id: string, status: UserAccountStatus): Promise<User | null> {
