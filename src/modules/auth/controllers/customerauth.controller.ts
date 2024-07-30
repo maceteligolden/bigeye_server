@@ -32,11 +32,12 @@ export default class CustomerAuthController {
 
   async confirmSignUp(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email, confirmationcode } = req.body;
+      const { email, confirmationcode, user_id } = req.body;
 
       const response = await this.customerAuthService.confirmSignup({
         email,
         confirmationcode,
+        userId: user_id
       });
 
       Res({

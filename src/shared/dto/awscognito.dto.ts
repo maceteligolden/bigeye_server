@@ -14,6 +14,7 @@ export type AWSCognitoSignupOutput = {
 
 export type AWSCognitoConfirmSignupInput = {
   email: string;
+  userId: string;
   confirmationcode: string;
 };
 

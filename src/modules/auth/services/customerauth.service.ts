@@ -61,6 +61,9 @@ export default class CustomerAuthService {
   async confirmSignup(args: AWSCognitoConfirmSignupInput): Promise<AWSCognitoConfirmSignupOutput> {
     const response = await this.awsCognito.confirmSignUp(args);
 
+    // change user account status from UNCONFIRMED to ACTIVE
+    await this.userRepository.updateAccountStatus(args.userId, UserAccountStatus.ACTIVE);
+
     //TODO: add logic to confirm user here
     return response;
   }
