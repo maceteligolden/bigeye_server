@@ -77,7 +77,7 @@ export default class FileManagerController {
 
       Res({
         res,
-        code: StatusCodes.CREATED,
+        code: StatusCodes.NO_CONTENT,
         message: "successfully moved object",
       });
     } catch (err: any) {
