@@ -24,6 +24,17 @@ export default class FileManagerRepository implements IRepository<FileManager> {
       throw new InternalServerError("failed to fetch all user objects");
     }
   }
+  async fetchHomeByUserId(user_id: string, skip: number, limit: number, folder?: string): Promise<FileManager[]> {
+    try {
+      if (folder) {
+        return await filemanagerSchema.find({ user: user_id, parent: folder }).skip(skip).limit(limit);
+      } else {
+        return await filemanagerSchema.find({ user: user_id, parent: null }).skip(skip).limit(limit);
+      }
+    } catch (err: any) {
+      throw new InternalServerError("failed to fetch all user objects");
+    }
+  }
   async totalObjectByUser(user_id: string, folder?: string): Promise<number> {
     try {
       if (folder) {
