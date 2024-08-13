@@ -32,7 +32,7 @@ export default class FileManagerService {
 
     const page_count = Math.ceil(totalObject / limitNumber).toString();
 
-    const response = await this.fileManagerRepository.fetchAllByUserId(check_user_id?._id!, skip, limitNumber, folder);
+    const response = await this.fileManagerRepository.fetchHomeByUserId(check_user_id?._id!, skip, limitNumber, folder);
 
     return {
       data: response,

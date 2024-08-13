@@ -29,7 +29,7 @@ export default class FileManagerRepository implements IRepository<FileManager> {
       if (folder) {
         return await filemanagerSchema.find({ user: user_id, parent: folder }).skip(skip).limit(limit);
       } else {
-        return await filemanagerSchema.find({ user: user_id, parent: null }).skip(skip).limit(limit);
+        return await filemanagerSchema.find({ user: user_id, parent: undefined }).skip(skip).limit(limit);
       }
     } catch (err: any) {
       throw new InternalServerError("failed to fetch all user objects");
