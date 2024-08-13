@@ -148,4 +148,24 @@ export default class CustomerAuthController {
       next(e);
     }
   }
+
+  async refreshAccessToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { refresh_token, email } = req.body;
+
+      const response = await this.customerAuthService.refreshToken({
+        email,
+        refresh_token
+      });
+
+      Res({
+        res,
+        code: StatusCodes.OK,
+        message: "successfully refreshed access token",
+        data: response,
+      });
+    } catch (e: any) {
+      next(e);
+    }
+  }
 }

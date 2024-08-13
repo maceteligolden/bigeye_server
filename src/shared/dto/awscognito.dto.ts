@@ -95,3 +95,14 @@ export type AWSCognitoUpdateProfileInput = {
 export type AWSCognitoUpdateProfileOutput = {
   isUpdated: boolean;
 };
+
+export type AWSCognitoRefreshTokenInput = {
+  refresh_token: string;
+  email: string;
+}
+
+export type AWSCognitoRefreshTokenOutput = {
+  access_token: string | undefined;
+  id_token: string | undefined;
+  refresh_token: string | undefined;
+}

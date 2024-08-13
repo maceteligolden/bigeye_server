@@ -31,6 +31,8 @@ import {
   AWSCognitoConfirmSignupOutput,
   AWSCognitoForgotPasswordInput,
   AWSCognitoForgotPasswordOutput,
+  AWSCognitoRefreshTokenInput,
+  AWSCognitoRefreshTokenOutput,
   AWSCognitoResendSignupCodeInput,
   AWSCognitoResendSignupCodeOutput,
   AWSCognitoSignInInput,
@@ -189,14 +191,16 @@ export default class AWSCognito {
     }
   }
 
-  async refreshAccessToken(refresh_token: string): Promise<any> {
+  async refreshAccessToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
     try {
+      const { refresh_token, email } = args;
+      
       const params = {
         AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
         ClientId: `${process.env.AWS_COGNITO_CLIENT_ID}`,
         AuthParameters: {
           REFRESH_TOKEN: refresh_token,
-          SECRET_HASH: await this.aws.generateSecretHash(""),
+          SECRET_HASH: await this.aws.generateSecretHash(email),
         },
       };
 
@@ -204,9 +208,9 @@ export default class AWSCognito {
       const response = await this.client.send(command);
 
       return {
-        accessToken: response.AuthenticationResult?.AccessToken,
-        idToken: response.AuthenticationResult?.IdToken,
-        refreshToken: response.AuthenticationResult?.RefreshToken,
+        access_token: response.AuthenticationResult?.AccessToken,
+        id_token: response.AuthenticationResult?.IdToken,
+        refresh_token: response.AuthenticationResult?.RefreshToken,
       };
     } catch (e: any) {
       throw new InternalServerError(e);

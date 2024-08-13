@@ -26,5 +26,8 @@ customerAuthRouter.post("/forgotpassword", (req: Request, res: Response, next: N
 customerAuthRouter.post("/confirm-forgotpassword", (req: Request, res: Response, next: NextFunction) =>
   customerAuthController.confirmForgotpassword(req, res, next),
 );
+customerAuthRouter.post("/refresh-access-token", (req: Request, res: Response, next: NextFunction) =>
+  customerAuthController.refreshAccessToken(req, res, next),
+);
 
 export default customerAuthRouter;

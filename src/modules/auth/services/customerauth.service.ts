@@ -7,6 +7,8 @@ import {
   AWSCognitoConfirmSignupOutput,
   AWSCognitoForgotPasswordInput,
   AWSCognitoForgotPasswordOutput,
+  AWSCognitoRefreshTokenInput,
+  AWSCognitoRefreshTokenOutput,
   AWSCognitoResendSignupCodeInput,
   AWSCognitoResendSignupCodeOutput,
   AWSCognitoSignInInput,
@@ -89,5 +91,9 @@ export default class CustomerAuthService {
     args: AWSCognitoConfirmForgotPasswordInput,
   ): Promise<AWSCognitoConfirmForgotPasswordOutput> {
     return await this.awsCognito.confirmForgotPassword(args);
+  }
+
+  async refreshToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
+    return await this.awsCognito.refreshAccessToken(args);
   }
 }
