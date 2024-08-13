@@ -68,4 +68,20 @@ export default class FileManagerController {
       next(err);
     }
   }
+
+  async move(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { ids, to } = req.body;
+
+      await this.fileManagerService.moveObjects(ids, to);
+
+      Res({
+        res,
+        code: StatusCodes.CREATED,
+        message: "successfully moved object",
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
 }

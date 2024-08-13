@@ -18,4 +18,8 @@ fileManagerRouter.delete("/", authMiddleware, (req: Request, res: Response, next
   fileManagerController.deleteManyObject(req, res, next),
 );
 
+fileManagerRouter.patch("/move", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  fileManagerController.move(req, res, next),
+);
+
 export default fileManagerRouter;

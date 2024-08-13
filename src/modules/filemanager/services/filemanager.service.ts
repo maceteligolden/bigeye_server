@@ -9,12 +9,14 @@ import {
 } from "../dto";
 import { FileManagerRepository, UserRepository } from "../../../shared/repositories";
 import { BadRequestError, InternalServerError } from "../../../shared/errors";
+import { Database } from "../../../shared/facade";
 
 @injectable()
 export default class FileManagerService {
   constructor(
     private fileManagerRepository: FileManagerRepository,
     private userRepository: UserRepository,
+    private database: Database
   ) {}
 
   async getAllObjects(args: GetAllObjectsInput): Promise<GetAllObjectsOutput> {
@@ -67,5 +69,23 @@ export default class FileManagerService {
     return {
       isDeleted: true,
     };
+  }
+
+  async moveObjects(object_id: string[], to: string): Promise<void> {
+    const checkDestination = await this.fileManagerRepository.fetchOneById(to);
+
+    if (!checkDestination) {
+      throw new BadRequestError("destination not found");
+    }
+
+    object_id.map(async (id, _) => {
+      const moveObject = await this.fileManagerRepository.update(id, {
+        parent: await this.database.convertStringToObjectId(to),
+      });
+
+      if (!moveObject) {
+        throw new BadRequestError("failed to move file");
+      }
+    });
   }
 }
