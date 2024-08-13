@@ -201,6 +201,7 @@ export default class AWSCognito {
         AuthParameters: {
           REFRESH_TOKEN: refresh_token,
           SECRET_HASH: await this.aws.generateSecretHash(email),
+          USERNAME: `${email}`
         },
       };
 
