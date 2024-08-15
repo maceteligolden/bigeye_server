@@ -12,11 +12,11 @@ beforeEach(async () => {
 });
 
 beforeEach(async () => {
-  const collections = await mongoose.connection.db.collections();
+  // const collections = await mongoose.connection.db.collections();
 
-  for (const collection of collections) {
-    await collection.deleteMany({});
-  }
+  // for (const collection of collections) {
+  //   await collection.deleteMany({});
+  // }
 });
 
 afterEach(async () => {
