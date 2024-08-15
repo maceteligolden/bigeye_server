@@ -6,6 +6,7 @@ import { adminPlanRouter, planRouter, subscriptionRouter } from "./modules/subcr
 import { cardRouter } from "./modules/payment/routers";
 import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanager/routers";
 import { accountRouter } from "./modules/account/routes";
+import { codeRouter } from "./modules/records/routes";
 
 export const router = Router({});
 
@@ -68,6 +69,10 @@ export const routes: ServerRouter[] = [
         path: "/plans",
         router: planRouter,
       },
+      {
+        path: "/codes",
+        router: codeRouter
+      }
     ],
   },
   {

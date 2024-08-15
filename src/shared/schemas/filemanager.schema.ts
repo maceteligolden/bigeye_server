@@ -26,7 +26,7 @@ const fileManagerSchema: Schema = new Schema<FileManager>({
   },
   object_type: {
     type: String,
-    enum: [FileManagerObjectTypes.FILE, FileManagerObjectTypes.FOLDER],
+    enum: [FileManagerObjectTypes.FILE, FileManagerObjectTypes.FOLDER, FileManagerObjectTypes.CODE],
     required: true,
   },
   created_at: {

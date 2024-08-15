@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe";
-import { AWSCognito, Stripe } from "../../../shared/facade";
+import { AWSCognito, AWSS3, Stripe } from "../../../shared/facade";
 import {
   AWSCognitoConfirmForgotPasswordInput,
   AWSCognitoConfirmForgotPasswordOutput,
@@ -26,6 +26,7 @@ import { UserAccountStatus } from "../../../shared/constants";
 export default class CustomerAuthService {
   constructor(
     private awsCognito: AWSCognito,
+    private awsS3: AWSS3,
     private userRepository: UserRepository,
     private stripe: Stripe,
   ) {}
@@ -94,6 +95,7 @@ export default class CustomerAuthService {
   }
 
   async refreshToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
+    console.log(await this.awsS3.getFilteredObjects("civil code"));
     return await this.awsCognito.refreshAccessToken(args);
   }
 }
