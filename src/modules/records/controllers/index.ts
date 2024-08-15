@@ -1,5 +1,3 @@
 import CodeController from "./code.controller";
 
-export {
-    CodeController
-}
+export { CodeController };

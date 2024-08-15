@@ -16,6 +16,9 @@ export default class FolderRepository implements IRepository<FileManager> {
   async fetchAllById(id: string): Promise<FileManager[]> {
     return await filemanagerSchema.find({ _id: id });
   }
+  async fetchAllByParent(id: string): Promise<FileManager[]> {
+    return await filemanagerSchema.find({ parent: id });
+  }
   async fetchOneById(id: string): Promise<FileManager | null> {
     return await filemanagerSchema.findOne({ _id: id });
   }

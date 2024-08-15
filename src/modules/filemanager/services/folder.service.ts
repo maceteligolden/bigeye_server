@@ -6,7 +6,7 @@ import {
   RenameFolderInput,
   RenameFolderOutput,
 } from "../dto";
-import { FolderRepository, UserRepository } from "../../../shared/repositories";
+import { FileRepository, FolderRepository, UserRepository } from "../../../shared/repositories";
 import { BadRequestError, InternalServerError, NotFoundError, NotModifiedError } from "../../../shared/errors";
 import { FileManagerObjectTypes } from "../../../shared/constants";
 import { IAction } from "../interfaces";
@@ -17,6 +17,7 @@ import { Database } from "../../../shared/facade";
 export default class FolderService implements IAction {
   constructor(
     private folderRepository: FolderRepository,
+    private fileRepository: FileRepository,
     private userRepository: UserRepository,
     private database: Database,
   ) {}
@@ -39,6 +40,7 @@ export default class FolderService implements IAction {
     });
   }
   async copy(object_id: string, to: string): Promise<void> {
+    
     const checkId = await this.folderRepository.fetchOneById(object_id);
 
     if (!checkId) {
@@ -48,11 +50,11 @@ export default class FolderService implements IAction {
     const checkDestination = await this.folderRepository.fetchOneById(to);
 
     if (!checkDestination) {
-      throw new BadRequestError("destionation not found");
+      throw new BadRequestError("destination not found");
     }
 
     const copyFolder = await this.folderRepository.create({
-      name: checkId.name,
+      name: await this.database.convertStringToObjectId(to) === checkId.parent ? `${checkId.name}copy` : checkId.name,
       object_type: checkId.object_type,
       user: checkId.user,
       parent: checkId.parent,
@@ -62,15 +64,26 @@ export default class FolderService implements IAction {
       throw new BadRequestError("failed to copy folder");
     }
 
-    const childobjects = await this.folderRepository.fetchAllById(object_id);
+    const files = await this.fileRepository.fetchAllByParent(object_id);
 
-    childobjects.map(async (object: FileManager) => {
-      await this.folderRepository.create({
-        name: object.name,
-        object_type: object.object_type,
-        user: object.user,
+   
+
+    files.map(async (file: any) => {
+      
+      await this.fileRepository.create({
+        name: file.name,
+        key: file.key,
+        object_type: FileManagerObjectTypes.FILE,
+        size: file.size,
         parent: await this.database.convertStringToObjectId(copyFolder._id!),
+        user: file.user,
       });
+    });
+
+    const folders = await this.folderRepository.fetchAllByParent(object_id);
+
+    folders.map((folder: any) => {
+      this.copy(folder._id!, copyFolder._id!);
     });
   }
 

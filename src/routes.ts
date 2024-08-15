@@ -71,8 +71,8 @@ export const routes: ServerRouter[] = [
       },
       {
         path: "/codes",
-        router: codeRouter
-      }
+        router: codeRouter,
+      },
     ],
   },
   {

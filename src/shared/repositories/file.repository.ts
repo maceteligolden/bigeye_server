@@ -16,6 +16,9 @@ export default class FileRepository implements IRepository<FileManager> {
   fetchAll(): Promise<FileManager[]> {
     throw new Error("Method not implemented.");
   }
+  async fetchAllByParent(id: string): Promise<FileManager[]> {
+    return await filemanagerSchema.find({ parent: id, object_type: FileManagerObjectTypes.FILE });
+  }
   async fetchOneById(id: string): Promise<FileManager | null> {
     return await filemanagerSchema.findOne({ _id: id });
   }
