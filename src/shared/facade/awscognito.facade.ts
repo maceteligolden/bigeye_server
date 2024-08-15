@@ -1,4 +1,5 @@
 import { injectable } from "tsyringe";
+const crypto = require("crypto");
 import {
   AuthFlowType,
   ChangePasswordCommand,
@@ -194,24 +195,24 @@ export default class AWSCognito {
   async refreshAccessToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
     try {
       const { refresh_token, email } = args;
-      
+  
       const params = {
         AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
-        ClientId: `${process.env.AWS_COGNITO_CLIENT_ID}`,
+        ClientId: process.env.AWS_COGNITO_CLIENT_ID!,
         AuthParameters: {
           REFRESH_TOKEN: refresh_token,
-          SECRET_HASH: await this.aws.generateSecretHash(email),
-          USERNAME: `${email}`
+          SECRET_HASH: process.env.AWS_COGNITO_SECRETHASH!,
+          USERNAME: email,  // Important: Add USERNAME to the parameters
         },
       };
-
+  
       const command = new InitiateAuthCommand(params);
       const response = await this.client.send(command);
-
+  
       return {
         access_token: response.AuthenticationResult?.AccessToken,
         id_token: response.AuthenticationResult?.IdToken,
-        refresh_token: response.AuthenticationResult?.RefreshToken,
+        refresh_token: response.AuthenticationResult?.RefreshToken || refresh_token, // Reuse the existing refresh token if not returned
       };
     } catch (e: any) {
       throw new InternalServerError(e);

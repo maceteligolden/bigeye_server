@@ -16,7 +16,7 @@ export default class FileManagerService {
   constructor(
     private fileManagerRepository: FileManagerRepository,
     private userRepository: UserRepository,
-    private database: Database
+    private database: Database,
   ) {}
 
   async getAllObjects(args: GetAllObjectsInput): Promise<GetAllObjectsOutput> {

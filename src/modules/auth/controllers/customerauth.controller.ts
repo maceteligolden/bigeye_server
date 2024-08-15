@@ -37,7 +37,7 @@ export default class CustomerAuthController {
       const response = await this.customerAuthService.confirmSignup({
         email,
         confirmationcode,
-        userId: user_id
+        userId: user_id,
       });
 
       Res({
@@ -155,7 +155,7 @@ export default class CustomerAuthController {
 
       const response = await this.customerAuthService.refreshToken({
         email,
-        refresh_token
+        refresh_token,
       });
 
       Res({

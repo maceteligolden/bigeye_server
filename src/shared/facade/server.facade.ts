@@ -178,9 +178,7 @@ export default class Server implements IServer {
         case "payment_intent.canceled":
           const PaymentIntentCancelledData = event.data.object;
 
-          await this.userRepository.fetchOneByCustomerId(
-            PaymentIntentCancelledData.customer,
-          );
+          await this.userRepository.fetchOneByCustomerId(PaymentIntentCancelledData.customer);
 
           await this.subscriptionRepository.updateByStripeSubId(PaymentIntentCancelledData.id);
 
