@@ -195,20 +195,20 @@ export default class AWSCognito {
   async refreshAccessToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
     try {
       const { refresh_token, email } = args;
-  
+
       const params = {
         AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
         ClientId: process.env.AWS_COGNITO_CLIENT_ID!,
         AuthParameters: {
           REFRESH_TOKEN: refresh_token,
           SECRET_HASH: process.env.AWS_COGNITO_SECRETHASH!,
-          USERNAME: email,  // Important: Add USERNAME to the parameters
+          USERNAME: email, // Important: Add USERNAME to the parameters
         },
       };
-  
+
       const command = new InitiateAuthCommand(params);
       const response = await this.client.send(command);
-  
+
       return {
         access_token: response.AuthenticationResult?.AccessToken,
         id_token: response.AuthenticationResult?.IdToken,

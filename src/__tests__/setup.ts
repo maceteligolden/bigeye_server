@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 
-let mongo: any;
+let mongo: MongoMemoryServer;
 
 beforeEach(async () => {
   const mongo = await MongoMemoryServer.create();
