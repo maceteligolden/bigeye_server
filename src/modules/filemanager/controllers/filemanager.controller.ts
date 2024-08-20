@@ -84,4 +84,20 @@ export default class FileManagerController {
       next(err);
     }
   }
+
+  async copy(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { object_ids, to } = req.body;
+
+      await this.fileManagerService.copyObjects(object_ids, to);
+
+      Res({
+        res,
+        code: StatusCodes.CREATED,
+        message: "successfully copied folder",
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
 }

@@ -22,4 +22,8 @@ fileManagerRouter.patch("/move", authMiddleware, (req: Request, res: Response, n
   fileManagerController.move(req, res, next),
 );
 
+fileManagerRouter.patch("/copy", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  fileManagerController.copy(req, res, next),
+);
+
 export default fileManagerRouter;

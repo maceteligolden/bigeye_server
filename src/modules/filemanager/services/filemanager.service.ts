@@ -88,4 +88,32 @@ export default class FileManagerService {
       }
     });
   }
+
+  async copyObjects(object_ids: string[], to: string): Promise<void> {
+    const checkDestination = await this.fileManagerRepository.fetchOneById(to);
+
+    if (!checkDestination) {
+      throw new BadRequestError("destination not found");
+    }
+
+    const copyFolder = await this.fileManagerRepository.create({
+      name: (await this.database.convertStringToObjectId(to)) === checkDestination.parent ? `${checkDestination.name}copy` : checkDestination.name,
+      object_type: checkDestination.object_type,
+      user: checkDestination.user,
+      parent: await this.database.convertStringToObjectId(to)
+    });
+
+    if (!copyFolder) {
+      throw new BadRequestError("failed to copy folder");
+    }
+    
+    object_ids.map(async (object_id)=> {
+      const folders = await this.fileManagerRepository.fetchAllByParent(object_id);
+
+      folders.map((folder: any) => {
+        this.copyObjects(folder._id!, copyFolder._id!);
+      });
+    });
+
+  }
 }

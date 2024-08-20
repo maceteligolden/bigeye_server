@@ -49,6 +49,9 @@ export default class FileManagerRepository implements IRepository<FileManager> {
   async fetchOneById(id: string): Promise<FileManager | null> {
     return await filemanagerSchema.findOne({ _id: id });
   }
+  async fetchAllByParent(id: string): Promise<FileManager[]> {
+    return await filemanagerSchema.find({ parent: id });
+  }
   async update(id: string, update: Partial<FileManager>): Promise<FileManager | null> {
     return await filemanagerSchema.findOneAndUpdate({ _id: id }, update);
   }

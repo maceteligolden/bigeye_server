@@ -40,7 +40,6 @@ export default class FolderService implements IAction {
     });
   }
   async copy(object_id: string, to: string): Promise<void> {
-    
     const checkId = await this.folderRepository.fetchOneById(object_id);
 
     if (!checkId) {
@@ -54,7 +53,7 @@ export default class FolderService implements IAction {
     }
 
     const copyFolder = await this.folderRepository.create({
-      name: await this.database.convertStringToObjectId(to) === checkId.parent ? `${checkId.name}copy` : checkId.name,
+      name: (await this.database.convertStringToObjectId(to)) === checkId.parent ? `${checkId.name}copy` : checkId.name,
       object_type: checkId.object_type,
       user: checkId.user,
       parent: checkId.parent,
@@ -66,10 +65,7 @@ export default class FolderService implements IAction {
 
     const files = await this.fileRepository.fetchAllByParent(object_id);
 
-   
-
     files.map(async (file: any) => {
-      
       await this.fileRepository.create({
         name: file.name,
         key: file.key,
