@@ -2,6 +2,7 @@ import FileManager from "./filemanager.entity";
 import { Chat, Message } from "./chat.entity";
 import Plan from "./plan.entity";
 import Subscription from "./subscription.entity";
+import Transaction from "./transaction.entity";
 import User from "./user.entity";
 import Websocket from "./websocket.entity";
 import Feature from "./feature.entity";
@@ -16,5 +17,6 @@ export {
     Chat, 
     Websocket, 
     Feature, 
-    Invoice 
+    Invoice,
+    Transaction
 };
