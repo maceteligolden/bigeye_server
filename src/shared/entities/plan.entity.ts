@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Base } from "./base.entity";
 
 export default interface Plan extends Base {
@@ -5,4 +6,5 @@ export default interface Plan extends Base {
   amount: string;
   stripe_plan_id: string;
   stripe_price_id: string;
+  features: [mongoose.Types.ObjectId]
 }
