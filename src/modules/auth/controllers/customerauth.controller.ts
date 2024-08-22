@@ -72,11 +72,12 @@ export default class CustomerAuthController {
 
   async signIn(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email, password } = req.body;
+      const { email, password, device_token } = req.body;
 
       const response = await this.customerAuthService.signIn({
         email,
         password,
+        device_token,
       });
 
       Res({

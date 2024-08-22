@@ -7,6 +7,9 @@ const userSchema: Schema = new Schema<User>({
     type: String,
     required: true,
   },
+  device_token: {
+    type: String,
+  },
   stripe_customer_id: {
     type: String,
   },

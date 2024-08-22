@@ -21,6 +21,9 @@ import {
 import { UserRepository } from "../../../shared/repositories";
 import { BadRequestError, InternalServerError } from "../../../shared/errors";
 import { UserAccountStatus } from "../../../shared/constants";
+import { CustomerSignInInput, CustomerSignInOutput } from "../dto";
+import { NotificationService } from "../../../shared/services";
+import { PushNotificationStrategy } from "../../../shared/strategies";
 
 @injectable()
 export default class CustomerAuthService {
@@ -29,6 +32,8 @@ export default class CustomerAuthService {
     private awsS3: AWSS3,
     private userRepository: UserRepository,
     private stripe: Stripe,
+    private notificationService: NotificationService,
+    private pushNotificatonStrategy: PushNotificationStrategy,
   ) {}
 
   async signUp(args: AWSCognitoSignupInput): Promise<AWSCognitoSignupOutput> {
@@ -74,8 +79,13 @@ export default class CustomerAuthService {
   async resendConfirmSignup(args: AWSCognitoResendSignupCodeInput): Promise<AWSCognitoResendSignupCodeOutput> {
     return await this.awsCognito.resendSignupConfirmationCode(args);
   }
-  async signIn(args: AWSCognitoSignInInput): Promise<AWSCognitoSignInOutput> {
-    const response = await this.awsCognito.signIn(args);
+  async signIn(args: CustomerSignInInput): Promise<CustomerSignInOutput> {
+    const { email, password, device_token } = args;
+
+    const response = await this.awsCognito.signIn({
+      email,
+      password,
+    });
 
     return response;
   }
@@ -95,7 +105,6 @@ export default class CustomerAuthService {
   }
 
   async refreshToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
-    console.log(await this.awsS3.getFilteredObjects("civil code"));
     return await this.awsCognito.refreshAccessToken(args);
   }
 }
