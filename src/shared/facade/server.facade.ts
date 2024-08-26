@@ -7,9 +7,9 @@ import { ServerRoute } from "../interfaces/server.interface";
 import { Database, Stripe as StripeFacade } from ".";
 import { cors, errorMiddleware } from "../middlewares";
 import { Res } from "../helper";
-import { StatusCodes, SubscriptionStatus, UserAccountStatus } from "../constants";
+import { InvoiceStatus, StatusCodes, SubscriptionStatus, TransactionProcessor, TransactionStatus, TransactionType, UserAccountStatus } from "../constants";
 import { BadRequestError, InternalServerError } from "../errors";
-import { PlanRepository, SubscriptionRepository, UserRepository } from "../repositories";
+import { InvoiceRepository, PlanRepository, SubscriptionRepository, TransactionRepository, UserRepository } from "../repositories";
 import Stripe from "stripe";
 import { PushNotificationStrategy } from "../strategies";
 import { PushNotificationInput } from "../dto";
@@ -22,6 +22,8 @@ export default class Server implements IServer {
   private subscriptionRepository: SubscriptionRepository;
   private planRepository: PlanRepository;
   private userRepository: UserRepository;
+  private invoiceRepository: InvoiceRepository;
+  private transactionRepository: TransactionRepository;
   private stripeFacade: StripeFacade;
   private notificationService: NotificationService;
   private pushNotificationStrategy: PushNotificationStrategy;
@@ -33,6 +35,8 @@ export default class Server implements IServer {
     this.subscriptionRepository = container.resolve(SubscriptionRepository);
     this.userRepository = container.resolve(UserRepository);
     this.planRepository = container.resolve(PlanRepository);
+    this.invoiceRepository = container.resolve(InvoiceRepository);
+    this.transactionRepository = container.resolve(TransactionRepository);
     this.database = container.resolve(Database);
     this.stripeFacade = container.resolve(StripeFacade);
     this.notificationService = container.resolve(NotificationService);
@@ -117,7 +121,7 @@ export default class Server implements IServer {
             user: userId,
             plan: planId,
             stripe_subscription_id: id,
-            status: SubscriptionStatus.ACTIVE,
+            status: SubscriptionStatus.INCOMPLETE,
             start_date: new Date(current_period_start),
             end_date: new Date(current_period_end),
             amount: Number(items.data[0].plan.amount).toString(),
@@ -128,10 +132,6 @@ export default class Server implements IServer {
               awsId: userData?.awscognito_user_id,
             });
           }
-
-          const update = await this.userRepository.update(userData?._id!, {
-            active_plan: planId,
-          });
 
           await this.loggerService.log("successfully subscribed customer to a plan", {
             awsId: userData?.awscognito_user_id,
@@ -189,18 +189,21 @@ export default class Server implements IServer {
           const {} = event.data.object;
           break;
         case "payment_intent.created":
-          const {} = event.data.object;
+          const paymentIntentCreatedData = event.data.object;
+
+          const invoice = await this.invoiceRepository.fetchOneByStripeId(paymentIntentCreatedData.invoice)
+
+          await this.transactionRepository.create({
+            amount: Number(paymentIntentCreatedData.amount_received).toString(),
+            status: TransactionStatus.PENDING,
+            processor: TransactionProcessor.STRIPE,
+            invoice_id: await this.database.convertStringToObjectId(invoice?._id!),
+            type: TransactionType.BILL
+          })
           break;
         case "payment_intent.canceled":
-          const PaymentIntentCancelledData = event.data.object;
+          const paymentIntentCancelledData = event.data.object;
 
-          await this.userRepository.fetchOneByCustomerId(PaymentIntentCancelledData.customer);
-
-          await this.subscriptionRepository.updateByStripeSubId(PaymentIntentCancelledData.id);
-
-          await this.userRepository.update(PaymentIntentCancelledData?._id!, {
-            active_plan: undefined,
-          });
           break;
         case "payment_intent.payment_failed":
           const {} = event.data.object;
@@ -226,22 +229,62 @@ export default class Server implements IServer {
         case "price.updated":
           const {} = event.data.object;
           break;
-        case "subscription_schedule.canceled":
-          const SubscriptionScheduleCanceledData = event.data.object;
+        case "invoice.created":
+            const invoiceCreatedData = event.data.object;
+  
+            const sub = await this.subscriptionRepository.fetchOneStripeSub(invoiceCreatedData.subcription);
+  
+            await this.invoiceRepository.create({
+              amount: invoiceCreatedData.amount_remaining,
+              subscription_id: await this.database.convertStringToObjectId(sub?._id!),
+              stripe_invoice_id: invoiceCreatedData.id,
+              status: InvoiceStatus.DRAFT
+            })
+  
+            break;
+        case "invoice.finalized":
+          const invoiceFinalizedData = event.data.object;
 
-          const subscriptionScheduleUserData = await this.userRepository.fetchOneByCustomerId(
-            SubscriptionScheduleCanceledData.customer,
-          );
-
-          await this.subscriptionRepository.updateByStripeSubId(SubscriptionScheduleCanceledData.id);
-
-          await this.userRepository.update(subscriptionScheduleUserData?._id!, {
-            active_plan: undefined,
+          await this.invoiceRepository.updateByStripeSub(invoiceFinalizedData.subscription, {
+            amount: Number(invoiceFinalizedData.amount_remaining).toString(),
+            status: InvoiceStatus.OPEN
           });
 
           break;
-        case "subscription_schedule.completed":
-          const {} = event.data.object;
+        case "invoice.finalization_failed":
+          const invoiceFinalizationFailedData = event.data.object;
+
+          await this.invoiceRepository.updateByStripeSub(invoiceFinalizationFailedData.subscription, {
+            amount: Number(invoiceFinalizationFailedData.amount_remaining).toString(),
+            status: InvoiceStatus.UNCOLLECTIBLE
+          });
+
+          break;
+        case "invoice.paid":
+          const invoicePaidData = event.data.object;
+
+          await this.invoiceRepository.updateByStripeSub(invoicePaidData.subscription, {
+            amount: Number(invoicePaidData.amount_remaining).toString(),
+            status: InvoiceStatus.PAID
+          });
+
+          await this.subscriptionRepository.updateByStripeSubId(invoicePaidData.subscription, {
+            status: SubscriptionStatus.ACTIVE
+          });
+
+          //TODO: subscription is now active
+          await this.transactionRepository.updateByStripeSub(invoicePaidData.subscription, {
+            status: TransactionStatus.SUCCESS
+          })
+
+          break;
+        case "invoice.payment_failed":
+          const invoicePaymentFailedData = event.data.object;
+
+          await this.transactionRepository.updateByStripeSub(invoicePaidData.subscription, {
+            status: TransactionStatus.FAILED
+          });
+
           break;
         case "subscription_schedule.created":
           const {} = event.data.object;

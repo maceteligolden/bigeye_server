@@ -13,6 +13,7 @@ const transactionSchema: Schema = new Schema<Transaction>({
         TransactionStatus.FAILED,
         TransactionStatus.PENDING,
         TransactionStatus.SUCCESS,
+        TransactionStatus.CANCELLED
     ]
   },
   invoice_id: {

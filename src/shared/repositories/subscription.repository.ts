@@ -19,18 +19,19 @@ export default class SubscriptionRepository implements IRepository<Subscription>
   async fetchByPriceId(id: string): Promise<Subscription | null> {
     return await subscriptionSchema.findOne({ plan: id });
   }
+  async fetchOneStripeSub(id: string): Promise<Subscription | null> {
+    return await subscriptionSchema.findOne({ stripe_subscription_id: id });
+  }
   async fetchActiveByUserId(user_id: string): Promise<Subscription | null> {
     return await subscriptionSchema.findOne({ user: user_id, status: SubscriptionStatus.ACTIVE });
   }
   async update(id: string, update: Partial<Subscription>): Promise<Subscription | null> {
     return await subscriptionSchema.findOneAndUpdate({ _id: id }, update);
   }
-  async updateByStripeSubId(id: string): Promise<Subscription | null> {
+  async updateByStripeSubId(id: string, update: Partial<Subscription>): Promise<Subscription | null> {
     return await subscriptionSchema.findOneAndUpdate(
       { stripe_subscription_id: id },
-      {
-        status: SubscriptionStatus.CANCELLED,
-      },
+      update
     );
   }
   async delete(id: string): Promise<DeleteOutput> {

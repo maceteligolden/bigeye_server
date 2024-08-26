@@ -39,14 +39,10 @@ export default class SubscriptionService {
 
     const { stripe_price_id } = checkPlan;
 
-    if (checkUser.active_plan) {
-      // get current subscription id
-      const subscription = await this.subscriptionRepository.fetchActiveByUserId(checkUser._id!);
+    const subscription = await this.subscriptionRepository.fetchActiveByUserId(checkUser._id!);
 
-      // cancel plan from stripe
-      await this.stripe.cancelSubscription({
-        subscription_id: subscription?.stripe_subscription_id!,
-      });
+    if (subscription) {
+      throw new BadRequestError("cannot have 2 active subscription. maybe update your subscription plan")
     }
     // create subscription using stripe facade
     const { subscription_id } = await this.stripe.createSubscription({

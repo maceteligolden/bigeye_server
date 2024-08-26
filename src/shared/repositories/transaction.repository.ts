@@ -19,6 +19,12 @@ export default class TransactionRepository implements IRepository<Transaction> {
     update(id: string, update: Partial<Transaction>): Promise<Transaction | null> {
         throw new Error("Method not implemented.");
     }
+    updateByStripeSub(id: string, update: Partial<Transaction>): Promise<Transaction | null> {
+        throw new Error("Method not implemented.");
+    }
+    updateBy(id: string, update: Partial<Transaction>): Promise<Transaction | null> {
+        throw new Error("Method not implemented.");
+    }
     delete(id: string): Promise<DeleteOutput> {
         throw new Error("Method not implemented.");
     }

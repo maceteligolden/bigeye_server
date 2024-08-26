@@ -7,7 +7,7 @@ export default class InvoiceRepository implements IRepository<Invoice> {
     constructor() {
 
     }
-    
+
     create(args: Invoice): Promise<Invoice> {
         throw new Error("Method not implemented.");
     }
@@ -17,7 +17,13 @@ export default class InvoiceRepository implements IRepository<Invoice> {
     fetchOneById(id: string): Promise<Invoice | null> {
         throw new Error("Method not implemented.");
     }
+    fetchOneByStripeId(id: string): Promise<Invoice | null> {
+        throw new Error("Method not implemented.");
+    }
     update(id: string, update: Partial<Invoice>): Promise<Invoice | null> {
+        throw new Error("Method not implemented.");
+    }
+    updateByStripeSub(id: string, update: Partial<Invoice>): Promise<Invoice | null> {
         throw new Error("Method not implemented.");
     }
     delete(id: string): Promise<DeleteOutput> {
