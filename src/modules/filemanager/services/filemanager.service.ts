@@ -71,22 +71,25 @@ export default class FileManagerService {
     };
   }
 
-  async moveObjects(object_id: string[], to: string): Promise<void> {
-    const checkDestination = await this.fileManagerRepository.fetchOneById(to);
+  async moveObjects(object_id: string[], to?: string): Promise<void> {
+    if(to){
+      const checkDestination = await this.fileManagerRepository.fetchOneById(to);
 
-    if (!checkDestination) {
-      throw new BadRequestError("destination not found");
+      if (!checkDestination) {
+        throw new BadRequestError("destination not found");
+      }
     }
 
     object_id.map(async (id, _) => {
       const moveObject = await this.fileManagerRepository.update(id, {
-        parent: await this.database.convertStringToObjectId(to),
+        parent: to ? await this.database.convertStringToObjectId(to) : undefined,
       });
 
       if (!moveObject) {
         throw new BadRequestError("failed to move file");
       }
     });
+
   }
 
   async copyObjects(object_ids: string[], to: string): Promise<void> {
