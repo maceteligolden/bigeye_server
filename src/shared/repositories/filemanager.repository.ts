@@ -46,6 +46,14 @@ export default class FileManagerRepository implements IRepository<FileManager> {
       throw new InternalServerError("failed to get total object count for user");
     }
   }
+  async fetchObjectByName(name: string, user_id: string): Promise<FileManager | null> {
+    const response = await filemanagerSchema.findOne({
+      name,
+      user: user_id
+    });
+
+    return response;
+  }
   async fetchOneById(id: string): Promise<FileManager | null> {
     return await filemanagerSchema.findOne({ _id: id });
   }

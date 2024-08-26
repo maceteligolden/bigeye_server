@@ -6,9 +6,11 @@ import {
   DeleteObjectOutput,
   GetAllObjectsInput,
   GetAllObjectsOutput,
+  RenameFileInput,
+  RenameFileOutput,
 } from "../dto";
 import { FileManagerRepository, UserRepository } from "../../../shared/repositories";
-import { BadRequestError, InternalServerError } from "../../../shared/errors";
+import { BadRequestError, InternalServerError, NotModifiedError } from "../../../shared/errors";
 import { Database } from "../../../shared/facade";
 
 @injectable()
@@ -120,5 +122,37 @@ export default class FileManagerService {
         this.copyObjects(folder._id!, copyFolder._id!);
       });
     });
+  }
+
+  async rename(args: RenameFileInput): Promise<RenameFileOutput> {
+    const { name, file_id, user_id } = args;
+
+    const user = await this.userRepository.fetchOneByCognitoId(user_id);
+
+    if (!user) {
+      throw new BadRequestError("account not found");
+    }
+
+    await this.checkFileName(name, user._id!);
+
+    const renameFile = await this.fileManagerRepository.update(file_id, {
+      name,
+    });
+
+    if (!renameFile) {
+      throw new NotModifiedError("failed to rename file");
+    }
+
+    return {
+      data: renameFile,
+    };
+  }
+
+  async checkFileName(name: string, user_id: string): Promise<void> {
+    const checkName = await this.fileManagerRepository.fetchObjectByName(name, user_id);
+
+    if (checkName) {
+      throw new BadRequestError("file name taken");
+    }
   }
 }
