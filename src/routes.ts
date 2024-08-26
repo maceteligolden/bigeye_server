@@ -7,6 +7,7 @@ import { cardRouter } from "./modules/payment/routers";
 import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanager/routers";
 import { accountRouter } from "./modules/account/routes";
 import { codeRouter } from "./modules/records/routes";
+import aiRouter from "./modules/ai/ai.router";
 
 export const router = Router({});
 
@@ -72,6 +73,10 @@ export const routes: ServerRouter[] = [
       {
         path: "/codes",
         router: codeRouter,
+      },
+      {
+        path: "/ai",
+        router: aiRouter,
       },
     ],
   },
