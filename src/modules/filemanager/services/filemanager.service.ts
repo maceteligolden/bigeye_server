@@ -74,7 +74,7 @@ export default class FileManagerService {
   }
 
   async moveObjects(object_id: string[], to?: string): Promise<void> {
-    if(to){
+    if (to) {
       const checkDestination = await this.fileManagerRepository.fetchOneById(to);
 
       if (!checkDestination) {
@@ -91,7 +91,6 @@ export default class FileManagerService {
         throw new BadRequestError("failed to move file");
       }
     });
-
   }
 
   async copyObjects(object_ids: string[], to: string): Promise<void> {

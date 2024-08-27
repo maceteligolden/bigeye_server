@@ -49,7 +49,7 @@ export default class FileManagerRepository implements IRepository<FileManager> {
   async fetchObjectByName(name: string, user_id: string): Promise<FileManager | null> {
     const response = await filemanagerSchema.findOne({
       name,
-      user: user_id
+      user: user_id,
     });
 
     return response;
