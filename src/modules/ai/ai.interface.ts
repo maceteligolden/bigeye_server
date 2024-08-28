@@ -1,6 +1,7 @@
 export interface SendPromptInput {
   message: string;
   chat_id: string;
+  from: string;
 }
 
 export interface Message {

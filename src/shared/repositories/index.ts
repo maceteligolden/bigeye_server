@@ -5,6 +5,7 @@ import FolderRepository from "./folder.repository";
 import PlanRepository from "./plan.repository";
 import SubscriptionRepository from "./subscription.repository";
 import UserRepository from "./user.repository";
+import WebsocketRepository from "./websocket.repository";
 
 export {
   UserRepository,
@@ -14,4 +15,5 @@ export {
   FolderRepository,
   FileManagerRepository,
   ChatRepository,
+  WebsocketRepository
 };
