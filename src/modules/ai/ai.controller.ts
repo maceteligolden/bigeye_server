@@ -11,9 +11,11 @@ export default class AIController {
 
   async prompt(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { message, chat_id } = req.body;
+      const { message, chat_id, from } = req.body;
 
-      const data = await this.aiSservice.sendPrompt({ message, chat_id });
+      const { sub } = req.user;
+
+      const data = await this.aiSservice.sendPrompt({ message, chat_id, from: sub });
 
       Res({
         res,

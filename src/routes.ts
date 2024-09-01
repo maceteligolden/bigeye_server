@@ -8,6 +8,7 @@ import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanag
 import { accountRouter } from "./modules/account/routes";
 import { codeRouter } from "./modules/records/routes";
 import aiRouter from "./modules/ai/ai.router";
+import chatRouter from "./modules/chat/chat.router";
 
 export const router = Router({});
 
@@ -73,6 +74,10 @@ export const routes: ServerRouter[] = [
       {
         path: "/codes",
         router: codeRouter,
+      },
+      {
+        path: "/chat",
+        router: chatRouter
       },
       {
         path: "/ai",

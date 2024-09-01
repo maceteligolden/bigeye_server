@@ -15,5 +15,5 @@ export {
   FolderRepository,
   FileManagerRepository,
   ChatRepository,
-  WebsocketRepository
+  WebsocketRepository,
 };

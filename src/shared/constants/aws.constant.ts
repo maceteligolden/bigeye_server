@@ -7,4 +7,10 @@ export enum AWSServices {
   SQS = "sqs",
 }
 
+export enum WebsocketEvent {
+  NOTIFICATION = "NOTIFICATION",
+  TICKET = "TICKET",
+  MESSAGE = "MESSAGE",
+}
+
 export enum AWSSESTemplates {}

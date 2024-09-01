@@ -1,4 +1,4 @@
-import { AWSSESTemplates, AWSSNSTargetARN, AWSServices } from "./aws.constant";
+import { AWSSESTemplates, AWSSNSTargetARN, AWSServices, WebsocketEvent } from "./aws.constant";
 import { FileManagerObjectTypes } from "./filemanager.constant";
 import { StatusCodes } from "./server.constant";
 import { StripeCurriencies, StripePaymentMethodType } from "./stripe.constant";
@@ -8,6 +8,7 @@ import { UserAccountStatus, UserRoles } from "./user.constant";
 export {
   UserRoles,
   StatusCodes,
+  WebsocketEvent,
   AWSSNSTargetARN,
   AWSServices,
   AWSSESTemplates,

@@ -2,10 +2,11 @@ import { injectable } from "tsyringe";
 import axios from "axios";
 import { stringify } from "flatted";
 import { Message, SendPromptInput } from "./ai.interface";
-import { ChatRepository, UserRepository } from "../../shared/repositories";
+import { ChatRepository, UserRepository, WebsocketRepository } from "../../shared/repositories";
 import { Chat } from "../../shared/entities";
 import { BadRequestError } from "../../shared/errors";
-import { Database } from "../../shared/facade";
+import { AWSWebsocket, Database } from "../../shared/facade";
+import { WebsocketEvent } from "../../shared/constants";
 
 @injectable()
 export default class AIService {
@@ -14,12 +15,20 @@ export default class AIService {
   constructor(
     private chatRepository: ChatRepository,
     private userRepository: UserRepository,
+    private websocketRepository: WebsocketRepository,
+    private awsWebsocket: AWSWebsocket,
     private database: Database,
   ) {}
 
   async sendPrompt(args: SendPromptInput): Promise<any> {
-    if (!this.messages) {
-      await this.getChat(args.chat_id);
+    // if (!this.messages) {
+    //   await this.getChat(args.chat_id);
+    // }
+
+    const user = await this.userRepository.fetchOneByCognitoId(args.from);
+
+    if (!user) {
+      throw new BadRequestError("failed to find user");
     }
 
     const data = await axios.post("https://test.api.newtonslaw.net/ask-newton", {
@@ -31,9 +40,43 @@ export default class AIService {
       ],
     });
 
-    //TODO: save ai comment to db
+    // await this.chatRepository.addNewMessage(args.chat_id, args.message, "user");
 
-    return stringify(data.data);
+    let response = stringify(data.data);
+
+    const response_content = await this.extractContent(response);
+
+    console.log(response_content);
+
+    //TODO: save ai comment to db
+    const websocket = await this.websocketRepository.getConnectionId(user._id!);
+
+    if (!websocket) {
+      throw new BadRequestError("failed to find user connection id");
+    }
+
+    this.awsWebsocket.send(websocket.connectionId!, WebsocketEvent.MESSAGE, response_content);
+  }
+
+  extractContent(jsonString: string): string[] {
+    const contents: string[] = [];
+
+    // First, let's clean up and parse the JSON string
+    const cleanedString = jsonString.replace(/\\"/g, '"').replace(/\\n/g, "\n");
+    const dataObjects = JSON.parse(cleanedString);
+
+    // Traverse the dataObjects to find content
+    dataObjects.forEach((data: any) => {
+      if (data.choices) {
+        data.choices.forEach((choice: any) => {
+          if (choice.delta && choice.delta.content) {
+            contents.push(choice.delta.content);
+          }
+        });
+      }
+    });
+
+    return contents;
   }
 
   async getChat(chat_id: string): Promise<Chat> {

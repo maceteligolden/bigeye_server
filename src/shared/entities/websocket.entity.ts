@@ -1,4 +1,4 @@
 export default interface Websocket {
-    userId?: string;
-    connectionId?: string;
+  userId?: string;
+  connectionId?: string;
 }
