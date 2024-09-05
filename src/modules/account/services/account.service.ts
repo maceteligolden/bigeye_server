@@ -1,10 +1,11 @@
 import { injectable } from "tsyringe";
 import { AWSCognito } from "../../../shared/facade";
 import { AWSCognitoGetProfileOutput, ChangepasswordInput, ChangepasswordOutput } from "../../../shared/dto";
-import { DeleteAccountInput, DeleteAccountOutput, UpdateProfileInput, UpdateProfileOutput } from "../dto";
+import { ChangeLanguagePreferenceInput, ChangeLanguagePreferenceOutput, DeleteAccountInput, DeleteAccountOutput, UpdateProfileInput, UpdateProfileOutput } from "../dto";
 import { FileManagerRepository, UserRepository } from "../../../shared/repositories";
 import { LoggerService } from "../../../shared/services";
 import { GetProfileOutput } from "../interfaces";
+import { BadRequestError } from "../../../shared/errors";
 
 @injectable()
 export default class AccountService {
@@ -71,5 +72,28 @@ export default class AccountService {
     return {
       isUpdated: deleteCognitoUser.isUpdated,
     };
+  }
+
+  async changeLanguagePreference(args: ChangeLanguagePreferenceInput): Promise<ChangeLanguagePreferenceOutput> {
+
+    const { language, awsId } = args;
+
+    const user = await this.userRepository.fetchOneByCognitoId(awsId);
+
+    if(!user){
+      throw new BadRequestError("failed to find user")
+    }
+
+    const updateLanguage = await this.userRepository.update(user?._id!, {
+      language_preference: language
+    })
+
+    if(!updateLanguage){
+      throw new BadRequestError("failed to update language preferences")
+    }
+
+    return {
+      isChanged: true
+    }
   }
 }

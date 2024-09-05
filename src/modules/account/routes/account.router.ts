@@ -22,4 +22,8 @@ accountRouter.patch("/update-profile", authMiddleware, (req: Request, res: Respo
   accountController.updateAccount(req, res, next),
 );
 
+accountRouter.patch("/update-language-preferences", authMiddleware, (req: Request, res: Response, next: NextFunction) =>
+  accountController.updateLanguagePreference(req, res, next),
+);
+
 export default accountRouter;

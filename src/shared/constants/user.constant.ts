@@ -8,3 +8,8 @@ export enum UserAccountStatus {
   UNCONFIRM = "UNCONFIRM",
   INCOMPLETE = "INCOMPLETE",
 }
+
+export enum UserLanguagePreference {
+  EN = "en",
+  ES = "es"
+}

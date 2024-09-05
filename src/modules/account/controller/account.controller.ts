@@ -70,6 +70,28 @@ export default class AccountController {
     }
   }
 
+  async updateLanguagePreference(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+
+      const { sub } = req.user;
+      const { language } = req.body;
+
+      const response = await this.accountService.changeLanguagePreference({
+        language,
+        awsId: sub
+      })
+
+      Res({
+        res,
+        message: "successfully updated language preference",
+        code: StatusCodes.OK,
+        data: response,
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
+
   async updateAccount(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const accessToken = req.headers.authorization?.split(" ")[1];

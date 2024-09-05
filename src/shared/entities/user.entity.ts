@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Base } from "./base.entity";
-import { UserAccountStatus } from "../constants";
+import { UserAccountStatus, UserLanguagePreference } from "../constants";
 
 export default interface User extends Base {
   awscognito_user_id?: string;
@@ -13,4 +13,5 @@ export default interface User extends Base {
   active_plan?: mongoose.Types.ObjectId; // filled only when user has an active plan
   status?: UserAccountStatus;
   isFirstLogin?: boolean;
+  language_preference?: UserLanguagePreference;
 }

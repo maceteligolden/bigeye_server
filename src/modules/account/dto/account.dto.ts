@@ -1,3 +1,4 @@
+import { UserLanguagePreference } from "../../../shared/constants";
 import { AWSCognitoUpdateProfileInput, AWSCognitoUpdateProfileOutput } from "../../../shared/dto";
 
 export type DeleteAccountInput = {
@@ -25,3 +26,12 @@ export type UpdateProfileInput = {
 } & AWSCognitoUpdateProfileInput;
 
 export type UpdateProfileOutput = {} & AWSCognitoUpdateProfileOutput;
+
+export type ChangeLanguagePreferenceInput = {
+  language: UserLanguagePreference;
+  awsId: string;
+}
+
+export type ChangeLanguagePreferenceOutput = {
+  isChanged: boolean;
+}

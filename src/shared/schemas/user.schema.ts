@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { User } from "../entities";
-import { UserAccountStatus } from "../constants";
+import { UserAccountStatus, UserLanguagePreference } from "../constants";
 
 const userSchema: Schema = new Schema<User>({
   awscognito_user_id: {
@@ -28,6 +28,11 @@ const userSchema: Schema = new Schema<User>({
   active_plan: {
     type: Schema.Types.ObjectId,
     ref: "Plan",
+  },
+  language_preference: {
+    type: String,
+    enum: [ UserLanguagePreference.EN, UserLanguagePreference.ES],
+    default: UserLanguagePreference.EN
   },
   status: {
     type: String,
