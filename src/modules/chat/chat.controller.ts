@@ -44,6 +44,24 @@ export default class ChatController {
     }
   }
 
+  async getChat(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+
+      const { chat_id } = req.params;
+
+      const data = await this.chatService.getChat(chat_id);
+
+      Res({
+        res,
+        message: "successfully fetched chat",
+        code: StatusCodes.OK,
+        data
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
+
   async rename(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
 

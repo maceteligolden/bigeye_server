@@ -42,6 +42,10 @@ export default class ChatService {
     return await this.chatRepository.getChatsByUser(user._id!);
   }
 
+  async getChat(chat_id: string): Promise<Chat | null> {
+    return await this.chatRepository.fetchOneById(chat_id);
+  }
+
   async renameChat(chat_id: string, title: string): Promise<Chat | null> {
     return await this.chatRepository.update(chat_id, {
       title,

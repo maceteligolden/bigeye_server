@@ -25,11 +25,11 @@ export default class AIService {
     //   await this.getChat(args.chat_id);
     // }
 
-    const user = await this.userRepository.fetchOneByCognitoId(args.from);
+    // const user = await this.userRepository.fetchOneByCognitoId(args.from);
 
-    if (!user) {
-      throw new BadRequestError("failed to find user");
-    }
+    // if (!user) {
+    //   throw new BadRequestError("failed to find user");
+    // }
 
     const data = await axios.post("https://test.api.newtonslaw.net/ask-newton", {
       messages: [
@@ -40,89 +40,57 @@ export default class AIService {
       ],
     });
 
+    let stringObject = JSON.stringify(data.data);
+   
+    stringObject = stringObject.replace(/data:/g, '')
+    // const json_form = this.extractContent(stringObject)
+    console.log("data: " + typeof JSON.parse(stringObject))
+    console.log("id: " + JSON.parse(stringObject)["id"])
+    // console.log("json: " + json_form)
     // await this.chatRepository.addNewMessage(args.chat_id, args.message, "user");
 
-    let response = stringify(data.data);
+    // let response = stringify(data.data);
 
-    const response_content = await this.extractContent(response);
+    // const response_content = await this.extractContent(response);
 
-    console.log(response_content);
+    // console.log(response);
 
     //TODO: save ai comment to db
-    const websocket = await this.websocketRepository.getConnectionId(user._id!);
+    // const websocket = await this.websocketRepository.getConnectionId(user._id!);
 
-    if (!websocket) {
-      throw new BadRequestError("failed to find user connection id");
-    }
+    // if (!websocket) {
+    //   throw new BadRequestError("failed to find user connection id");
+    // }
 
-    this.awsWebsocket.send(websocket.connectionId!, WebsocketEvent.MESSAGE, response_content);
+    // this.awsWebsocket.send(websocket.connectionId!, WebsocketEvent.MESSAGE, response_content);
   }
 
-  extractContent(jsonString: string): string[] {
-    const contents: string[] = [];
-
-    // First, let's clean up and parse the JSON string
-    const cleanedString = jsonString.replace(/\\"/g, '"').replace(/\\n/g, "\n");
-    const dataObjects = JSON.parse(cleanedString);
-
-    // Traverse the dataObjects to find content
-    dataObjects.forEach((data: any) => {
-      if (data.choices) {
-        data.choices.forEach((choice: any) => {
-          if (choice.delta && choice.delta.content) {
-            contents.push(choice.delta.content);
-          }
-        });
-      }
+  stringToJSON(str: string) {
+    const jsonObject: any = {};
+    const pairs = str.split(','); // Split by commas to get individual key-value pairs
+    
+    pairs.forEach(pair => {
+        console.log("pair: " + pair)
+        const [key, value] = pair.split(':'); // Split each pair by colon
+        const trimmedKey = key.trim(); // Trim any extra spaces around the key
+        const trimmedValue = value.trim(); // Trim any extra spaces around the value
+        
+        jsonObject[trimmedKey] = trimmedValue; // Add the key-value pair to the JSON object
     });
+    
+    return jsonObject;
+}
 
-    return contents;
-  }
-
-  async getChat(chat_id: string): Promise<Chat> {
-    const chat = await this.chatRepository.fetchOneById(chat_id);
-
-    if (!chat) {
-      throw new BadRequestError("failed to fetch chat");
+  extractContent(inputString: string): string | null {
+    const match = inputString.match(/"content":\s"([^"]*)"/);
+    console.log("match: " + match)
+    if (match && match[1]) {
+        // Return the extracted content with the surrounding quotes removed
+        return match[1];
+    } else {
+        // Return null if the pattern is not found
+        return null;
     }
-
-    this.messages = chat.messages;
-
-    return chat;
   }
 
-  async createChat(title: string, aws_id: string): Promise<Chat> {
-    const user = await this.userRepository.fetchOneByCognitoId(aws_id);
-
-    if (!user) {
-      throw new BadRequestError("failed to find user");
-    }
-
-    return await this.chatRepository.create({
-      title,
-      creator: await this.database.convertStringToObjectId(user._id!),
-    });
-  }
-
-  async renameChat(title: string, chat_id: string): Promise<boolean> {
-    const renamedChat = await this.chatRepository.update(chat_id, {
-      title,
-    });
-
-    if (!renamedChat) {
-      throw new BadRequestError("failed to rename chat");
-    }
-
-    return true;
-  }
-
-  async deleteChat(chat_id: string): Promise<boolean> {
-    const isDeleted = await this.chatRepository.delete(chat_id);
-
-    if (!isDeleted) {
-      throw new BadRequestError("failed to delete chat");
-    }
-
-    return true;
-  }
 }

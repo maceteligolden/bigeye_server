@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { injectable } from "tsyringe";
 import { Res } from "../../shared/helper";
 import { StatusCodes } from "../../shared/constants";
-
 import AIService from "./ai.service";
 
 @injectable()
