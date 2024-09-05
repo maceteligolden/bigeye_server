@@ -9,6 +9,7 @@ import { accountRouter } from "./modules/account/routes";
 import { codeRouter } from "./modules/records/routes";
 import aiRouter from "./modules/ai/ai.router";
 import chatRouter from "./modules/chat/chat.router";
+import notificationRouter from "./modules/notification/notification.router";
 
 export const router = Router({});
 
@@ -83,6 +84,10 @@ export const routes: ServerRouter[] = [
         path: "/ai",
         router: aiRouter,
       },
+      {
+        path: "/notification",
+        router: notificationRouter
+      }
     ],
   },
   {

@@ -18,22 +18,14 @@ export default class AWSSNS {
     });
   }
 
-  async registerPhoneToken(user_id: string, token: string): Promise<void> {
+  async registerPhoneToken(user_id: string, token: string): Promise<any> {
     const input = {
       PlatformApplicationArn: `${process.env.AWS_SNS_PLATFORM_APPLICATION_ARN}`,
       Token: token,
       CustomUserData: user_id,
     };
     const command = new CreatePlatformEndpointCommand(input);
-    this.client
-      .send(command)
-      .then(() => {})
-      .catch(async (err: any) => {
-        await this.loggerService.log(err.message, {
-          user_id,
-          token,
-        });
-      });
+    return await this.client.send(command)
   }
 
   async pushNotification(args: PushNotificationInput): Promise<void> {
