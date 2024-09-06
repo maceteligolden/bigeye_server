@@ -28,7 +28,6 @@ export default class ChatController {
 
   async getChats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
       const { sub } = req.user;
 
       const data = await this.chatService.getChats(sub);
@@ -37,7 +36,7 @@ export default class ChatController {
         res,
         message: "successfully fetched chats",
         code: StatusCodes.OK,
-        data
+        data,
       });
     } catch (err: any) {
       next(err);
@@ -46,7 +45,6 @@ export default class ChatController {
 
   async getChat(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
       const { chat_id } = req.params;
 
       const data = await this.chatService.getChat(chat_id);
@@ -55,7 +53,7 @@ export default class ChatController {
         res,
         message: "successfully fetched chat",
         code: StatusCodes.OK,
-        data
+        data,
       });
     } catch (err: any) {
       next(err);
@@ -64,7 +62,6 @@ export default class ChatController {
 
   async rename(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
       const { chat_id } = req.params;
 
       const { title } = req.body;
@@ -74,7 +71,7 @@ export default class ChatController {
       Res({
         res,
         message: "successfully renamed chat",
-        code: StatusCodes.NO_CONTENT
+        code: StatusCodes.NO_CONTENT,
       });
     } catch (err: any) {
       next(err);
@@ -83,7 +80,6 @@ export default class ChatController {
 
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-
       const { chat_id } = req.params;
 
       await this.chatService.deleteChat(chat_id);
@@ -91,7 +87,7 @@ export default class ChatController {
       Res({
         res,
         message: "successfully deleted chat",
-        code: StatusCodes.NO_CONTENT
+        code: StatusCodes.NO_CONTENT,
       });
     } catch (err: any) {
       next(err);

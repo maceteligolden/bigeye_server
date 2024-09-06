@@ -25,7 +25,7 @@ export default class AWSSNS {
       CustomUserData: user_id,
     };
     const command = new CreatePlatformEndpointCommand(input);
-    return await this.client.send(command)
+    return await this.client.send(command);
   }
 
   async pushNotification(args: PushNotificationInput): Promise<void> {

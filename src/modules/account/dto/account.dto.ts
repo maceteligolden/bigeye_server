@@ -30,8 +30,8 @@ export type UpdateProfileOutput = {} & AWSCognitoUpdateProfileOutput;
 export type ChangeLanguagePreferenceInput = {
   language: UserLanguagePreference;
   awsId: string;
-}
+};
 
 export type ChangeLanguagePreferenceOutput = {
   isChanged: boolean;
-}
+};

@@ -11,5 +11,5 @@ export enum UserAccountStatus {
 
 export enum UserLanguagePreference {
   EN = "en",
-  ES = "es"
+  ES = "es",
 }

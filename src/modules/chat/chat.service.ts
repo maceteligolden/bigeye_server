@@ -9,34 +9,33 @@ export default class ChatService {
   constructor(
     private database: Database,
     private chatRepository: ChatRepository,
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
   ) {}
 
   async createChat(title: string, creator: string): Promise<Chat> {
-
     const user = await this.userRepository.fetchOneByCognitoId(creator);
 
-    if(!user){
-      throw new BadRequestError("failed to find user")
+    if (!user) {
+      throw new BadRequestError("failed to find user");
     }
 
     const checkTitle = await this.chatRepository.getChatByTitle(title);
 
-    if(!checkTitle){
-      throw new BadRequestError("chat title already taken")
+    if (!checkTitle) {
+      throw new BadRequestError("chat title already taken");
     }
 
     return await this.chatRepository.create({
       title,
-      creator: await this.database.convertStringToObjectId(user._id!)
+      creator: await this.database.convertStringToObjectId(user._id!),
     });
   }
 
   async getChats(user_id: string): Promise<Chat[] | null> {
     const user = await this.userRepository.fetchOneByCognitoId(user_id);
 
-    if(!user){
-      throw new BadRequestError("failed to find user")
+    if (!user) {
+      throw new BadRequestError("failed to find user");
     }
 
     return await this.chatRepository.getChatsByUser(user._id!);

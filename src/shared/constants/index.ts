@@ -17,5 +17,5 @@ export {
   SubscriptionStatus,
   FileManagerObjectTypes,
   UserAccountStatus,
-  UserLanguagePreference
+  UserLanguagePreference,
 };

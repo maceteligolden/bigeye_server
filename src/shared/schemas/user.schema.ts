@@ -31,8 +31,8 @@ const userSchema: Schema = new Schema<User>({
   },
   language_preference: {
     type: String,
-    enum: [ UserLanguagePreference.EN, UserLanguagePreference.ES],
-    default: UserLanguagePreference.EN
+    enum: [UserLanguagePreference.EN, UserLanguagePreference.ES],
+    default: UserLanguagePreference.EN,
   },
   status: {
     type: String,

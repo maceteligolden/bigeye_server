@@ -78,7 +78,7 @@ export const routes: ServerRouter[] = [
       },
       {
         path: "/chat",
-        router: chatRouter
+        router: chatRouter,
       },
       {
         path: "/ai",
@@ -86,8 +86,8 @@ export const routes: ServerRouter[] = [
       },
       {
         path: "/notification",
-        router: notificationRouter
-      }
+        router: notificationRouter,
+      },
     ],
   },
   {
