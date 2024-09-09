@@ -1,7 +1,7 @@
 import { Application } from "express";
 import { container, injectable } from "tsyringe";
 const bodyParser = require("body-parser");
-import { LoggerService, NotificationService } from "../services";
+import { LoggerService } from "../services";
 import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
 import { ServerRoute } from "../interfaces/server.interface";
 import { Database, Stripe as StripeFacade } from ".";
@@ -10,9 +10,6 @@ import { Res } from "../helper";
 import { InvoiceStatus, StatusCodes, SubscriptionStatus, TransactionProcessor, TransactionStatus, TransactionType, UserAccountStatus } from "../constants";
 import { BadRequestError, InternalServerError } from "../errors";
 import { InvoiceRepository, PlanRepository, SubscriptionRepository, TransactionRepository, UserRepository } from "../repositories";
-import Stripe from "stripe";
-import { PushNotificationStrategy } from "../strategies";
-import { PushNotificationInput } from "../dto";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
@@ -25,8 +22,6 @@ export default class Server implements IServer {
   private invoiceRepository: InvoiceRepository;
   private transactionRepository: TransactionRepository;
   private stripeFacade: StripeFacade;
-  private notificationService: NotificationService;
-  private pushNotificationStrategy: PushNotificationStrategy;
   private database: IDatabase;
 
   constructor(app: Application) {
@@ -39,8 +34,6 @@ export default class Server implements IServer {
     this.transactionRepository = container.resolve(TransactionRepository);
     this.database = container.resolve(Database);
     this.stripeFacade = container.resolve(StripeFacade);
-    this.notificationService = container.resolve(NotificationService);
-    this.pushNotificationStrategy = container.resolve(PushNotificationStrategy);
   }
 
   async start(): Promise<void> {
@@ -136,6 +129,8 @@ export default class Server implements IServer {
           await this.loggerService.log("successfully subscribed customer to a plan", {
             awsId: userData?.awscognito_user_id,
           });
+
+          //TODO: send notification when user successfully subscribes to a plan
           break;
         case "customer.subscription.deleted":
           const {} = event.data.object;
@@ -159,30 +154,18 @@ export default class Server implements IServer {
             throw new BadRequestError("Failed to fetch cards");
           }
 
-          const addCard = await this.userRepository.updateWithCustomerId(setupIntentSucceeded.metadata.customer, {
+          await this.userRepository.updateWithCustomerId(setupIntentSucceeded.metadata.customer, {
             stripe_card_id: setupIntentSucceeded.payment_method,
             stripe_card_last_digits: card_details.last4,
             stripe_card_expire_date: `${card_details.exp_month}/${card_details.exp_year}`,
             stripe_card_type: card_details.brand,
           });
 
-          if(addCard?.aws_device_endpoint){
-            const payload: PushNotificationInput = {
-              message: "You successfully added your card, enjoy our premium plans",
-              subject: "Card Successfully Added",
-              targetarn: addCard?.aws_device_endpoint
-            }
-
-            await this.notificationService.send(this.pushNotificationStrategy, payload);
-          }
-
-          // if (!addCard) {
-          //   throw new BadRequestError("Failed to add card");
-          // }
-
           await this.loggerService.log("successfully add card to user account", {
             awsId: setupIntentSucceeded.metadata.user_cognito_id,
           });
+
+          //TODO: send notification saying the card has successfully been added
 
           break;
         case "setup_intent.setup_failed":
@@ -199,7 +182,8 @@ export default class Server implements IServer {
             processor: TransactionProcessor.STRIPE,
             invoice_id: await this.database.convertStringToObjectId(invoice?._id!),
             type: TransactionType.BILL
-          })
+          });
+
           break;
         case "payment_intent.canceled":
           const paymentIntentCancelledData = event.data.object;
@@ -230,18 +214,18 @@ export default class Server implements IServer {
           const {} = event.data.object;
           break;
         case "invoice.created":
-            const invoiceCreatedData = event.data.object;
-  
-            const sub = await this.subscriptionRepository.fetchOneStripeSub(invoiceCreatedData.subcription);
-  
-            await this.invoiceRepository.create({
-              amount: invoiceCreatedData.amount_remaining,
-              subscription_id: await this.database.convertStringToObjectId(sub?._id!),
-              stripe_invoice_id: invoiceCreatedData.id,
-              status: InvoiceStatus.DRAFT
-            })
-  
-            break;
+          const invoiceCreatedData = event.data.object;
+
+          const sub = await this.subscriptionRepository.fetchOneStripeSub(invoiceCreatedData.subcription);
+
+          await this.invoiceRepository.create({
+            amount: invoiceCreatedData.amount_remaining,
+            subscription_id: await this.database.convertStringToObjectId(sub?._id!),
+            stripe_invoice_id: invoiceCreatedData.id,
+            status: InvoiceStatus.DRAFT
+          });
+
+          break;
         case "invoice.finalized":
           const invoiceFinalizedData = event.data.object;
 
@@ -256,7 +240,7 @@ export default class Server implements IServer {
 
           await this.invoiceRepository.updateByStripeSub(invoiceFinalizationFailedData.subscription, {
             amount: Number(invoiceFinalizationFailedData.amount_remaining).toString(),
-            status: InvoiceStatus.UNCOLLECTIBLE
+            status: InvoiceStatus.VOID
           });
 
           break;
@@ -277,16 +261,29 @@ export default class Server implements IServer {
             status: TransactionStatus.SUCCESS
           })
 
+          //TODO: sent notification saying monthly charge has been deducted
+
           break;
         case "invoice.payment_failed":
           const invoicePaymentFailedData = event.data.object;
+
+          await this.subscriptionRepository.updateByStripeSubId(invoicePaidData.subscription, {
+            status: SubscriptionStatus.ACTIVE
+          });
 
           await this.transactionRepository.updateByStripeSub(invoicePaidData.subscription, {
             status: TransactionStatus.FAILED
           });
 
+          //TODO: send notification saying we couldn't charge your card
+
           break;
-        case "subscription_schedule.created":
+        case "invoice.payment_action_required":
+          const paymentActionRequiredData = event.data.object;
+
+          // TODO: send notification saying action is needed for payment method
+          break;
+        case "invoice.updated":
           const {} = event.data.object;
 
           await this.loggerService.log("subscription plan will expire in 7 days");

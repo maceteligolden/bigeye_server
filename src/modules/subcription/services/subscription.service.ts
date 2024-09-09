@@ -50,7 +50,7 @@ export default class SubscriptionService {
       customer_id: stripe_customer_id ? stripe_customer_id : "",
       payment_method: stripe_card_id,
       user: checkUser._id ? checkUser._id.toString() : "",
-      plan,
+      plan
     });
 
     if (!subscription_id) {
