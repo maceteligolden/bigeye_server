@@ -34,6 +34,10 @@ const userSchema: Schema = new Schema<User>({
     enum: [UserLanguagePreference.EN, UserLanguagePreference.ES],
     default: UserLanguagePreference.EN,
   },
+  notification: {
+    type: Boolean,
+    default: true
+  },
   status: {
     type: String,
     enum: [

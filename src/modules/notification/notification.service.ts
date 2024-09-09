@@ -1,10 +1,13 @@
 import { injectable } from "tsyringe";
 import { AWSSNS } from "../../shared/facade";
-import { BadRequestError } from "../../shared/errors";
+import { UserRepository } from "../../shared/repositories";
 
 @injectable()
 export default class NotificationService {
-  constructor(private awsSNS: AWSSNS) {}
+  constructor(
+    private awsSNS: AWSSNS,
+    private userRepository: UserRepository
+  ) {}
 
   async testNotification(args: any): Promise<any> {
     const { user_id, device_token, message, subject } = args;
@@ -23,4 +26,9 @@ export default class NotificationService {
       subject,
     });
   }
+
+  async updateNotification(aws_id: string, notification: boolean): Promise<any> {
+    return await this.userRepository.changeNotification(aws_id, notification)
+  }
+
 }

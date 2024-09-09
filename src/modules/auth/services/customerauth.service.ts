@@ -72,7 +72,7 @@ export default class CustomerAuthService {
     // change user account status from UNCONFIRMED to ACTIVE
     await this.userRepository.updateAccountStatus(args.userId, UserAccountStatus.ACTIVE);
 
-    //TODO: add logic to confirm user here
+    //TODO: add logic to confirm user on database
     return response;
   }
 

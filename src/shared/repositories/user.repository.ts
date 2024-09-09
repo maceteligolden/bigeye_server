@@ -69,4 +69,12 @@ export default class UserRepository implements IRepository<User> {
   async updateAccountStatus(customer_id: string, status: UserAccountStatus): Promise<User | null> {
     return await userSchema.findOneAndUpdate({ stripe_customer_id: customer_id }, { status });
   }
+
+  async changeNotification(user_id: string, notification: boolean): Promise<User | null> {
+    return await userSchema.findOneAndUpdate({
+      awscognito_user_id: user_id
+    }, {
+      notification
+    })
+  }
 }

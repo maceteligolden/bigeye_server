@@ -30,4 +30,24 @@ export default class NotificationController {
       next(err);
     }
   }
+
+  async updateNotification(req: Request, res: Response, next: NextFunction) {
+    try {
+
+      const { sub } = req.user;
+
+      const { notification } = req.body;
+
+      const data = await this.notificationService.updateNotification(sub, notification)
+
+      Res({
+        res,
+        code: StatusCodes.OK,
+        message: "successfully update profile notification preference",
+        data,
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
 }

@@ -14,4 +14,5 @@ export default interface User extends Base {
   status?: UserAccountStatus;
   isFirstLogin?: boolean;
   language_preference?: UserLanguagePreference;
+  notification?: boolean;
 }
