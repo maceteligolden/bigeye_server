@@ -77,4 +77,16 @@ export default class UserRepository implements IRepository<User> {
       notification
     })
   }
+
+  async updateDeviceToken(email: string, device_token: string): Promise<any> {
+    return await userSchema.findOneAndUpdate({
+      email
+    }, {
+      device_token
+    })
+  }
+
+  async fetchAllByEmail(email: string): Promise<User | null> {
+    return await userSchema.findOne({email})
+  }
 }

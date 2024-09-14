@@ -1,7 +1,7 @@
 import { Application } from "express";
 import { container, injectable } from "tsyringe";
 const bodyParser = require("body-parser");
-import { LoggerService } from "../services";
+import { LoggerService, NotificationService } from "../services";
 import { IDatabase, ILogger, IServer, ServerConfig, ServerRouter } from "../interfaces";
 import { ServerRoute } from "../interfaces/server.interface";
 import { Database, Stripe as StripeFacade } from ".";
@@ -11,6 +11,8 @@ import { StatusCodes, SubscriptionStatus, UserAccountStatus } from "../constants
 import { BadRequestError, InternalServerError } from "../errors";
 import { PlanRepository, SubscriptionRepository, UserRepository } from "../repositories";
 import Stripe from "stripe";
+import { PushNotificationStrategy } from "../strategies";
+import { PushNotificationInput } from "../dto";
 const stripe = require("stripe")(`${process.env.STRIPE_API_KEY}`);
 
 @injectable()
@@ -21,6 +23,8 @@ export default class Server implements IServer {
   private planRepository: PlanRepository;
   private userRepository: UserRepository;
   private stripeFacade: StripeFacade;
+  private notificationService: NotificationService;
+  private pushNotificationStrategy: PushNotificationStrategy;
   private database: IDatabase;
 
   constructor(app: Application) {
@@ -31,6 +35,8 @@ export default class Server implements IServer {
     this.planRepository = container.resolve(PlanRepository);
     this.database = container.resolve(Database);
     this.stripeFacade = container.resolve(StripeFacade);
+    this.notificationService = container.resolve(NotificationService);
+    this.pushNotificationStrategy = container.resolve(PushNotificationStrategy);
   }
 
   async start(): Promise<void> {
@@ -159,6 +165,16 @@ export default class Server implements IServer {
             stripe_card_expire_date: `${card_details.exp_month}/${card_details.exp_year}`,
             stripe_card_type: card_details.brand,
           });
+
+          if(addCard?.aws_device_endpoint){
+            const payload: PushNotificationInput = {
+              message: "You successfully added your card, enjoy our premium plans",
+              subject: "Card Successfully Added",
+              targetarn: addCard?.aws_device_endpoint
+            }
+
+            await this.notificationService.send(this.pushNotificationStrategy, payload);
+          }
 
           // if (!addCard) {
           //   throw new BadRequestError("Failed to add card");

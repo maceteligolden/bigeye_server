@@ -7,7 +7,19 @@ const userSchema: Schema = new Schema<User>({
     type: String,
     required: true,
   },
-  device_token: {
+  email: {
+    type: String,
+    required: true
+  },
+  first_name: {
+    type: String,
+    required: true
+  },
+  last_name: {
+    type: String,
+    required: true
+  },
+  aws_device_endpoint: {
     type: String,
   },
   stripe_customer_id: {

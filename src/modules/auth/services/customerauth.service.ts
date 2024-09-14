@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe";
-import { AWSCognito, AWSS3, Stripe } from "../../../shared/facade";
+import { AWSCognito, AWSS3, AWSSNS, Stripe } from "../../../shared/facade";
 import {
   AWSCognitoConfirmForgotPasswordInput,
   AWSCognitoConfirmForgotPasswordOutput,
@@ -32,18 +32,22 @@ export default class CustomerAuthService {
     private awsS3: AWSS3,
     private userRepository: UserRepository,
     private stripe: Stripe,
+    private awsSNS: AWSSNS,
     private notificationService: NotificationService,
     private pushNotificatonStrategy: PushNotificationStrategy,
   ) {}
 
   async signUp(args: AWSCognitoSignupInput): Promise<AWSCognitoSignupOutput> {
     const { email, firstname, lastname } = args;
+
+    // save to aws cognito user pool 
     const response = await this.awsCognito.signUp(args);
 
     if (!response) {
       throw new BadRequestError("failed to signup ");
     }
 
+    // generate stripe customer account and associate it to the user
     const { customer_id } = await this.stripe.createCustomer({
       email,
       name: `${firstname} ${lastname}`,
@@ -53,10 +57,14 @@ export default class CustomerAuthService {
       throw new BadRequestError("failed to create customer account");
     }
 
+    // save user data to DB
     const user = await this.userRepository.create({
       awscognito_user_id: response.userId!,
       stripe_customer_id: customer_id,
       status: UserAccountStatus.UNCONFIRM,
+      email,
+      first_name: firstname,
+      last_name: lastname
     });
 
     if (!user) {
@@ -82,6 +90,21 @@ export default class CustomerAuthService {
   async signIn(args: CustomerSignInInput): Promise<CustomerSignInOutput> {
     const { email, password, device_token } = args;
 
+    const user = await this.userRepository.fetchAllByEmail(email);
+
+    if(!user){
+      throw new BadRequestError("invalid details provided");
+    }
+
+    // check if user has a device endpointarn and generate one if its missing
+    if(!user.aws_device_endpoint){
+      await this.createEndpointARN(email, device_token);
+    } else {
+      const checkEnpointEnabled = await this.awsSNS.checkEnpointEnabled(user.aws_device_endpoint);
+
+      !checkEnpointEnabled && await this.createEndpointARN(email, device_token)
+    }
+
     const response = await this.awsCognito.signIn({
       email,
       password,
@@ -103,6 +126,16 @@ export default class CustomerAuthService {
   ): Promise<AWSCognitoConfirmForgotPasswordOutput> {
     return await this.awsCognito.confirmForgotPassword(args);
   }
+
+  async createEndpointARN(email: string, device_token: string): Promise<void> {
+    const endpointArn = await this.awsSNS.registerPhoneToken(device_token);
+
+    const updateUserEndpointArn = await this.userRepository.updateDeviceToken(email, endpointArn);
+
+    if(!updateUserEndpointArn){
+      throw new BadRequestError("failed to save endpoint arn");
+    }
+  } 
 
   async refreshToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
     return await this.awsCognito.refreshAccessToken(args);
