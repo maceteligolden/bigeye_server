@@ -23,5 +23,5 @@ export {
   InvoiceStatus,
   TransactionStatus,
   TransactionType,
-  TransactionProcessor
+  TransactionProcessor,
 };

@@ -21,5 +21,5 @@ export {
   WebsocketRepository,
   FeatureRepository,
   TransactionRepository,
-  InvoiceRepository
+  InvoiceRepository,
 };

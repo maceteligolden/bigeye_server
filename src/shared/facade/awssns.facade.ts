@@ -1,10 +1,10 @@
 import { injectable } from "tsyringe";
-import { 
-  CreatePlatformEndpointCommand, 
-  GetEndpointAttributesCommand, 
-  PublishCommand, 
-  SNSClient, 
-  SubscribeCommand 
+import {
+  CreatePlatformEndpointCommand,
+  GetEndpointAttributesCommand,
+  PublishCommand,
+  SNSClient,
+  SubscribeCommand,
 } from "@aws-sdk/client-sns";
 import { AWSServices } from "../constants";
 import { PushNotificationInput } from "../dto";
@@ -26,7 +26,7 @@ export default class AWSSNS {
   async registerPhoneToken(token: string): Promise<any> {
     const input = {
       PlatformApplicationArn: `${process.env.AWS_SNS_PLATFORM_APPLICATION_ARN}`,
-      Token: token
+      Token: token,
     };
     const command = new CreatePlatformEndpointCommand(input);
     return (await this.client.send(command)).EndpointArn;
@@ -34,7 +34,7 @@ export default class AWSSNS {
 
   async checkEnpointEnabled(endpointArn: string): Promise<boolean> {
     const command = new GetEndpointAttributesCommand({
-      EndpointArn: endpointArn
+      EndpointArn: endpointArn,
     });
     const response = await this.client.send(command);
 
@@ -49,11 +49,11 @@ export default class AWSSNS {
         aps: {
           alert: {
             title: args.subject,
-            body: args.message
+            body: args.message,
           },
-          sound: 'default',
+          sound: "default",
           badge: 1,
-          'mutable-content': 1,
+          "mutable-content": 1,
           customData: {
             chat_id: args.meta_data?.chat_id,
             user_id: args.meta_data?.user_id,
@@ -64,20 +64,20 @@ export default class AWSSNS {
         notification: {
           title: args.subject,
           body: args.message,
-          sound: 'default',
-          icon: 'ic_notification',
-          click_action: 'OPEN_ACTIVITY',
+          sound: "default",
+          icon: "ic_notification",
+          click_action: "OPEN_ACTIVITY",
         },
         data: {
           chat_id: args.meta_data?.chat_id,
           user_id: args.meta_data?.user_id,
         },
       }),
-    }
+    };
     const input = {
       TargetArn: args.targetarn,
       Message: JSON.stringify(messagePayload),
-      MessageStructure: 'json',
+      MessageStructure: "json",
       Subject: args.subject,
     };
     const command = new PublishCommand(input);

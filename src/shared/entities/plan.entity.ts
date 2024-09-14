@@ -7,5 +7,5 @@ export default interface Plan extends Base {
   amount: string;
   stripe_plan_id: string;
   stripe_price_id: string;
-  features?: mongoose.Types.ObjectId[]
+  features?: mongoose.Types.ObjectId[];
 }

@@ -6,7 +6,7 @@ import { UserRepository } from "../../shared/repositories";
 export default class NotificationService {
   constructor(
     private awsSNS: AWSSNS,
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
   ) {}
 
   async testNotification(args: any): Promise<any> {
@@ -28,7 +28,6 @@ export default class NotificationService {
   }
 
   async updateNotification(aws_id: string, notification: boolean): Promise<any> {
-    return await this.userRepository.changeNotification(aws_id, notification)
+    return await this.userRepository.changeNotification(aws_id, notification);
   }
-
 }

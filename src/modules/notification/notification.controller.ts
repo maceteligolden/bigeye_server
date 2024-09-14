@@ -10,7 +10,6 @@ export default class NotificationController {
 
   async testNotification(req: Request, res: Response, next: NextFunction) {
     try {
-
       const { message, device_token, subject } = req.body;
 
       const data = await this.notificationService.testNotification({
@@ -33,12 +32,11 @@ export default class NotificationController {
 
   async updateNotification(req: Request, res: Response, next: NextFunction) {
     try {
-
       const { sub } = req.user;
 
       const { notification } = req.body;
 
-      const data = await this.notificationService.updateNotification(sub, notification)
+      const data = await this.notificationService.updateNotification(sub, notification);
 
       Res({
         res,

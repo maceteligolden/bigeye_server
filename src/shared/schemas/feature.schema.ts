@@ -13,7 +13,7 @@ const featureSchema: Schema = new Schema<Feature>({
   },
   stripe_product_feature_id: {
     type: String,
-    required: true
+    required: true,
   },
   created_at: {
     type: Date,

@@ -30,6 +30,15 @@ export default class SubscriptionService {
 
     const { stripe_customer_id, stripe_card_id } = checkUser;
 
+    if(plan === "FREE"){
+      await this.userRepository.update(checkUser?._id!, {
+        active_plan: undefined
+      });
+
+      return {
+        processing: true
+      }
+    }
     // fetch select plan details
     const checkPlan = await this.planRepository.fetchOneById(plan);
 
@@ -42,7 +51,7 @@ export default class SubscriptionService {
     const subscription = await this.subscriptionRepository.fetchActiveByUserId(checkUser._id!);
 
     if (subscription) {
-      throw new BadRequestError("cannot have 2 active subscription. maybe update your subscription plan")
+      throw new BadRequestError("cannot have 2 active subscription. maybe update your subscription plan");
     }
     // create subscription using stripe facade
     const { subscription_id } = await this.stripe.createSubscription({
@@ -50,7 +59,7 @@ export default class SubscriptionService {
       customer_id: stripe_customer_id ? stripe_customer_id : "",
       payment_method: stripe_card_id,
       user: checkUser._id ? checkUser._id.toString() : "",
-      plan
+      plan,
     });
 
     if (!subscription_id) {

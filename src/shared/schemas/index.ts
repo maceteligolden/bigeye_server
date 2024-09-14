@@ -8,6 +8,14 @@ import featureSchema from "./feature.schema";
 import transactionSchema from "./transaction.schema";
 import invoiceSchema from "./invoice.schema";
 
-export { userSchema, planSchema, subscriptionSchema, filemanagerSchema, chatSchema, websocketSchema, featureSchema, transactionSchema, invoiceSchema };
-
-
+export {
+  userSchema,
+  planSchema,
+  subscriptionSchema,
+  filemanagerSchema,
+  chatSchema,
+  websocketSchema,
+  featureSchema,
+  transactionSchema,
+  invoiceSchema,
+};

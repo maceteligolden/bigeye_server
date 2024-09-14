@@ -8,15 +8,4 @@ import Websocket from "./websocket.entity";
 import Feature from "./feature.entity";
 import Invoice from "./invoice.entity";
 
-export { 
-    User, 
-    Plan, 
-    Subscription, 
-    FileManager, 
-    Message, 
-    Chat, 
-    Websocket, 
-    Feature, 
-    Invoice,
-    Transaction
-};
+export { User, Plan, Subscription, FileManager, Message, Chat, Websocket, Feature, Invoice, Transaction };

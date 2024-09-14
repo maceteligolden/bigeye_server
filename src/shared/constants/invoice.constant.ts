@@ -1,7 +1,7 @@
 export enum InvoiceStatus {
-    DRAFT = "draft",
-    OPEN = "open",
-    PAID = "paid",
-    VOID = "void",
-    UNCOLLECTIBLE = "uncollectible"
+  DRAFT = "draft",
+  OPEN = "open",
+  PAID = "paid",
+  VOID = "void",
+  UNCOLLECTIBLE = "uncollectible",
 }

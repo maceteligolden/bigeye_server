@@ -71,22 +71,28 @@ export default class UserRepository implements IRepository<User> {
   }
 
   async changeNotification(user_id: string, notification: boolean): Promise<User | null> {
-    return await userSchema.findOneAndUpdate({
-      awscognito_user_id: user_id
-    }, {
-      notification
-    })
+    return await userSchema.findOneAndUpdate(
+      {
+        awscognito_user_id: user_id,
+      },
+      {
+        notification,
+      },
+    );
   }
 
   async updateDeviceToken(email: string, device_token: string): Promise<any> {
-    return await userSchema.findOneAndUpdate({
-      email
-    }, {
-      device_token
-    })
+    return await userSchema.findOneAndUpdate(
+      {
+        email,
+      },
+      {
+        device_token,
+      },
+    );
   }
 
   async fetchAllByEmail(email: string): Promise<User | null> {
-    return await userSchema.findOne({email})
+    return await userSchema.findOne({ email });
   }
 }

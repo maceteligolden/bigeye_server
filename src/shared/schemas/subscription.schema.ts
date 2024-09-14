@@ -25,7 +25,7 @@ const subscriptionSchema: Schema = new Schema<Subscription>({
       SubscriptionStatus.INCOMPLETE,
       SubscriptionStatus.INCOMPLETE_EXPIRED,
       SubscriptionStatus.PAST_DUE,
-      SubscriptionStatus.UNPAID
+      SubscriptionStatus.UNPAID,
     ],
     required: true,
   },

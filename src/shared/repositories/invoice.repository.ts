@@ -1,6 +1,7 @@
 import { injectable } from "tsyringe";
 import { Invoice } from "../entities";
 import { DeleteOutput, IRepository } from "../interfaces";
+import { invoiceSchema } from "../schemas";
 
 @injectable()
 export default class InvoiceRepository implements IRepository<Invoice> {
@@ -8,26 +9,26 @@ export default class InvoiceRepository implements IRepository<Invoice> {
 
     }
 
-    create(args: Invoice): Promise<Invoice> {
-        throw new Error("Method not implemented.");
+    async create(args: Invoice): Promise<Invoice> {
+       return await invoiceSchema.create(args)
     }
-    fetchAll(): Promise<Invoice[]> {
-        throw new Error("Method not implemented.");
+    async fetchAll(): Promise<Invoice[]> {
+        return await invoiceSchema.find({})
     }
-    fetchOneById(id: string): Promise<Invoice | null> {
-        throw new Error("Method not implemented.");
+    async fetchOneById(id: string): Promise<Invoice | null> {
+        return await invoiceSchema.findOne({_id: id})
     }
-    fetchOneByStripeId(id: string): Promise<Invoice | null> {
-        throw new Error("Method not implemented.");
+    async fetchOneByStripeId(id: string): Promise<Invoice | null> {
+       return await invoiceSchema.findOne({ stripe_invoice_id: id})
     }
-    update(id: string, update: Partial<Invoice>): Promise<Invoice | null> {
-        throw new Error("Method not implemented.");
+    async update(id: string, update: Partial<Invoice>): Promise<Invoice | null> {
+        return await invoiceSchema.findByIdAndUpdate(id, update)
     }
-    updateByStripeSub(id: string, update: Partial<Invoice>): Promise<Invoice | null> {
-        throw new Error("Method not implemented.");
+    async updateByStripeId(id: string, update: Partial<Invoice>): Promise<any> {
+        return await invoiceSchema.updateOne({_id: id}, update);
     }
-    delete(id: string): Promise<DeleteOutput> {
-        throw new Error("Method not implemented.");
+    async delete(id: string): Promise<DeleteOutput> {
+       return await invoiceSchema.deleteOne({_id: id});
     }
     
 }

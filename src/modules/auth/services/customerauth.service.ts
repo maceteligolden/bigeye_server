@@ -40,7 +40,7 @@ export default class CustomerAuthService {
   async signUp(args: AWSCognitoSignupInput): Promise<AWSCognitoSignupOutput> {
     const { email, firstname, lastname } = args;
 
-    // save to aws cognito user pool 
+    // save to aws cognito user pool
     const response = await this.awsCognito.signUp(args);
 
     if (!response) {
@@ -64,7 +64,7 @@ export default class CustomerAuthService {
       status: UserAccountStatus.UNCONFIRM,
       email,
       first_name: firstname,
-      last_name: lastname
+      last_name: lastname,
     });
 
     if (!user) {
@@ -92,17 +92,17 @@ export default class CustomerAuthService {
 
     const user = await this.userRepository.fetchAllByEmail(email);
 
-    if(!user){
+    if (!user) {
       throw new BadRequestError("invalid details provided");
     }
 
     // check if user has a device endpointarn and generate one if its missing
-    if(!user.aws_device_endpoint){
+    if (!user.aws_device_endpoint) {
       await this.createEndpointARN(email, device_token);
     } else {
       const checkEnpointEnabled = await this.awsSNS.checkEnpointEnabled(user.aws_device_endpoint);
 
-      !checkEnpointEnabled && await this.createEndpointARN(email, device_token)
+      !checkEnpointEnabled && (await this.createEndpointARN(email, device_token));
     }
 
     const response = await this.awsCognito.signIn({
@@ -132,10 +132,10 @@ export default class CustomerAuthService {
 
     const updateUserEndpointArn = await this.userRepository.updateDeviceToken(email, endpointArn);
 
-    if(!updateUserEndpointArn){
+    if (!updateUserEndpointArn) {
       throw new BadRequestError("failed to save endpoint arn");
     }
-  } 
+  }
 
   async refreshToken(args: AWSCognitoRefreshTokenInput): Promise<AWSCognitoRefreshTokenOutput> {
     return await this.awsCognito.refreshAccessToken(args);

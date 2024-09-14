@@ -9,15 +9,15 @@ const userSchema: Schema = new Schema<User>({
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
   first_name: {
     type: String,
-    required: true
+    required: true,
   },
   last_name: {
     type: String,
-    required: true
+    required: true,
   },
   aws_device_endpoint: {
     type: String,
@@ -48,7 +48,7 @@ const userSchema: Schema = new Schema<User>({
   },
   notification: {
     type: Boolean,
-    default: true
+    default: true,
   },
   status: {
     type: String,

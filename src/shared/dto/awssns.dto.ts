@@ -5,5 +5,5 @@ export type PushNotificationInput = {
   meta_data?: {
     chat_id?: string;
     user_id?: string;
-  }
+  };
 };

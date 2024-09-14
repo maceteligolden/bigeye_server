@@ -9,7 +9,13 @@ const invoiceSchema: Schema = new Schema<Invoice>({
   },
   status: {
     type: String,
-    enum: [InvoiceStatus.DRAFT, InvoiceStatus.OPEN, InvoiceStatus.PAID, InvoiceStatus.UNCOLLECTIBLE, InvoiceStatus.VOID],
+    enum: [
+      InvoiceStatus.DRAFT,
+      InvoiceStatus.OPEN,
+      InvoiceStatus.PAID,
+      InvoiceStatus.UNCOLLECTIBLE,
+      InvoiceStatus.VOID,
+    ],
     required: true,
   },
   subscription_id: {
@@ -19,7 +25,7 @@ const invoiceSchema: Schema = new Schema<Invoice>({
   },
   stripe_invoice_id: {
     type: String,
-    required: true
+    required: true,
   },
   created_at: {
     type: Date,

@@ -9,12 +9,7 @@ const transactionSchema: Schema = new Schema<Transaction>({
   },
   status: {
     type: String,
-    enum: [
-        TransactionStatus.FAILED,
-        TransactionStatus.PENDING,
-        TransactionStatus.SUCCESS,
-        TransactionStatus.CANCELLED
-    ]
+    enum: [TransactionStatus.FAILED, TransactionStatus.PENDING, TransactionStatus.SUCCESS, TransactionStatus.CANCELLED],
   },
   invoice_id: {
     type: Schema.Types.ObjectId,
@@ -23,19 +18,13 @@ const transactionSchema: Schema = new Schema<Transaction>({
   },
   type: {
     type: String,
-    enum: [
-        TransactionType.BILL,
-        TransactionType.BILL_RETRY,
-        TransactionType.REFUND
-    ],
-    required: true
+    enum: [TransactionType.BILL, TransactionType.BILL_RETRY, TransactionType.REFUND],
+    required: true,
   },
   processor: {
     type: String,
-    enum: [
-        TransactionProcessor.STRIPE
-    ],
-    required: true
+    enum: [TransactionProcessor.STRIPE],
+    required: true,
   },
   created_at: {
     type: Date,

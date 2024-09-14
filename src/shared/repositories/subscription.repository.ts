@@ -10,8 +10,8 @@ export default class SubscriptionRepository implements IRepository<Subscription>
   async create(args: Subscription): Promise<Subscription> {
     return await subscriptionSchema.create(args);
   }
-  fetchAll(): Promise<Subscription[]> {
-    throw new Error("Method not implemented.");
+  async fetchAll(): Promise<Subscription[]> {
+    return await subscriptionSchema.find({});
   }
   async fetchOneById(id: string): Promise<Subscription | null> {
     return await subscriptionSchema.findById(id);
@@ -29,12 +29,9 @@ export default class SubscriptionRepository implements IRepository<Subscription>
     return await subscriptionSchema.findOneAndUpdate({ _id: id }, update);
   }
   async updateByStripeSubId(id: string, update: Partial<Subscription>): Promise<Subscription | null> {
-    return await subscriptionSchema.findOneAndUpdate(
-      { stripe_subscription_id: id },
-      update
-    );
+    return await subscriptionSchema.findOneAndUpdate({ stripe_subscription_id: id }, update);
   }
   async delete(id: string): Promise<DeleteOutput> {
-    throw new Error("Method not implemented.");
+    return await subscriptionSchema.deleteOne({_id: id})
   }
 }
