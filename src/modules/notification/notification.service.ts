@@ -21,7 +21,7 @@ export default class NotificationService {
     // }
 
     await this.awsSNS.pushNotification({
-      targetarn: "arn:aws:sns:us-west-1:572368690967:endpoint/GCM/newtons_law/de0d8477-c7c9-3bad-a11c-fea2e206a6e8",
+      targetarn: "",
       message,
       subject,
     });
