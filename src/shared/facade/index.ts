@@ -6,6 +6,5 @@ import AWSSQS from "./awssqs.facade";
 import AWSWebsocket from "./awswebsocket.facade";
 import Database from "./database.facade";
 import Server from "./server.facade";
-import Stripe from "./stripe.facade";
 
-export { Server, Database, AWSCognito, AWSSQS, AWSSNS, AWSCloudWatch, AWSS3, AWSWebsocket, Stripe };
+export { Server, Database, AWSCognito, AWSSQS, AWSSNS, AWSCloudWatch, AWSS3, AWSWebsocket };
