@@ -6,6 +6,7 @@ import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanag
 import { accountRouter } from "./modules/account/routes";
 import notificationRouter from "./modules/notification/notification.router";
 import blogRouter from "./modules/blog/blog.router";
+import siteRouter from "./modules/site/site.router";
 
 export const router = Router({});
 
@@ -59,6 +60,10 @@ export const routes: ServerRouter[] = [
       {
         path: "/blogs",
         router: blogRouter,
+      },
+      {
+        path: "/sites",
+        router: siteRouter,
       },
     ],
   },

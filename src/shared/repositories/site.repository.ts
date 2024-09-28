@@ -23,4 +23,10 @@ export default class SiteRepository implements IRepository<Site> {
     async delete(id: string): Promise<DeleteOutput> {
         return await siteSchema.deleteOne({_id: id})
     }
+    async fetchOneByName(name: string): Promise<Site | null> {
+        return await siteSchema.findOne({name});
+    }
+    async fetchAllByUserId(id: string): Promise<Site[]> {
+        return await siteSchema.find({user_id: id});
+    }
 }
