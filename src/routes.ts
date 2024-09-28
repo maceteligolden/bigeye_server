@@ -5,6 +5,7 @@ import { customerAuthRouter } from "./modules/auth/routers";
 import { fileManagerRouter, fileRouter, folderRouter } from "./modules/filemanager/routers";
 import { accountRouter } from "./modules/account/routes";
 import notificationRouter from "./modules/notification/notification.router";
+import blogRouter from "./modules/blog/blog.router";
 
 export const router = Router({});
 
@@ -55,12 +56,14 @@ export const routes: ServerRouter[] = [
         path: "/notification",
         router: notificationRouter,
       },
+      {
+        path: "/blogs",
+        router: blogRouter,
+      },
     ],
   },
   {
     base: "admin",
-    routes: [
-     
-    ],
+    routes: [],
   },
 ];

@@ -1,17 +1,17 @@
 import { Schema, model } from "mongoose";
-import { Feature } from "../entities";
+import { Site } from "../entities";
 
-const featureSchema: Schema = new Schema<Feature>({
-  title: {
+const siteSchema: Schema = new Schema<Site>({
+  user_id: {
+    type: Schema.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  healthcheck_link: {
     type: String,
     required: true,
   },
-  plan_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Plan",
-    required: true,
-  },
-  stripe_product_feature_id: {
+  name: {
     type: String,
     required: true,
   },
@@ -26,4 +26,4 @@ const featureSchema: Schema = new Schema<Feature>({
   },
 });
 
-export default model<Feature>("Feature", featureSchema);
+export default model<Site>("Site", siteSchema);

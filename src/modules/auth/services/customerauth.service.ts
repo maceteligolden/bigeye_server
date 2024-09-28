@@ -25,7 +25,7 @@ import { CustomerSignInInput, CustomerSignInOutput } from "../dto";
 export default class CustomerAuthService {
   constructor(
     private awsCognito: AWSCognito,
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
   ) {}
 
   async signUp(args: AWSCognitoSignupInput): Promise<AWSCognitoSignupOutput> {
