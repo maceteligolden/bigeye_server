@@ -7,7 +7,6 @@ export default class LoggerService implements ILogger {
   constructor(private awsCloudWatch: AWSCloudWatch) {}
 
   async log(message: string, metadata?: {}): Promise<void> {
-    await this.awsCloudWatch.sendLog(message, metadata);
     console.log(message);
   }
 }
