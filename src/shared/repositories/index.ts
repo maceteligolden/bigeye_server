@@ -6,12 +6,12 @@ import FolderRepository from "./folder.repository";
 import SiteRepository from "./site.repository";
 import UserRepository from "./user.repository";
 
-export { 
-    UserRepository, 
-    FileRepository, 
-    FolderRepository, 
-    FileManagerRepository, 
-    BlogRepository, 
-    CommentRepository,
-    SiteRepository
+export {
+  UserRepository,
+  FileRepository,
+  FolderRepository,
+  FileManagerRepository,
+  BlogRepository,
+  CommentRepository,
+  SiteRepository,
 };

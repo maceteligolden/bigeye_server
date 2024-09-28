@@ -2,7 +2,6 @@ import { injectable } from "tsyringe";
 import { BlogRepository } from "../../shared/repositories";
 import { Blog } from "../../shared/entities";
 import { BadRequestError } from "../../shared/errors";
-import { UpdateBlogInput } from "./blog.interface";
 
 @injectable()
 export default class BlogService {
@@ -31,6 +30,4 @@ export default class BlogService {
 
     return blog;
   }
-
-  async update(args: UpdateBlogInput): Promise<UpdateBlogOutput> {}
 }

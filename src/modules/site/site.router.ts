@@ -1,7 +1,7 @@
 import { container } from "tsyringe";
 import { Request, Response, NextFunction, Router } from "express";
-import SiteController from "./site.controller";
 import { authMiddleware } from "../../shared/middlewares";
+import SiteController from "./site.controller";
 
 const siteRouter = Router();
 const siteController = container.resolve(SiteController);
